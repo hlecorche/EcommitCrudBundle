@@ -1,0 +1,40 @@
+{% set ajax_options = ajax_options|merge({ 'before': 'processCrudDisplayConfig();' }) %}
+
+<div id="display_config" class="crud_modal" style="width: 500px; text-align: left;">
+<div class="contentWrap">
+    <div class="titre">{% trans %}Display Settings{% endtrans %}</div>
+    {{ ecommit_jQuery_ajax_form(url, ajax_options)  }}
+        <b>{{ form_label(form.npp) }} :</b><br />
+        {{ form_widget(form.npp) }}<br /><br />
+        
+        <b>{{ form_label(form.displayed_columns) }} :</b><br />
+         {% for choice, child in form.displayed_columns %}
+                {{ form_widget(child) }}  {{ form_label(child) }}<br />
+         {% endfor %}
+        {{ form_rest(form) }}
+
+        <div style="text-align: center;">
+            <input type="submit" class="save" value="{% trans %}Save{% endtrans %}" />
+        </div>
+    </form>
+</div>
+</div>
+
+<script type="text/javascript">
+    var dialog_display_config = $('#display_config').overlay({oneInstance: false, api: true});
+    function processCrudDisplayConfig()
+    {
+       if($('#display_config input:checkbox:checked').length < 1)
+       {
+            alert('{% trans %}You need to select at least one column to display{% endtrans %}');
+            return false;
+       }
+       dialog_display_config.close();
+    }
+    function change_display_config()
+    {
+        dialog_display_config.load();
+    }
+</script>
+
+<a href="#" onclick="change_display_config(); return false;"><img src="{{ image_url }}" alt="{% trans %}Display Settings{% endtrans %}" title="{% trans %}Display Settings{% endtrans %}" /></a>

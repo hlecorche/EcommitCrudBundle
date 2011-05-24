@@ -1,0 +1,43 @@
+
+
+ ***************************************************
+ *                                                 *
+ *            INSTALLATION                         *
+ *                                                 *
+ ***************************************************
+
+* Add EcommitCrudBundle to your src/ dir
+
+* Add the Ecommit namespace to your autoloader:
+
+// app/autoload.php 
+$loader->registerNamespaces(array(
+        // your other namespaces
+        'Ecommit' => __DIR__.'/../src',
+    );
+
+
+* Add EcommitCrudBundle to your application kernel
+
+// app/AppKernel.php
+public function registerBundles()
+{
+    return array(
+        // ...
+        new Ecommit\CrudBundle\EcommitJavascriptBundle(),
+        // ...
+    );
+}
+
+* Execute command line:
+    php app/console assets:install web
+
+* In layout, add lines:
+
+<head>
+...
+<link media="screen" rel="stylesheet" href="/bundles/ecommitcrud/css/crud.css" type="text/css" />
+{{ ecommit_jQuery_insert_js() }}
+{{ ecommit_jQuery_insert_css() }}
+...
+</head>
