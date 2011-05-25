@@ -210,6 +210,47 @@ class CrudHelper
     }
     
     /**
+     * Returns search form tag
+     * 
+     * @param CrudManager $crud
+     * @param array $ajax_options   Ajax Options
+     * @param type $html_options   Html options
+     * @return string 
+     */
+    public function searchFormTag(CrudManager $crud, $ajax_options = array(), $html_options = array())
+    {
+        if(!isset($ajax_options['update']))
+        {
+            $ajax_options['update'] = 'js_holder_for_multi_update';
+        }
+        return $this->javascript_manager->jQueryFormToRemote($crud->getSearchUrl(), $ajax_options, $html_options);
+    }
+    
+    /**
+     * Returns search reset button
+     * 
+     * @param CrudManager $crud
+     * @param string $label   Label
+     * @param array $ajax_options   Ajax options
+     * @param array $html_options   Html options
+     * @param string $link_parameter   Suffix url
+     * @return string 
+     */
+    public function searchResetButton(CrudManager $crud, $label = 'Reset', $ajax_options = array(), $html_options = array(), $link_parameter = '?raz=1')
+    {
+        if(!isset($ajax_options['update']))
+        {
+            $ajax_options['update'] = 'js_holder_for_multi_update';
+        }
+        if(!isset($html_options['class']))
+        {
+            $html_options['class'] = 'raz';
+        }
+        $label = $this->util->translate($label);
+        return $this->javascript_manager->jQueryButtonToRemote($label, $crud->getSearchUrl().$link_parameter, $ajax_options, $html_options);
+    }
+    
+    /**
      * Creates a link
      * 
      * @param string $name   Name link

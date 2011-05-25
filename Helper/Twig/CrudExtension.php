@@ -56,11 +56,13 @@ class CrudExtension extends Twig_Extension
             'crud_th' => new Twig_Function_Method($this, 'th', array('is_safe' => array('all'))),
             'crud_td' => new Twig_Function_Method($this, 'td', array('is_safe' => array('all'))),
             'crud_display_config' => new Twig_Function_Method($this, 'display_config', array('is_safe' => array('all'))),
+            'crud_search_form' => new Twig_Function_Method($this, 'search_form', array('is_safe' => array('all'))),
+            'crud_search_reset' => new Twig_Function_Method($this, 'search_reset', array('is_safe' => array('all'))),
         );
     }
     
     /**
-     * Twig function: "paginator"
+     * Twig function: "crud_paginator"
      *  
      * @see CrudHelper:paginator
      */
@@ -70,7 +72,7 @@ class CrudExtension extends Twig_Extension
     }
     
     /**
-     * Twig function: "th"
+     * Twig function: "crud_th"
      *  
      * @see CrudHelper:th
      */
@@ -80,7 +82,7 @@ class CrudExtension extends Twig_Extension
     }
     
     /**
-     * Twig function: "td"
+     * Twig function: "crud_td"
      *  
      * @see CrudHelper:td
      */
@@ -107,5 +109,25 @@ class CrudExtension extends Twig_Extension
         $form = $this->crud_helper->getFormDisplayConfig($crud);
         return $this->templating->render('EcommitCrudBundle:Crud:form_config.html.twig', 
                 array('form' => $form, 'url' => $crud->getUrl(), 'ajax_options' => $ajax_options, 'image_url' => $image_url));
+    }
+    
+    /**
+     * Twig function: "crud_search_form"
+     * 
+     * @see CrudHelper:searchFormTag 
+     */
+    public function search_form(CrudManager $crud, $ajax_options = array(), $html_options = array())
+    {
+        return $this->crud_helper->searchFormTag($crud, $ajax_options, $html_options);
+    }
+    
+    /**
+     * Twig function: "crud_search_reset"
+     * 
+     * @see CrudHelper:searchResetButton 
+     */
+    public function search_reset(CrudManager $crud, $label = 'Reset', $ajax_options = array(), $html_options = array(), $link_parameter = '?raz=1')
+    {
+        return $this->crud_helper->searchResetButton($crud, $label, $ajax_options, $html_options, $link_parameter);
     }
 }
