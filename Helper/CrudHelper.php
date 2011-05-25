@@ -38,7 +38,7 @@ class CrudHelper
     }
     
     /**
-     * Returns paginator
+     * Returns links paginator
      * 
      * @param CrudManager $crud
      * @param array $options_ajax   Ajax Options
@@ -51,7 +51,7 @@ class CrudHelper
      * @param sring $attribute_page   Text between the url page and the num page (ex. : "?page=")
      * @return string 
      */
-    public function paginator(CrudManager $crud, $options_ajax = array(), $max_pages_before = 3, $max_pages_after = 3, $image_first = '/bundles/ecommitcrud/images/i16/resultset_first.png', $image_last = '/bundles/ecommitcrud/images/i16/resultset_last.png', $image_previous = '/bundles/ecommitcrud/images/i16/resultset_previous.png', $image_next = '/bundles/ecommitcrud/images/i16/resultset_next.png', $attribute_page = '?page=')
+    public function paginatorLinks(CrudManager $crud, $options_ajax = array(), $max_pages_before = 3, $max_pages_after = 3, $image_first = '/bundles/ecommitcrud/images/i16/resultset_first.png', $image_last = '/bundles/ecommitcrud/images/i16/resultset_last.png', $image_previous = '/bundles/ecommitcrud/images/i16/resultset_previous.png', $image_next = '/bundles/ecommitcrud/images/i16/resultset_next.png', $attribute_page = '?page=')
     {
         if(!isset($options_ajax['update']))
         {

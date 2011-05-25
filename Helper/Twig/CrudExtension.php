@@ -52,10 +52,10 @@ class CrudExtension extends Twig_Extension
     public function getFunctions()
     {
         return array(
-            'paginator' => new Twig_Function_Method($this, 'paginator', array('is_safe' => array('all'))),
-            'th' => new Twig_Function_Method($this, 'th', array('is_safe' => array('all'))),
-            'td' => new Twig_Function_Method($this, 'td', array('is_safe' => array('all'))),
-            'crud_display_config' => new Twig_Function_Method($this, 'crud_display_config', array('is_safe' => array('all'))),
+            'crud_paginator_links' => new Twig_Function_Method($this, 'paginator_links', array('is_safe' => array('all'))),
+            'crud_th' => new Twig_Function_Method($this, 'th', array('is_safe' => array('all'))),
+            'crud_td' => new Twig_Function_Method($this, 'td', array('is_safe' => array('all'))),
+            'crud_display_config' => new Twig_Function_Method($this, 'display_config', array('is_safe' => array('all'))),
         );
     }
     
@@ -64,9 +64,9 @@ class CrudExtension extends Twig_Extension
      *  
      * @see CrudHelper:paginator
      */
-    public function paginator(CrudManager $crud, $options_ajax = array(), $max_pages_before = 3, $max_pages_after = 3, $image_first = '/bundles/ecommitcrud/images/i16/resultset_first.png', $image_last = '/bundles/ecommitcrud/images/i16/resultset_last.png', $image_previous = '/bundles/ecommitcrud/images/i16/resultset_previous.png', $image_next = '/bundles/ecommitcrud/images/i16/resultset_next.png', $attribute_page = '?page=')
+    public function paginator_links(CrudManager $crud, $options_ajax = array(), $max_pages_before = 3, $max_pages_after = 3, $image_first = '/bundles/ecommitcrud/images/i16/resultset_first.png', $image_last = '/bundles/ecommitcrud/images/i16/resultset_last.png', $image_previous = '/bundles/ecommitcrud/images/i16/resultset_previous.png', $image_next = '/bundles/ecommitcrud/images/i16/resultset_next.png', $attribute_page = '?page=')
     {
-        return $this->crud_helper->paginator($crud, $options_ajax, $max_pages_before, $max_pages_after, $image_first, $image_last, $image_previous, $image_next, $attribute_page);
+        return $this->crud_helper->paginatorLinks($crud, $options_ajax, $max_pages_before, $max_pages_after, $image_first, $image_last, $image_previous, $image_next, $attribute_page);
     }
     
     /**
@@ -97,7 +97,7 @@ class CrudExtension extends Twig_Extension
      * @param string $image_url   Url image (button)
      * @return string 
      */
-    public function crud_display_config(CrudManager $crud, $ajax_options = array(), $image_url = '/bundles/ecommitcrud/images/i16/list.png')
+    public function display_config(CrudManager $crud, $ajax_options = array(), $image_url = '/bundles/ecommitcrud/images/i16/list.png')
     {
         if(!isset($ajax_options['update']))
         {
