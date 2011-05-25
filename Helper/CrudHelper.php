@@ -41,7 +41,7 @@ class CrudHelper
      * Returns links paginator
      * 
      * @param CrudManager $crud
-     * @param array $options_ajax   Ajax Options
+     * @param array $ajax_options   Ajax Options
      * @param int $max_pages_before   Number of displayed pages, before curent page
      * @param int $max_pages_after   Number of displayed pages, after curent page
      * @param string $image_first   Url image "<<"
@@ -51,11 +51,11 @@ class CrudHelper
      * @param sring $attribute_page   Text between the url page and the num page (ex. : "?page=")
      * @return string 
      */
-    public function paginatorLinks(CrudManager $crud, $options_ajax = array(), $max_pages_before = 3, $max_pages_after = 3, $image_first = '/bundles/ecommitcrud/images/i16/resultset_first.png', $image_last = '/bundles/ecommitcrud/images/i16/resultset_last.png', $image_previous = '/bundles/ecommitcrud/images/i16/resultset_previous.png', $image_next = '/bundles/ecommitcrud/images/i16/resultset_next.png', $attribute_page = '?page=')
+    public function paginatorLinks(CrudManager $crud, $ajax_options = array(), $max_pages_before = 3, $max_pages_after = 3, $image_first = '/bundles/ecommitcrud/images/i16/resultset_first.png', $image_last = '/bundles/ecommitcrud/images/i16/resultset_last.png', $image_previous = '/bundles/ecommitcrud/images/i16/resultset_previous.png', $image_next = '/bundles/ecommitcrud/images/i16/resultset_next.png', $attribute_page = '?page=')
     {
-        if(!isset($options_ajax['update']))
+        if(!isset($ajax_options['update']))
         {
-            $options_ajax['update'] = 'crud_list';
+            $ajax_options['update'] = 'crud_list';
         }
         $paginator = $crud->getPaginator();
         $url = $crud->getUrl();
@@ -66,8 +66,8 @@ class CrudHelper
             //First page / Previous page
             if ($paginator->getPage() != 1)
             {
-                $navigation .= $this->listePrivateLink($this->util->tag('img', array('src' => $image_first, 'alt' => 'first', 'style' => 'vertical-align: top;')), $url.$attribute_page.'1', array(), $options_ajax);
-                $navigation .= $this->listePrivateLink($this->util->tag('img', array('src' => $image_previous, 'alt' => 'previous', 'style' => 'vertical-align: top;')), $url.$attribute_page.$paginator->getPreviousPage(), array(), $options_ajax).' ';
+                $navigation .= $this->listePrivateLink($this->util->tag('img', array('src' => $image_first, 'alt' => 'first', 'style' => 'vertical-align: top;')), $url.$attribute_page.'1', array(), $ajax_options);
+                $navigation .= $this->listePrivateLink($this->util->tag('img', array('src' => $image_previous, 'alt' => 'previous', 'style' => 'vertical-align: top;')), $url.$attribute_page.$paginator->getPreviousPage(), array(), $ajax_options).' ';
             }
             
             //Links
@@ -79,7 +79,7 @@ class CrudHelper
                 if($page <= $paginator->getLastPage() && $page >= $paginator->getFirstPage())
                 {
                     //The page exists, displays it
-                    $links[] = $this->listePrivateLink($page, $url.$attribute_page.$page, array('class' => 'pagination_no_actual'), $options_ajax);
+                    $links[] = $this->listePrivateLink($page, $url.$attribute_page.$page, array('class' => 'pagination_no_actual'), $ajax_options);
                 }
             }
             
@@ -92,7 +92,7 @@ class CrudHelper
                 if($page <= $paginator->getLastPage() && $page >= $paginator->getFirstPage())
                 {
                     //The page exists, displays it
-                    $links[] = $this->listePrivateLink($page, $url.$attribute_page.$page, array('class' => 'pagination_no_actual'), $options_ajax);
+                    $links[] = $this->listePrivateLink($page, $url.$attribute_page.$page, array('class' => 'pagination_no_actual'), $ajax_options);
                 }
             }
             
@@ -101,8 +101,8 @@ class CrudHelper
             //Next page / Last page
             if ($paginator->getPage() != $paginator->getLastPage())
 	    {
-                $navigation .= '&nbsp;&nbsp;'.$this->listePrivateLink($this->util->tag('img', array('src' => $image_next, 'alt' => 'next', 'style' => 'vertical-align: top;')), $url.$attribute_page.$paginator->getNextPage(), array(), $options_ajax);
-                $navigation .= $this->listePrivateLink($this->util->tag('img', array('src' => $image_last, 'alt' => 'last', 'style' => 'vertical-align: top;')), $url.$attribute_page.$paginator->getLastPage(), array(), $options_ajax);
+                $navigation .= '&nbsp;&nbsp;'.$this->listePrivateLink($this->util->tag('img', array('src' => $image_next, 'alt' => 'next', 'style' => 'vertical-align: top;')), $url.$attribute_page.$paginator->getNextPage(), array(), $ajax_options);
+                $navigation .= $this->listePrivateLink($this->util->tag('img', array('src' => $image_last, 'alt' => 'last', 'style' => 'vertical-align: top;')), $url.$attribute_page.$paginator->getLastPage(), array(), $ajax_options);
 	    }
         }
         return $navigation;
@@ -114,18 +114,18 @@ class CrudHelper
      * @param string $column_id   Column id
      * @param CrudManager $crud
      * @param array $th_options   Html options
-     * @param array $options_ajax   Ajax Options
+     * @param array $ajax_options   Ajax Options
      * @param string $label   Label. If null, default label is displayed
      * @param string $image_up   Url image "^"
      * @param string $image_down   Url image "V"
      * @param string $attribute_page   Text between the url page and attributes (ex. : "?")
      * @return string 
      */
-    public function th($column_id, CrudManager $crud, $th_options = array(), $options_ajax = array(), $label = null, $image_up = '/bundles/ecommitcrud/images/i16/sort_incr.png', $image_down = '/bundles/ecommitcrud/images/i16/sort_decrease.png', $attribute_page = '?')
+    public function th($column_id, CrudManager $crud, $th_options = array(), $ajax_options = array(), $label = null, $image_up = '/bundles/ecommitcrud/images/i16/sort_incr.png', $image_down = '/bundles/ecommitcrud/images/i16/sort_decrease.png', $attribute_page = '?')
     {
-        if(!isset($options_ajax['update']))
+        if(!isset($ajax_options['update']))
         {
-            $options_ajax['update'] = 'crud_list';
+            $ajax_options['update'] = 'crud_list';
         }
 
         //If the column is not to be shown, returns empty
@@ -155,7 +155,7 @@ class CrudHelper
         //Case n°2: We can sort on this column, but the sorting is not active on her at present
         if($session_values->sort != $column_id)
         {
-            $content = $this->listePrivateLink($label, $crud->getUrl().$attribute_page.'sort='.$column_id, array(), $options_ajax);
+            $content = $this->listePrivateLink($label, $crud->getUrl().$attribute_page.'sort='.$column_id, array(), $ajax_options);
             return $this->util->tag('th', $th_options, $content);
         }
         
@@ -164,7 +164,7 @@ class CrudHelper
         $image_alt = ($session_values->sense == CrudManager::ASC)? 'V' : '^';
         $new_sense = ($session_values->sense == CrudManager::ASC)? CrudManager::DESC : CrudManager::ASC;
         $image = $this->util->tag('img', array('src' => $image_src, 'alt' => $image_alt));
-        $link = $this->listePrivateLink($label, $crud->getUrl().$attribute_page.'sense='.$new_sense, array(), $options_ajax);
+        $link = $this->listePrivateLink($label, $crud->getUrl().$attribute_page.'sense='.$new_sense, array(), $ajax_options);
         return $this->util->tag('th', $th_options, $link.$image);
     }
     
@@ -256,12 +256,12 @@ class CrudHelper
      * @param string $name   Name link
      * @param string $url   Url link
      * @param array $options_link_to   Html options
-     * @param array $options_ajax   Ajax options (if null, Ajax is dissabled)
+     * @param array $ajax_options   Ajax options (if null, Ajax is dissabled)
      * @return string 
      */
-    protected function listePrivateLink($name, $url, $options_link_to = array(), $options_ajax = null)
+    protected function listePrivateLink($name, $url, $options_link_to = array(), $ajax_options = null)
     {
-	if(is_null($options_ajax))
+	if(is_null($ajax_options))
 	{
             //No Ajax, Simple link
             $options_link_to['href'] = $url;
@@ -270,7 +270,7 @@ class CrudHelper
 	else
 	{
             //Ajax Request
-            return $this->javascript_manager->jQueryLinkToRemote($name, $url, $options_ajax, $options_link_to);
+            return $this->javascript_manager->jQueryLinkToRemote($name, $url, $ajax_options, $options_link_to);
 	}
     }
 }
