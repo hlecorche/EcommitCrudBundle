@@ -87,7 +87,7 @@ class CrudExtension extends Twig_Extension
      */
     public function td($column_id, CrudManager $crud, $value, $escape = true, $td_options = array())
     {
-        return $this->crud_helper->td($column_id, $crud, $value, $td_options);
+        return $this->crud_helper->td($column_id, $crud, $value, $escape, $td_options);
     }
     
     /**
