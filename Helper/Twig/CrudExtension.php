@@ -14,7 +14,6 @@ namespace Ecommit\CrudBundle\Helper\Twig;
 use Twig_Extension;
 use Twig_Function_Method;
 use Ecommit\CrudBundle\Helper\CrudHelper;
-use Ecommit\CrudBundle\Paginator\AbstractPaginator;
 use Ecommit\CrudBundle\Crud\CrudManager;
 use Twig_Environment;
 
@@ -65,9 +64,9 @@ class CrudExtension extends Twig_Extension
      *  
      * @see CrudHelper:paginator
      */
-    public function paginator(AbstractPaginator $paginator, $url, $options_ajax = array(), $max_pages_before = 3, $max_pages_after = 3, $image_first = '/bundles/ecommitcrud/images/i16/resultset_first.png', $image_last = '/bundles/ecommitcrud/images/i16/resultset_last.png', $image_previous = '/bundles/ecommitcrud/images/i16/resultset_previous.png', $image_next = '/bundles/ecommitcrud/images/i16/resultset_next.png', $attribute_page = '?page=')
+    public function paginator(CrudManager $crud, $options_ajax = array(), $max_pages_before = 3, $max_pages_after = 3, $image_first = '/bundles/ecommitcrud/images/i16/resultset_first.png', $image_last = '/bundles/ecommitcrud/images/i16/resultset_last.png', $image_previous = '/bundles/ecommitcrud/images/i16/resultset_previous.png', $image_next = '/bundles/ecommitcrud/images/i16/resultset_next.png', $attribute_page = '?page=')
     {
-        return $this->crud_helper->paginator($paginator, $url, $options_ajax, $max_pages_before, $max_pages_after, $image_first, $image_last, $image_previous, $image_next, $attribute_page);
+        return $this->crud_helper->paginator($crud, $options_ajax, $max_pages_before, $max_pages_after, $image_first, $image_last, $image_previous, $image_next, $attribute_page);
     }
     
     /**

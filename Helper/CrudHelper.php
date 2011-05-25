@@ -13,7 +13,6 @@ namespace Ecommit\CrudBundle\Helper;
 
 use Ecommit\UtilBundle\Helper\UtilHelper;
 use Ecommit\JavascriptBundle\jQuery\Manager;
-use Ecommit\CrudBundle\Paginator\AbstractPaginator;
 use Ecommit\CrudBundle\Crud\CrudManager;
 use Symfony\Component\Form\FormFactory;
 use Ecommit\CrudBundle\Form\Type\DisplayConfigType;
@@ -41,8 +40,7 @@ class CrudHelper
     /**
      * Returns paginator
      * 
-     * @param AbstractPaginator $paginator   Paginator
-     * @param string $url   Url page
+     * @param CrudManager $crud
      * @param array $options_ajax   Ajax Options
      * @param int $max_pages_before   Number of displayed pages, before curent page
      * @param int $max_pages_after   Number of displayed pages, after curent page
@@ -53,12 +51,14 @@ class CrudHelper
      * @param sring $attribute_page   Text between the url page and the num page (ex. : "?page=")
      * @return string 
      */
-    public function paginator(AbstractPaginator $paginator, $url, $options_ajax = array(), $max_pages_before = 3, $max_pages_after = 3, $image_first = '/bundles/ecommitcrud/images/i16/resultset_first.png', $image_last = '/bundles/ecommitcrud/images/i16/resultset_last.png', $image_previous = '/bundles/ecommitcrud/images/i16/resultset_previous.png', $image_next = '/bundles/ecommitcrud/images/i16/resultset_next.png', $attribute_page = '?page=')
+    public function paginator(CrudManager $crud, $options_ajax = array(), $max_pages_before = 3, $max_pages_after = 3, $image_first = '/bundles/ecommitcrud/images/i16/resultset_first.png', $image_last = '/bundles/ecommitcrud/images/i16/resultset_last.png', $image_previous = '/bundles/ecommitcrud/images/i16/resultset_previous.png', $image_next = '/bundles/ecommitcrud/images/i16/resultset_next.png', $attribute_page = '?page=')
     {
         if(!isset($options_ajax['update']))
         {
             $options_ajax['update'] = 'crud_list';
         }
+        $paginator = $crud->getPaginator();
+        $url = $crud->getUrl();
         
         $navigation = '';
 	if ($paginator->haveToPaginate())
