@@ -75,9 +75,9 @@ class CrudExtension extends Twig_Extension
      *  
      * @see CrudHelper:th
      */
-    public function th($column_id, CrudManager $crud, $url, $th_options = array(), $options_ajax = array(), $label = null, $image_up = '/bundles/ecommitcrud/images/i16/sort_incr.png', $image_down = '/bundles/ecommitcrud/images/i16/sort_decrease.png', $attribute_page = '?')
+    public function th($column_id, CrudManager $crud, $th_options = array(), $options_ajax = array(), $label = null, $image_up = '/bundles/ecommitcrud/images/i16/sort_incr.png', $image_down = '/bundles/ecommitcrud/images/i16/sort_decrease.png', $attribute_page = '?')
     {
-        return $this->crud_helper->th($column_id, $crud, $url, $th_options, $options_ajax, $label, $image_up, $image_down, $attribute_page);
+        return $this->crud_helper->th($column_id, $crud, $th_options, $options_ajax, $label, $image_up, $image_down, $attribute_page);
     }
     
     /**
@@ -94,12 +94,11 @@ class CrudExtension extends Twig_Extension
      * Twig function: "crud_display_config"
      * 
      * @param CrudManager $crud
-     * @param string $url   Url
      * @param array $ajax_options   Ajax options
      * @param string $image_url   Url image (button)
      * @return string 
      */
-    public function crud_display_config(CrudManager $crud, $url, $ajax_options = array(), $image_url = '/bundles/ecommitcrud/images/i16/list.png')
+    public function crud_display_config(CrudManager $crud, $ajax_options = array(), $image_url = '/bundles/ecommitcrud/images/i16/list.png')
     {
         if(!isset($ajax_options['update']))
         {
@@ -108,6 +107,6 @@ class CrudExtension extends Twig_Extension
         
         $form = $this->crud_helper->getFormDisplayConfig($crud);
         return $this->templating->render('EcommitCrudBundle:Crud:form_config.html.twig', 
-                array('form' => $form, 'url' => $url, 'ajax_options' => $ajax_options, 'image_url' => $image_url));
+                array('form' => $form, 'url' => $crud->getUrl(), 'ajax_options' => $ajax_options, 'image_url' => $image_url));
     }
 }

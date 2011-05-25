@@ -113,7 +113,6 @@ class CrudHelper
      * 
      * @param string $column_id   Column id
      * @param CrudManager $crud
-     * @param string $url   Url page
      * @param array $th_options   Html options
      * @param array $options_ajax   Ajax Options
      * @param string $label   Label. If null, default label is displayed
@@ -122,7 +121,7 @@ class CrudHelper
      * @param string $attribute_page   Text between the url page and attributes (ex. : "?")
      * @return string 
      */
-    public function th($column_id, CrudManager $crud, $url, $th_options = array(), $options_ajax = array(), $label = null, $image_up = '/bundles/ecommitcrud/images/i16/sort_incr.png', $image_down = '/bundles/ecommitcrud/images/i16/sort_decrease.png', $attribute_page = '?')
+    public function th($column_id, CrudManager $crud, $th_options = array(), $options_ajax = array(), $label = null, $image_up = '/bundles/ecommitcrud/images/i16/sort_incr.png', $image_down = '/bundles/ecommitcrud/images/i16/sort_decrease.png', $attribute_page = '?')
     {
         if(!isset($options_ajax['update']))
         {
@@ -156,7 +155,7 @@ class CrudHelper
         //Case n°2: We can sort on this column, but the sorting is not active on her at present
         if($session_values->sort != $column_id)
         {
-            $content = $this->listePrivateLink($label, $url.$attribute_page.'sort='.$column_id, array(), $options_ajax);
+            $content = $this->listePrivateLink($label, $crud->getUrl().$attribute_page.'sort='.$column_id, array(), $options_ajax);
             return $this->util->tag('th', $th_options, $content);
         }
         
@@ -165,7 +164,7 @@ class CrudHelper
         $image_alt = ($session_values->sense == CrudManager::ASC)? 'V' : '^';
         $new_sense = ($session_values->sense == CrudManager::ASC)? CrudManager::DESC : CrudManager::ASC;
         $image = $this->util->tag('img', array('src' => $image_src, 'alt' => $image_alt));
-        $link = $this->listePrivateLink($label, $url.$attribute_page.'sense='.$new_sense, array(), $options_ajax);
+        $link = $this->listePrivateLink($label, $crud->getUrl().$attribute_page.'sense='.$new_sense, array(), $options_ajax);
         return $this->util->tag('th', $th_options, $link.$image);
     }
     
