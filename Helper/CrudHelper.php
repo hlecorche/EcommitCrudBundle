@@ -43,7 +43,7 @@ class CrudHelper
      * 
      * @param AbstractPaginator $paginator   Paginator
      * @param string $url   Url page
-     * @param array $options_ajax   Ajax Options (if null, Ajax is dissabled)
+     * @param array $options_ajax   Ajax Options
      * @param int $max_pages_before   Number of displayed pages, before curent page
      * @param int $max_pages_after   Number of displayed pages, after curent page
      * @param string $image_first   Url image "<<"
@@ -53,8 +53,13 @@ class CrudHelper
      * @param sring $attribute_page   Text between the url page and the num page (ex. : "?page=")
      * @return string 
      */
-    public function paginator(AbstractPaginator $paginator, $url, $options_ajax = null, $max_pages_before = 3, $max_pages_after = 3, $image_first = '/bundles/ecommitcrud/images/i16/resultset_first.png', $image_last = '/bundles/ecommitcrud/images/i16/resultset_last.png', $image_previous = '/bundles/ecommitcrud/images/i16/resultset_previous.png', $image_next = '/bundles/ecommitcrud/images/i16/resultset_next.png', $attribute_page = '?page=')
+    public function paginator(AbstractPaginator $paginator, $url, $options_ajax = array(), $max_pages_before = 3, $max_pages_after = 3, $image_first = '/bundles/ecommitcrud/images/i16/resultset_first.png', $image_last = '/bundles/ecommitcrud/images/i16/resultset_last.png', $image_previous = '/bundles/ecommitcrud/images/i16/resultset_previous.png', $image_next = '/bundles/ecommitcrud/images/i16/resultset_next.png', $attribute_page = '?page=')
     {
+        if(!isset($options_ajax['update']))
+        {
+            $options_ajax['update'] = 'crud_list';
+        }
+        
         $navigation = '';
 	if ($paginator->haveToPaginate())
 	{
@@ -109,16 +114,21 @@ class CrudHelper
      * @param string $column_id   Column id
      * @param CrudManager $crud
      * @param string $url   Url page
-     * @param array $options_ajax   Ajax Options (if null, Ajax is dissabled)
      * @param array $th_options   Html options
+     * @param array $options_ajax   Ajax Options
      * @param string $label   Label. If null, default label is displayed
      * @param string $image_up   Url image "^"
      * @param string $image_down   Url image "V"
      * @param string $attribute_page   Text between the url page and attributes (ex. : "?")
      * @return string 
      */
-    public function th($column_id, CrudManager $crud, $url, $options_ajax = null, $th_options = array(), $label = null, $image_up = '/bundles/ecommitcrud/images/i16/sort_incr.png', $image_down = '/bundles/ecommitcrud/images/i16/sort_decrease.png', $attribute_page = '?')
+    public function th($column_id, CrudManager $crud, $url, $th_options = array(), $options_ajax = array(), $label = null, $image_up = '/bundles/ecommitcrud/images/i16/sort_incr.png', $image_down = '/bundles/ecommitcrud/images/i16/sort_decrease.png', $attribute_page = '?')
     {
+        if(!isset($options_ajax['update']))
+        {
+            $options_ajax['update'] = 'crud_list';
+        }
+
         //If the column is not to be shown, returns empty
         $session_values =  $crud->getSessionValues();
         if(!\in_array($column_id, $session_values->columns_diplayed))

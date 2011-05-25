@@ -65,7 +65,7 @@ class CrudExtension extends Twig_Extension
      *  
      * @see CrudHelper:paginator
      */
-    public function paginator(AbstractPaginator $paginator, $url, $options_ajax = null, $max_pages_before = 3, $max_pages_after = 3, $image_first = '/bundles/ecommitcrud/images/i16/resultset_first.png', $image_last = '/bundles/ecommitcrud/images/i16/resultset_last.png', $image_previous = '/bundles/ecommitcrud/images/i16/resultset_previous.png', $image_next = '/bundles/ecommitcrud/images/i16/resultset_next.png', $attribute_page = '?page=')
+    public function paginator(AbstractPaginator $paginator, $url, $options_ajax = array(), $max_pages_before = 3, $max_pages_after = 3, $image_first = '/bundles/ecommitcrud/images/i16/resultset_first.png', $image_last = '/bundles/ecommitcrud/images/i16/resultset_last.png', $image_previous = '/bundles/ecommitcrud/images/i16/resultset_previous.png', $image_next = '/bundles/ecommitcrud/images/i16/resultset_next.png', $attribute_page = '?page=')
     {
         return $this->crud_helper->paginator($paginator, $url, $options_ajax, $max_pages_before, $max_pages_after, $image_first, $image_last, $image_previous, $image_next, $attribute_page);
     }
@@ -75,9 +75,9 @@ class CrudExtension extends Twig_Extension
      *  
      * @see CrudHelper:th
      */
-    public function th($column_id, CrudManager $crud, $url, $options_ajax = null, $th_options = array(), $label = null, $image_up = '/bundles/ecommitcrud/images/i16/sort_incr.png', $image_down = '/bundles/ecommitcrud/images/i16/sort_decrease.png', $attribute_page = '?')
+    public function th($column_id, CrudManager $crud, $url, $th_options = array(), $options_ajax = array(), $label = null, $image_up = '/bundles/ecommitcrud/images/i16/sort_incr.png', $image_down = '/bundles/ecommitcrud/images/i16/sort_decrease.png', $attribute_page = '?')
     {
-        return $this->crud_helper->th($column_id, $crud, $url, $options_ajax, $th_options, $label, $image_up, $image_down, $attribute_page);
+        return $this->crud_helper->th($column_id, $crud, $url, $th_options, $options_ajax, $label, $image_up, $image_down, $attribute_page);
     }
     
     /**
@@ -99,8 +99,13 @@ class CrudExtension extends Twig_Extension
      * @param string $image_url   Url image (button)
      * @return string 
      */
-    public function crud_display_config(CrudManager $crud, $url, $ajax_options, $image_url = '/bundles/ecommitcrud/images/i16/list.png')
+    public function crud_display_config(CrudManager $crud, $url, $ajax_options = array(), $image_url = '/bundles/ecommitcrud/images/i16/list.png')
     {
+        if(!isset($ajax_options['update']))
+        {
+            $ajax_options['update'] = 'crud_list';
+        }
+        
         $form = $this->crud_helper->getFormDisplayConfig($crud);
         return $this->templating->render('EcommitCrudBundle:Crud:form_config.html.twig', 
                 array('form' => $form, 'url' => $url, 'ajax_options' => $ajax_options, 'image_url' => $image_url));
