@@ -37,6 +37,8 @@ class CrudManager
     protected $controller = null;
     protected $paginator = null;
     protected $build_paginator = true;
+    protected $url = null;
+    protected $search_url = null;
     
     /**
      * Constructor
@@ -126,6 +128,52 @@ class CrudManager
     }
     
     /**
+     * Sets the list url
+     * 
+     * @param string $route_name
+     * @param array $parameters 
+     * @return CrudManager
+     */
+    public function setUrl($route_name, $parameters = array())
+    {
+        $this->url = $this->controller->get('router')->generate($route_name, $parameters);
+        return $this;
+    }
+    
+    /**
+     * Returns the list url
+     * 
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+    
+    /**
+     * Sets the search url
+     * 
+     * @param string $route_name
+     * @param array $parameters
+     * @return CrudManager
+     */
+    public function setSearchUrl($route_name, $parameters = array())
+    {
+        $this->search_url = $this->controller->get('router')->generate($route_name, $parameters);
+        return $this;
+    }
+    
+    /**
+     * Returns the search url
+     * 
+     * @return string
+     */
+    public function getSearchUrl()
+    {
+        return $this->search_url;
+    }
+    
+    /**
      * Enables (or not) the auto build paginator
      * 
      * @param bool $value 
@@ -205,7 +253,11 @@ class CrudManager
     {
         //Cheks not empty values
         $check_values = array('available_columns', 'available_number_results_displayed', 'default_sort',
-            'default_sense', 'default_number_results_displayed', 'query_builder');
+            'default_sense', 'default_number_results_displayed', 'query_builder', 'url');
+        if(!empty($this->form_filter_values_object))
+        {
+            $check_values[] = 'search_url';
+        }
         foreach($check_values as $value)
         {
             if(empty($this->$value))
