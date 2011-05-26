@@ -32,7 +32,7 @@ public function registerBundles()
 * Execute command line:
     php app/console assets:install web
 
-* In layout, add lines:
+* In layout, add lines (If not present):
 
 <head>
 ...
