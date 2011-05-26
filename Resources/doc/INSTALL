@@ -37,7 +37,7 @@ public function registerBundles()
 <head>
 ...
 <link media="screen" rel="stylesheet" href="/bundles/ecommitcrud/css/crud.css" type="text/css" />
-{{ ecommit_jQuery_insert_js() }}
-{{ ecommit_jQuery_insert_css() }}
+{{ jQuery_insert_js() }}
+{{ jQuery_insert_css() }}
 ...
 </head>

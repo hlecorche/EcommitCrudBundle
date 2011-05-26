@@ -3,7 +3,7 @@
 <div id="display_config" class="crud_modal" style="width: 500px; text-align: left;">
 <div class="contentWrap">
     <div class="titre">{% trans %}Display Settings{% endtrans %}</div>
-    {{ ecommit_jQuery_ajax_form(url, ajax_options)  }}
+    {{ jQuery_ajax_form(url, ajax_options)  }}
         <b>{{ form_label(form.npp) }} :</b><br />
         {{ form_widget(form.npp) }}<br /><br />
         
