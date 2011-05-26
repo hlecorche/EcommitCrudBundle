@@ -203,7 +203,7 @@ class CrudManager
     {
         $this->form_filter_values_object = $form_filter_values_object;
                 
-        $form_builder = $this->controller->get('form.factory')->createBuilder(new FormSearchType());
+        $form_builder = $this->controller->get('form.factory')->createNamedBuilder(new FormSearchType(), 'crud_search');
         foreach($form_filter_values_object->getFieldsFilter() as $field)
         {
             if(!($field instanceof \Ecommit\CrudBundle\Form\Filter\FormFilterAbstract ))
@@ -386,9 +386,9 @@ class CrudManager
     protected function processRequest()
     {
         $request = $this->controller->get('request');
-        if($request->request->has('display_config'))
+        if($request->request->has('crud_display_config'))
         {
-            $display_config = $request->request->get('display_config');
+            $display_config = $request->request->get('crud_display_config');
             if(isset($display_config['displayed_columns']))
             {
                 $this->changeColumnsDisplayed($display_config['displayed_columns']);

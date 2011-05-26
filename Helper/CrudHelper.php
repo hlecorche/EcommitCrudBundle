@@ -205,7 +205,7 @@ class CrudHelper
     {
         $this->javascript_manager->enablejQueryTools();
         
-        $form = $this->form_factory->create(new DisplayConfigType($crud));
+        $form = $this->form_factory->createNamed(new DisplayConfigType($crud), 'crud_display_config');
         return $form->createView();
     }
     
