@@ -251,6 +251,77 @@ class CrudHelper
     }
     
     /**
+     * Returns declaration of modal
+     * 
+     * @param string $modal_id   Modal id
+     * @return string 
+     */
+    public function declareModal($modal_id)
+    {
+        $modal_id = str_replace(' ', '', $modal_id);
+        return '<div id="'.$modal_id.'" class="crud_modal"><div class="contentWrap"></div></div>';
+    }
+    
+    /**
+     * Returns JS code to open modal window
+     * 
+     * @param string $modal_id   Modal id
+     * @param string $url   Url
+     * @param string $js_on_close   JS code excuted, during the closure of the modal 
+     * @param array $ajax_options   Ajax options
+     * @return string 
+     */
+    public function remoteModal($modal_id, $url, $js_on_close = null, $ajax_options = array())
+    {
+        $this->javascript_manager->enablejQueryTools();
+        
+        $modal_id = str_replace(' ', '', $modal_id);
+        //Create Callback (Opening window)
+        $js_modal = "$('#$modal_id .contentWrap').html(data); ";
+	$js_modal .= "var api_crud_modal = $('#$modal_id').overlay({oneInstance: false, api: true, ";
+	$js_modal .= is_null($js_on_close)? '': "onClose: function() { $js_on_close }";
+	$js_modal .= '}); ';
+	$js_modal .= 'api_crud_modal.load();';
+        
+        //Add callback
+	if(isset($ajax_options['success']))
+	{
+		$ajax_options['success'] = $js_modal.' '.$ajax_options['success'];
+	}
+	else
+	{
+		$ajax_options['success'] = $js_modal;
+	}
+        
+        //Method
+        if(!isset($ajax_options['method']))
+        {
+            $ajax_options['method'] = 'GET';
+        }
+        
+        return $this->javascript_manager->jQueryRemoteFunction($url, $ajax_options);
+    }
+    
+    /**
+     * Returns modal form tag
+     * 
+     * @param string $modal_id   Modal id
+     * @param string $url   Url
+     * @param array $ajax_options   Ajax options
+     * @param array $html_options   Html options
+     * @return string 
+     */
+    public function formModal($modal_id, $url, $ajax_options = array(), $html_options = array())
+    {
+        $modal_id = str_replace(' ', '', $modal_id);
+        if(!isset($ajax_options['update']))
+        {
+            $ajax_options['update'] = $modal_id.' .contentWrap';
+        }
+        return $this->javascript_manager->jQueryFormToRemote($url, $ajax_options, $html_options);
+    }
+    
+    /**
      * Creates a link
      * 
      * @param string $name   Name link

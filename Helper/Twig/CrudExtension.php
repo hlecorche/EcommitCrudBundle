@@ -58,6 +58,9 @@ class CrudExtension extends Twig_Extension
             'crud_display_config' => new Twig_Function_Method($this, 'display_config', array('is_safe' => array('all'))),
             'crud_search_form' => new Twig_Function_Method($this, 'search_form', array('is_safe' => array('all'))),
             'crud_search_reset' => new Twig_Function_Method($this, 'search_reset', array('is_safe' => array('all'))),
+            'crud_declare_modal' => new Twig_Function_Method($this, 'declare_modal', array('is_safe' => array('all'))),
+            'crud_remote_modal' => new Twig_Function_Method($this, 'remote_modal', array('is_safe' => array('all'))),
+            'crud_form_modal' => new Twig_Function_Method($this, 'form_modal', array('is_safe' => array('all'))),
         );
     }
     
@@ -129,5 +132,35 @@ class CrudExtension extends Twig_Extension
     public function search_reset(CrudManager $crud, $label = 'Reset', $ajax_options = array(), $html_options = array(), $link_parameter = '?raz=1')
     {
         return $this->crud_helper->searchResetButton($crud, $label, $ajax_options, $html_options, $link_parameter);
+    }
+    
+    /**
+     * Twig function: "crud_declare_modal"
+     * 
+     * @see CrudHelper:reclareModal 
+     */
+    public function declare_modal($modal_id)
+    {
+        return $this->crud_helper->declareModal($modal_id);
+    }
+    
+    /**
+     * Twig function: "crud_remote_modal"
+     * 
+     * @see CrudHelper:remoteModal 
+     */
+    public function remote_modal($modal_id, $url, $js_on_close = null, $ajax_options = array())
+    {
+        return $this->crud_helper->remoteModal($modal_id, $url, $js_on_close, $ajax_options);
+    }
+    
+    /**
+     * Twig function: "crud_form_modal"
+     * 
+     * @see CrudHelper:formModal 
+     */
+    public function form_modal($modal_id, $url, $ajax_options = array(), $html_options = array())
+    {
+        return $this->crud_helper->formModal($modal_id, $url, $ajax_options, $html_options);
     }
 }
