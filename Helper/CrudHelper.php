@@ -51,7 +51,7 @@ class CrudHelper
      * @param sring $attribute_page   Text between the url page and the num page (ex. : "?page=")
      * @return string 
      */
-    public function paginatorLinks(CrudManager $crud, $ajax_options = array(), $max_pages_before = 3, $max_pages_after = 3, $image_first = '/bundles/ecommitcrud/images/i16/resultset_first.png', $image_last = '/bundles/ecommitcrud/images/i16/resultset_last.png', $image_previous = '/bundles/ecommitcrud/images/i16/resultset_previous.png', $image_next = '/bundles/ecommitcrud/images/i16/resultset_next.png', $attribute_page = '?page=')
+    public function paginatorLinks(CrudManager $crud, $ajax_options, $max_pages_before, $max_pages_after, $image_first, $image_last, $image_previous, $image_next, $attribute_page)
     {
         if(!isset($ajax_options['update']))
         {
@@ -59,6 +59,10 @@ class CrudHelper
         }
         $paginator = $crud->getPaginator();
         $url = $crud->getUrl();
+        $image_first = $this->util->getUrl($image_first);
+        $image_last = $this->util->getUrl($image_last);
+        $image_previous = $this->util->getUrl($image_previous);
+        $image_next = $this->util->getUrl($image_next);
         
         $navigation = '';
 	if ($paginator->haveToPaginate())
@@ -121,12 +125,14 @@ class CrudHelper
      * @param string $attribute_page   Text between the url page and attributes (ex. : "?")
      * @return string 
      */
-    public function th($column_id, CrudManager $crud, $th_options = array(), $ajax_options = array(), $label = null, $image_up = '/bundles/ecommitcrud/images/i16/sort_incr.png', $image_down = '/bundles/ecommitcrud/images/i16/sort_decrease.png', $attribute_page = '?')
+    public function th($column_id, CrudManager $crud, $th_options, $ajax_options, $label, $image_up, $image_down, $attribute_page)
     {
         if(!isset($ajax_options['update']))
         {
             $ajax_options['update'] = 'crud_list';
         }
+        $image_up = $this->util->getUrl($image_up);
+        $image_down = $this->util->getUrl($image_down);
 
         //If the column is not to be shown, returns empty
         $session_values =  $crud->getSessionValues();
@@ -178,7 +184,7 @@ class CrudHelper
      * @param array $td_options   Html options
      * @return string 
      */
-    public function td($column_id, CrudManager $crud, $value, $escape = true, $td_options = array())
+    public function td($column_id, CrudManager $crud, $value, $escape, $td_options)
     {
         //If the column is not to be shown, returns empty
         $session_values =  $crud->getSessionValues();
@@ -217,7 +223,7 @@ class CrudHelper
      * @param type $html_options   Html options
      * @return string 
      */
-    public function searchFormTag(CrudManager $crud, $ajax_options = array(), $html_options = array())
+    public function searchFormTag(CrudManager $crud, $ajax_options, $html_options)
     {
         if(!isset($ajax_options['update']))
         {
@@ -236,7 +242,7 @@ class CrudHelper
      * @param string $link_parameter   Suffix url
      * @return string 
      */
-    public function searchResetButton(CrudManager $crud, $label = 'Reset', $ajax_options = array(), $html_options = array(), $link_parameter = '?raz=1')
+    public function searchResetButton(CrudManager $crud, $label, $ajax_options, $html_options, $link_parameter)
     {
         if(!isset($ajax_options['update']))
         {
@@ -271,7 +277,7 @@ class CrudHelper
      * @param array $ajax_options   Ajax options
      * @return string 
      */
-    public function remoteModal($modal_id, $url, $js_on_close = null, $ajax_options = array())
+    public function remoteModal($modal_id, $url, $js_on_close, $ajax_options)
     {
         $this->javascript_manager->enablejQueryTools();
         
@@ -311,7 +317,7 @@ class CrudHelper
      * @param array $html_options   Html options
      * @return string 
      */
-    public function formModal($modal_id, $url, $ajax_options = array(), $html_options = array())
+    public function formModal($modal_id, $url, $ajax_options, $html_options)
     {
         $modal_id = str_replace(' ', '', $modal_id);
         if(!isset($ajax_options['update']))
