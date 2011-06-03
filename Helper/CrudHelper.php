@@ -284,8 +284,8 @@ class CrudHelper
         $modal_id = str_replace(' ', '', $modal_id);
         //Create Callback (Opening window)
         $js_modal = "$('#$modal_id .contentWrap').html(data); ";
-	$js_modal .= "var api_crud_modal = $('#$modal_id').overlay({oneInstance: false, api: true, ";
-	$js_modal .= is_null($js_on_close)? '': "onClose: function() { $js_on_close }";
+	$js_modal .= "var api_crud_modal = $('#$modal_id').overlay({oneInstance: false, api: true";
+	$js_modal .= is_null($js_on_close)? '': " ,onClose: function() { $js_on_close }";
 	$js_modal .= '}); ';
 	$js_modal .= 'api_crud_modal.load();';
         
