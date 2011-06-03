@@ -19,6 +19,9 @@ use Ecommit\CrudBundle\Form\Type\DisplayConfigType;
 
 class CrudHelper
 {
+    const MESSAGE_CONFIRM = 'message_confirm';
+    const MESSAGE_ERROR = 'message_error';
+    
     protected $util;
     protected $javascript_manager;
     protected $form_factory;
@@ -325,6 +328,56 @@ class CrudHelper
             $ajax_options['update'] = $modal_id.' .contentWrap';
         }
         return $this->javascript_manager->jQueryFormToRemote($url, $ajax_options, $html_options);
+    }
+    
+    /**
+     * Displays a message
+     * 
+     * @param string $message   Message
+     * @param const $type   Type
+     * @param string|boolean $close_label   Close label. If false, label is disabled
+     * @param string $width   Div with
+     * @return string 
+     */
+    public function message($message, $type, $close_label, $width)
+    {
+        if(is_null($message))
+        {
+            return '';
+        }
+        
+        $this->javascript_manager->enablejQuery();
+        $message = \htmlentities($this->util->translate($message));
+        $render = \sprintf('<div class="crud_message %s" style="width: %s;">', $type, $width);
+        $render .= \sprintf('<div class="message">%s</div>', $message);
+        
+        if($close_label !== false)
+        {
+            $close_label = \htmlentities($this->util->translate($close_label));
+            $render .= \sprintf('<div class="close"><a href="#" title="%s" onclick="$(this).parent().parent().remove(); return false;">x</a></div>', $close_label);
+        }
+        
+        $render .= '</div>';
+        return $render;
+    }
+    
+    /**
+     * Displays a flash message
+     * 
+     * @param string $name   Flash name
+     * @param const $type   Type
+     * @param string|boolean $close_label   Close label. If false, label is disabled
+     * @param string $width   Div with
+     * @return string 
+     */
+    public function flashMessage($name, $type, $close_label, $width)
+    {
+        $session = $this->util->get('session');
+        if($session->hasFlash($name))
+        {
+            return $this->message($session->getFlash($name), $type, $close_label, $width);
+        }
+        return '';
     }
     
     /**
