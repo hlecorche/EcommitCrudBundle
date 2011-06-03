@@ -29,15 +29,16 @@ public function registerBundles()
     );
 }
 
-* Execute command line:
-    php app/console assets:install web
+* Execute command line (Windows: Admin credentials required):
+    php app/console assets:install --symlink web
 
 * In layout, add lines (If not present):
 
 <head>
 ...
 <link media="screen" rel="stylesheet" href="/bundles/ecommitcrud/css/crud.css" type="text/css" />
-{{ jQuery_insert_js() }}
-{{ jQuery_insert_css() }}
 ...
 </head>
+
+* Add into .htaccess file (before Symfony lines):
+    RewriteRule ^ecr/(.+)$ bundles/ecommitcrud/$1 [L]

@@ -69,7 +69,7 @@ class CrudExtension extends Twig_Extension
      *  
      * @see CrudHelper:paginator
      */
-    public function paginator_links(CrudManager $crud, $ajax_options = array(), $max_pages_before = 3, $max_pages_after = 3, $image_first = '/bundles/ecommitcrud/images/i16/resultset_first.png', $image_last = '/bundles/ecommitcrud/images/i16/resultset_last.png', $image_previous = '/bundles/ecommitcrud/images/i16/resultset_previous.png', $image_next = '/bundles/ecommitcrud/images/i16/resultset_next.png', $attribute_page = '?page=')
+    public function paginator_links(CrudManager $crud, $ajax_options = array(), $max_pages_before = 3, $max_pages_after = 3, $image_first = 'ecr/images/i16/resultset_first.png', $image_last = 'ecr/images/i16/resultset_last.png', $image_previous = 'ecr/images/i16/resultset_previous.png', $image_next = 'ecr/images/i16/resultset_next.png', $attribute_page = '?page=')
     {
         return $this->crud_helper->paginatorLinks($crud, $ajax_options, $max_pages_before, $max_pages_after, $image_first, $image_last, $image_previous, $image_next, $attribute_page);
     }
@@ -79,7 +79,7 @@ class CrudExtension extends Twig_Extension
      *  
      * @see CrudHelper:th
      */
-    public function th($column_id, CrudManager $crud, $th_options = array(), $ajax_options = array(), $label = null, $image_up = '/bundles/ecommitcrud/images/i16/sort_incr.png', $image_down = '/bundles/ecommitcrud/images/i16/sort_decrease.png', $attribute_page = '?')
+    public function th($column_id, CrudManager $crud, $th_options = array(), $ajax_options = array(), $label = null, $image_up = 'ecr/images/i16/sort_incr.png', $image_down = 'ecr/images/i16/sort_decrease.png', $attribute_page = '?')
     {
         return $this->crud_helper->th($column_id, $crud, $th_options, $ajax_options, $label, $image_up, $image_down, $attribute_page);
     }
@@ -102,7 +102,7 @@ class CrudExtension extends Twig_Extension
      * @param string $image_url   Url image (button)
      * @return string 
      */
-    public function display_config(CrudManager $crud, $ajax_options = array(), $image_url = '/bundles/ecommitcrud/images/i16/list.png')
+    public function display_config(CrudManager $crud, $ajax_options = array(), $image_url = 'ecr/images/i16/list.png')
     {
         if(!isset($ajax_options['update']))
         {
