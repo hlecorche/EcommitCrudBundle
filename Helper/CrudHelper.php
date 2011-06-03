@@ -59,10 +59,10 @@ class CrudHelper
         }
         $paginator = $crud->getPaginator();
         $url = $crud->getUrl();
-        $image_first = $this->util->getUrl($image_first);
-        $image_last = $this->util->getUrl($image_last);
-        $image_previous = $this->util->getUrl($image_previous);
-        $image_next = $this->util->getUrl($image_next);
+        $image_first = $this->util->getAssetUrl($image_first);
+        $image_last = $this->util->getAssetUrl($image_last);
+        $image_previous = $this->util->getAssetUrl($image_previous);
+        $image_next = $this->util->getAssetUrl($image_next);
         
         $navigation = '';
 	if ($paginator->haveToPaginate())
@@ -131,8 +131,8 @@ class CrudHelper
         {
             $ajax_options['update'] = 'crud_list';
         }
-        $image_up = $this->util->getUrl($image_up);
-        $image_down = $this->util->getUrl($image_down);
+        $image_up = $this->util->getAssetUrl($image_up);
+        $image_down = $this->util->getAssetUrl($image_down);
 
         //If the column is not to be shown, returns empty
         $session_values =  $crud->getSessionValues();
