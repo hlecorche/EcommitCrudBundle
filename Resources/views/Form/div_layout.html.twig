@@ -1,0 +1,21 @@
+{% extends 'TwigBundle:Form:div_layout.html.twig' %}
+{% block field_errors %}
+{% spaceless %}
+    {% if errors|length > 0 %}
+    <ul class="form_error">
+        {% for error in errors %}
+            <li><span>{{ error.messageTemplate|trans(error.messageParameters, 'validators') }}</span></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+{% endspaceless %}
+{% endblock field_errors %}
+
+{% block field_label %}
+{% spaceless %}
+    {{ parent() }}
+    {% if required %}
+        <span class="field_required" title="This field is required">*</span>
+    {% endif %}
+{% endspaceless %}
+{% endblock field_label %}

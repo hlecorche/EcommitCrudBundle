@@ -207,3 +207,37 @@ input.desactive
 {
         color: #ffffff;
 }
+
+/*Erreurs formulaire */
+ul.form_error
+{
+        width: 100%;
+        padding-left: 0px;
+}
+
+ul.form_error li
+{
+        background-color: #CC3333;
+	background-image: url('../images/i16/error.png');
+	background-repeat: no-repeat;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	background-position: 2px 2px;
+	margin-bottom: 1px;
+        list-style-type: none;
+}
+
+ul.form_error li span
+{
+        margin-left: 20px;
+	font-weight: bold;
+	color: white;
+	font-style: italic;
+}
+
+/* Formulaire */
+span.field_required
+{
+        color: #CC3333;
+        font-weight: bold;
+}
