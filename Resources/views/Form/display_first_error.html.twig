@@ -1,0 +1,22 @@
+{% spaceless %}
+<script type="text/javascript">
+$(function()
+{
+	var cible = $('ul.form_error:first');
+	if(cible.length > 0)
+	{		
+		pane = cible.parents('div.pane-auto_display_first_error');
+		table = cible.parents('div.tab-auto_display_first_error');
+		if(pane.length > 0 && table.length > 0)
+		{
+			idTable = table.attr('id');
+			indexPane = pane.prevAll("#"+idTable+" div.pane-auto_display_first_error").length;
+			api = $("#"+idTable).tabs();
+			api.click(indexPane);
+		}
+		hauteur = cible.offset().top;
+		$('html,body').animate({scrollTop:hauteur});
+	}
+});
+</script>
+{% endspaceless %}

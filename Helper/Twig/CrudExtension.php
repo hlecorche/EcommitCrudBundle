@@ -65,6 +65,7 @@ class CrudExtension extends Twig_Extension
             'message_error' => new Twig_Function_Method($this, 'message_error', array('is_safe' => array('all'))),
             'flash_confirm' => new Twig_Function_Method($this, 'flash_confirm', array('is_safe' => array('all'))),
             'flash_error' => new Twig_Function_Method($this, 'flash_error', array('is_safe' => array('all'))),
+            'display_first_error' => new Twig_Function_Method($this, 'display_first_error', array('is_safe' => array('all'))),
         );
     }
     
@@ -206,5 +207,17 @@ class CrudExtension extends Twig_Extension
     public function flash_error($name, $close_label = 'Close', $width = '100%')
     {
         return $this->crud_helper->flashMessage($name, CrudHelper::MESSAGE_ERROR, $close_label, $width);
+    }
+    
+	/**
+	 * Twig function: "display_first_error"
+	 * Auto-displays first error
+	 * 
+	 * @return string 
+	 */
+    public function display_first_error()
+    {
+        $js = $this->templating->render('EcommitCrudBundle:Form:display_first_error.html.twig');
+        return \preg_replace("/\n|\t|\r/",'', $js);
     }
 }
