@@ -23,14 +23,22 @@ class FormFilterDate extends FormFilterAbstract
     const SMALLER_EQUAL = '<=';
     const EQUAL = '=';
     
-    protected $comparator;
+    protected $type;
+	protected $comparator;
     
     /**
      * {@inheritDoc} 
      */
     public function __construct($column_id, $field_name, $options = array(), $field_options = array())
     {
-        if(!isset($options['comparator']))
+        $type = (isset($options['type']))? $options['type'] : 'js_date';
+		if($type != 'js_date' && $type != 'date')
+		{
+			throw new Exception(\get_class($this).': Option "type" is not valid');
+		}
+		$this->type = $type;
+		
+		if(!isset($options['comparator']))
         {
             throw new \Exception(\get_class($this).': Option "comparator" is required');
         }
@@ -49,7 +57,7 @@ class FormFilterDate extends FormFilterAbstract
      */
     public function addField(FormBuilder $form_builder)
     {
-        $form_builder->add($this->field_name, 'date', $this->field_options);
+        $form_builder->add($this->field_name, $this->type, $this->field_options);
         return $form_builder;
     }
     
