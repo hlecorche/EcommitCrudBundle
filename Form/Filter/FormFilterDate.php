@@ -69,10 +69,37 @@ class FormFilterDate extends FormFilterAbstract
         $value_date = $type->get($this->field_name);
         if(!empty($value_date) && $value_date instanceof \DateTime)
         {
-            $value_date = $value_date->format('Y-m-d H:i:s');
             $parameter_name = 'value_date_'.str_replace(' ', '', $this->field_name);
-            $query_builder->andWhere(sprintf('%s %s :%s', $column->alias, $this->comparator, $parameter_name))
-            ->setParameter($parameter_name, $value_date);
+			
+			switch($this->comparator):
+				case FormFilterDate::SMALLER_THAN:
+				case FormFilterDate::GREATER_EQUAL:
+					$value_date->setTime(0, 0, 0);
+					$value_date = $value_date->format('Y-m-d H:i:s');
+					$query_builder->andWhere(sprintf('%s %s :%s', $column->alias, $this->comparator, $parameter_name))
+					->setParameter($parameter_name, $value_date);
+					break;
+				case FormFilterDate::SMALLER_EQUAL:
+				case FormFilterDate::GREATER_THAN:
+					$value_date->setTime(23, 59, 59);
+					$value_date = $value_date->format('Y-m-d H:i:s');
+					$query_builder->andWhere(sprintf('%s %s :%s', $column->alias, $this->comparator, $parameter_name))
+					->setParameter($parameter_name, $value_date);
+					break;
+				default:
+					$value_date_inf = clone $value_date;
+					$value_date_sup = clone $value_date;
+					$value_date_inf->setTime(0, 0, 0);
+					$value_date_sup->setTime(23, 59, 59);
+					$value_date_inf = $value_date_inf->format('Y-m-d H:i:s');
+					$value_date_sup = $value_date_sup->format('Y-m-d H:i:s');
+					$parameter_name_inf = 'value_date_inf_'.str_replace(' ', '', $this->field_name);
+					$parameter_name_sup = 'value_date_sup_'.str_replace(' ', '', $this->field_name);
+					$query_builder->andWhere(sprintf('%s >= :%s AND %s <= :%s', $column->alias, $parameter_name_inf, $column->alias, $parameter_name_sup))
+					->setParameter($parameter_name_inf, $value_date_inf)
+					->setParameter($parameter_name_sup, $value_date_sup);
+					break;
+			endswitch;
         }
         return $query_builder;
     }
