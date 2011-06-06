@@ -241,3 +241,15 @@ span.field_required
 	color: #CC3333;
 	font-weight: bold;
 }
+
+/* Pagination */
+.pagination_actual
+{
+	color: blue;
+	font-weight: bold;
+}
+
+.pagination_no_actual
+{
+	font-weight: bold;
+}
