@@ -20,11 +20,7 @@ class FormFilterEntity extends FormFilterList
      */
     public function __construct($column_id, $field_name, $options = array(), $field_options = array())
     {
-        if(!isset($options['key_method']))
-        {
-            throw new \Exception(\get_class($this).': Option "key_method" is required');
-        }
-        $key_method = $options['key_method'];
+		$key_method = isset($options['key_method'])? $options['key_method'] : 'getId';
         $method = isset($options['method'])? $options['method'] : '__toString';
         
         
