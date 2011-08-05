@@ -51,6 +51,11 @@ abstract class FormFilterAbstract
     {
         $this->column_id = $column_id;
         $this->field_name = $field_name;
+		
+		if(!isset($field_options['required']))
+		{
+			$field_options['required'] = false;
+		}
         $this->field_options = $field_options;
     }
     
