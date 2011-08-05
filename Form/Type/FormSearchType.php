@@ -33,4 +33,12 @@ class FormSearchType extends AbstractType
             'required' => false,
         );
     }
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getName()
+	{
+		return 'crud_search';
+	}
 }

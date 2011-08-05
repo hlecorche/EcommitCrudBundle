@@ -65,4 +65,12 @@ class DisplayConfigType extends AbstractType
             'csrf_protection' => false,
         );
     }
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getName()
+	{
+		return 'crud_display_config';
+	}
 }
