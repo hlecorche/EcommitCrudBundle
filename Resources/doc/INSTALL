@@ -6,14 +6,14 @@
  *                                                 *
  ***************************************************
 
-* Add EcommitCrudBundle to your /src/Ecommit dir
+* Add EcommitCrudBundle to your /vendor/bundles/Ecommit dir
 
 * Add the Ecommit namespace to your autoloader:
 
 // app/autoload.php 
 $loader->registerNamespaces(array(
         // your other namespaces
-        'Ecommit' => __DIR__.'/../src',
+        'Ecommit' => __DIR__.'/../vendor/bundles',
     );
 
 
@@ -36,7 +36,7 @@ public function registerBundles()
 
 <head>
 ...
-<link media="screen" rel="stylesheet" href="/bundles/ecommitcrud/css/crud.css" type="text/css" />
+<link media="screen" rel="stylesheet" href="/ecr/css/crud.css" type="text/css" />
 ...
 </head>
 
