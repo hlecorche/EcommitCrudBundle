@@ -153,7 +153,7 @@ class CrudHelper
         //I18N label
         $label = $this->util->translate($label);
         //XSS protection
-        $label = \htmlentities($label);
+        $label = \htmlentities($label, ENT_COMPAT, 'UTF-8');
         
         //Case n°1: We cannot sort this column, we just show the label
         if(!$column->sortable)
@@ -199,7 +199,7 @@ class CrudHelper
         //XSS protection
         if($escape)
         {
-            $value = \htmlentities($value);
+            $value = \htmlentities($value, ENT_COMPAT, 'UTF-8');
         }
         return $this->util->tag('td', $td_options, $value);
     }
@@ -346,13 +346,13 @@ class CrudHelper
         }
         
         $this->javascript_manager->enablejQuery();
-        $message = \htmlentities($this->util->translate($message));
+        $message = \htmlentities($this->util->translate($message), ENT_COMPAT, 'UTF-8');
         $render = \sprintf('<div class="crud_message %s">', $type);
         $render .= \sprintf('<div class="message">%s</div>', $message);
         
         if($close_label !== false)
         {
-            $close_label = \htmlentities($this->util->translate($close_label));
+            $close_label = \htmlentities($this->util->translate($close_label), ENT_COMPAT, 'UTF-8');
             $render .= \sprintf('<div class="message_close"><a href="#" title="%s" onclick="$(this).parent().parent().remove(); return false;">x</a></div>', $close_label);
         }
         
