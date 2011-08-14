@@ -194,9 +194,9 @@ class CrudExtension extends Twig_Extension
      * 
      * @see CrudHelper:flashMessage 
      */
-    public function flash_confirm($name, $close_label = 'Close')
+    public function flash_confirm($name, $close_label = 'Close', $remove = true)
     {
-        return $this->crud_helper->flashMessage($name, CrudHelper::MESSAGE_CONFIRM, $close_label);
+        return $this->crud_helper->flashMessage($name, CrudHelper::MESSAGE_CONFIRM, $close_label, $remove);
     }
     
     /**
@@ -204,9 +204,9 @@ class CrudExtension extends Twig_Extension
      * 
      * @see CrudHelper:flashMessage 
      */
-    public function flash_error($name, $close_label = 'Close')
+    public function flash_error($name, $close_label = 'Close', $remove = true)
     {
-        return $this->crud_helper->flashMessage($name, CrudHelper::MESSAGE_ERROR, $close_label);
+        return $this->crud_helper->flashMessage($name, CrudHelper::MESSAGE_ERROR, $close_label, $remove);
     }
     
 	/**

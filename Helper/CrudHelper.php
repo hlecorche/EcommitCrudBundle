@@ -366,14 +366,20 @@ class CrudHelper
      * @param string $name   Flash name
      * @param const $type   Type
      * @param string|boolean $close_label   Close label. If false, label is disabled
+	 * @param bool    Remove flash message after display
      * @return string 
      */
-    public function flashMessage($name, $type, $close_label)
+    public function flashMessage($name, $type, $close_label, $remove)
     {
         $session = $this->util->get('session');
         if($session->hasFlash($name))
         {
-            return $this->message($session->getFlash($name), $type, $close_label);
+            $message = $session->getFlash($name);
+			if($remove)
+			{
+				$session->removeFlash($name);
+			}
+			return $this->message($message, $type, $close_label);
         }
         return '';
     }
