@@ -27,8 +27,8 @@ abstract class CrudAbstractController extends Controller
 
     public function autoListAction()
     {
-        $this->prepareList();
-        return $this->render($this->getPathView('index'), array('crud' => $this->cm));
+        $data = $this->prepareList();
+        return $this->render($this->getPathView('index'), \array_merge($data, array('crud' => $this->cm)));
     }
     
     public function autoAjaxListAction()
@@ -38,8 +38,8 @@ abstract class CrudAbstractController extends Controller
         {
             throw new NotFoundHttpException('Ajax is required');
         }
-        $this->prepareList();
-        return $this->render($this->getPathView('list'), array('crud' => $this->cm));
+        $data = $this->prepareList();
+        return $this->render($this->getPathView('list'), \array_merge($data, array('crud' => $this->cm)));
     }
     
     public function autoAjaxSearchAction()
@@ -49,9 +49,9 @@ abstract class CrudAbstractController extends Controller
         {
             throw new NotFoundHttpException('Ajax is required');
         }
-        $this->processSearch();
-        $render_search = $this->renderView($this->getPathView('search'), array('crud' => $this->cm));
-        $render_list = $this->renderView($this->getPathView('list'), array('crud' => $this->cm));
+        $data = $this->processSearch();
+        $render_search = $this->renderView($this->getPathView('search'), \array_merge($data, array('crud' => $this->cm)));
+        $render_list = $this->renderView($this->getPathView('list'), \array_merge($data, array('crud' => $this->cm)));
         return $this->render('EcommitCrudBundle:Crud:double_search.html.twig', array('render_search' => $render_search,
             'render_list' => $render_list));
     }
@@ -61,7 +61,9 @@ abstract class CrudAbstractController extends Controller
     {
         $this->cm = $this->configCrud();
         $this->cm->buildQuery();
+		$data = $this->addDataAfterBuildQuery();
         $this->cm->clearTemplate();
+		return $data;
     }
     
     protected function processSearch()
@@ -69,6 +71,17 @@ abstract class CrudAbstractController extends Controller
         $this->cm = $this->configCrud();
         $this->cm->processForm();
         $this->cm->buildQuery();
+		$data = $this->addDataAfterBuildQuery();
         $this->cm->clearTemplate();
+		return $data;
     }
+	
+	/**
+	 *
+	 * @return array 
+	 */
+	protected function addDataAfterBuildQuery()
+	{
+		return array();
+	}
 }
