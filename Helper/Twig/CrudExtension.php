@@ -209,12 +209,12 @@ class CrudExtension extends Twig_Extension
         return $this->crud_helper->flashMessage($name, CrudHelper::MESSAGE_ERROR, $close_label, $remove);
     }
     
-	/**
-	 * Twig function: "display_first_error"
-	 * Auto-displays first error
-	 * 
-	 * @return string 
-	 */
+    /**
+     * Twig function: "display_first_error"
+     * Auto-displays first error
+     * 
+     * @return string 
+     */
     public function display_first_error()
     {
         $js = $this->templating->render('EcommitCrudBundle:Form:display_first_error.html.twig');

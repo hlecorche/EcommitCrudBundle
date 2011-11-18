@@ -41,8 +41,8 @@ class DisplayConfigType extends AbstractType
             $choices_npp[$number] = $number;
         }
         $builder->add('npp', 'choice', array('choices' => $choices_npp,
-											 'label' => 'Number of results per page',
-											 'required' => false)); //required:  W3C validation
+                                             'label' => 'Number of results per page',
+                                             'required' => false)); //required:  W3C validation
         
         //Field "displayed_columns"
         $choice_columns = array();
@@ -51,8 +51,8 @@ class DisplayConfigType extends AbstractType
             $choice_columns[$column->id] = $column->label;
         }
         $builder->add('displayed_columns', 'choice', array('choices' => $choice_columns,
-														   'multiple' => true, 'expanded' => true,
-														   'label' => 'Columns to be shown'));
+                                                           'multiple' => true, 'expanded' => true,
+                                                           'label' => 'Columns to be shown'));
         
         //Default values
         $values['npp'] = $this->crud->getSessionValues()->number_results_displayed;
@@ -69,12 +69,12 @@ class DisplayConfigType extends AbstractType
             'csrf_protection' => false,
         );
     }
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public function getName()
-	{
-		return 'crud_display_config';
-	}
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function getName()
+    {
+        return 'crud_display_config';
+    }
 }

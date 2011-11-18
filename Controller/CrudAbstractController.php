@@ -61,9 +61,9 @@ abstract class CrudAbstractController extends Controller
     {
         $this->cm = $this->configCrud();
         $this->cm->buildQuery();
-		$data = $this->addDataAfterBuildQuery();
+        $data = $this->addDataAfterBuildQuery();
         $this->cm->clearTemplate();
-		return $data;
+        return $data;
     }
     
     protected function processSearch()
@@ -71,17 +71,17 @@ abstract class CrudAbstractController extends Controller
         $this->cm = $this->configCrud();
         $this->cm->processForm();
         $this->cm->buildQuery();
-		$data = $this->addDataAfterBuildQuery();
+        $data = $this->addDataAfterBuildQuery();
         $this->cm->clearTemplate();
-		return $data;
+        return $data;
     }
-	
-	/**
-	 *
-	 * @return array 
-	 */
-	protected function addDataAfterBuildQuery()
-	{
-		return array();
-	}
+    
+    /**
+     *
+     * @return array 
+     */
+    protected function addDataAfterBuildQuery()
+    {
+        return array();
+    }
 }

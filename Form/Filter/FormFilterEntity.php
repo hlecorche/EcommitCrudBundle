@@ -20,7 +20,7 @@ class FormFilterEntity extends FormFilterList
      */
     public function __construct($column_id, $field_name, $options = array(), $field_options = array())
     {
-		$key_method = isset($options['key_method'])? $options['key_method'] : 'getId';
+        $key_method = isset($options['key_method'])? $options['key_method'] : 'getId';
         $method = isset($options['method'])? $options['method'] : '__toString';
         
         

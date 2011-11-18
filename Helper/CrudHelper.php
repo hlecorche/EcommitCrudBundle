@@ -68,8 +68,8 @@ class CrudHelper
         $image_next = $this->util->getAssetUrl($image_next);
         
         $navigation = '';
-	if ($paginator->haveToPaginate())
-	{
+    if ($paginator->haveToPaginate())
+    {
             //First page / Previous page
             if ($paginator->getPage() != 1)
             {
@@ -107,10 +107,10 @@ class CrudHelper
             
             //Next page / Last page
             if ($paginator->getPage() != $paginator->getLastPage())
-	    {
+        {
                 $navigation .= '&nbsp;&nbsp;'.$this->listePrivateLink($this->util->tag('img', array('src' => $image_next, 'alt' => 'next', 'style' => 'vertical-align: top;')), $url.$attribute_page.$paginator->getNextPage(), array(), $ajax_options);
                 $navigation .= $this->listePrivateLink($this->util->tag('img', array('src' => $image_last, 'alt' => 'last', 'style' => 'vertical-align: top;')), $url.$attribute_page.$paginator->getLastPage(), array(), $ajax_options);
-	    }
+        }
         }
         return $navigation;
     }
@@ -287,20 +287,20 @@ class CrudHelper
         $modal_id = str_replace(' ', '', $modal_id);
         //Create Callback (Opening window)
         $js_modal = "$('#$modal_id .contentWrap').html(data); ";
-		$js_modal .= "var api_crud_modal = $('#$modal_id').overlay({oneInstance: false, api: true, fixed: false";
-		$js_modal .= is_null($js_on_close)? '': " ,onClose: function() { $js_on_close }";
-		$js_modal .= '}); ';
-		$js_modal .= 'api_crud_modal.load();';
+        $js_modal .= "var api_crud_modal = $('#$modal_id').overlay({oneInstance: false, api: true, fixed: false";
+        $js_modal .= is_null($js_on_close)? '': " ,onClose: function() { $js_on_close }";
+        $js_modal .= '}); ';
+        $js_modal .= 'api_crud_modal.load();';
 
-		//Add callback
-		if(isset($ajax_options['success']))
-		{
-			$ajax_options['success'] = $js_modal.' '.$ajax_options['success'];
-		}
-		else
-		{
-			$ajax_options['success'] = $js_modal;
-		}
+        //Add callback
+        if(isset($ajax_options['success']))
+        {
+            $ajax_options['success'] = $js_modal.' '.$ajax_options['success'];
+        }
+        else
+        {
+            $ajax_options['success'] = $js_modal;
+        }
         
         //Method
         if(!isset($ajax_options['method']))
@@ -366,7 +366,7 @@ class CrudHelper
      * @param string $name   Flash name
      * @param const $type   Type
      * @param string|boolean $close_label   Close label. If false, label is disabled
-	 * @param bool    Remove flash message after display
+     * @param bool    Remove flash message after display
      * @return string 
      */
     public function flashMessage($name, $type, $close_label, $remove)
@@ -375,11 +375,11 @@ class CrudHelper
         if($session->hasFlash($name))
         {
             $message = $session->getFlash($name);
-			if($remove)
-			{
-				$session->removeFlash($name);
-			}
-			return $this->message($message, $type, $close_label);
+            if($remove)
+            {
+                $session->removeFlash($name);
+            }
+            return $this->message($message, $type, $close_label);
         }
         return '';
     }
@@ -395,16 +395,16 @@ class CrudHelper
      */
     protected function listePrivateLink($name, $url, $options_link_to = array(), $ajax_options = null)
     {
-	if(is_null($ajax_options))
-	{
+    if(is_null($ajax_options))
+    {
             //No Ajax, Simple link
             $options_link_to['href'] = $url;
             return $this->util->tag('a', $options_link_to, $name);
-	}
-	else
-	{
+    }
+    else
+    {
             //Ajax Request
             return $this->javascript_manager->jQueryLinkToRemote($name, $url, $ajax_options, $options_link_to);
-	}
+    }
     }
 }

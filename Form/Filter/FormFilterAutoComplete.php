@@ -37,46 +37,46 @@ class FormFilterAutoComplete extends FormFilterAbstract
         {
             throw new \Exception(\get_class($this).'"query_builder" or "class" option is required');
         }
-		
-		if(!empty($options['url']))
+        
+        if(!empty($options['url']))
         {
             $field_options['url'] = $options['url'];
         }
-		else
+        else
         {
             throw new \Exception(\get_class($this).'"url" option is required');
         }
-		
-		if(!empty($options['alias']))
+        
+        if(!empty($options['alias']))
         {
             $field_options['alias'] = $options['alias'];
         }
-		else
+        else
         {
             throw new \Exception(\get_class($this).'"alias" option is required');
         }
-		
-		if(!empty($options['key_method']))
+        
+        if(!empty($options['key_method']))
         {
             $field_options['key_method'] = $options['key_method'];
         }
-		if(!empty($options['method']))
+        if(!empty($options['method']))
         {
             $field_options['method'] = $options['method'];
         }
-		
-		$this->multiple = isset($options['multiple'])? $options['multiple'] : false;
+        
+        $this->multiple = isset($options['multiple'])? $options['multiple'] : false;
         if($this->multiple)
-		{
-			if(!empty($options['limit']))
-			{
-				$field_options['max'] = $options['limit'];
-				$this->limit = $options['limit'];
-			}
-		}
-		
-		$field_options['input'] = 'key';
-		
+        {
+            if(!empty($options['limit']))
+            {
+                $field_options['max'] = $options['limit'];
+                $this->limit = $options['limit'];
+            }
+        }
+        
+        $field_options['input'] = 'key';
+        
         parent::__construct($column_id, $field_name, $options, $field_options);
     }
     
@@ -86,13 +86,13 @@ class FormFilterAutoComplete extends FormFilterAbstract
     public function addField(FormBuilder $form_builder)
     {
         if($this->multiple)
-		{
-			$form_builder->add($this->field_name, 'multi_entity_autocomplete', $this->field_options);
-		}
-		else
-		{
-			$form_builder->add($this->field_name, 'entity_autocomplete', $this->field_options);
-		}
+        {
+            $form_builder->add($this->field_name, 'multi_entity_autocomplete', $this->field_options);
+        }
+        else
+        {
+            $form_builder->add($this->field_name, 'entity_autocomplete', $this->field_options);
+        }
         return $form_builder;
     }
 

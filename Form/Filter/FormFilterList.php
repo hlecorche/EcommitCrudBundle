@@ -36,10 +36,10 @@ class FormFilterList extends FormFilterAbstract
         $field_options['choices'] = $options['choices'];
         $this->multiple = isset($options['multiple'])? $options['multiple'] : false;
         $field_options['multiple'] = $this->multiple;
-		if(!empty($options['limit']))
-		{
-			$this->limit = $options['limit'];
-		}
+        if(!empty($options['limit']))
+        {
+            $this->limit = $options['limit'];
+        }
         parent::__construct($column_id, $field_name, $options, $field_options);
     }
     

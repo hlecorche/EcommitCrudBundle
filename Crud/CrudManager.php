@@ -88,8 +88,8 @@ class CrudManager
         $this->query_builder = $query_builder;
         return $this;
     }
-	
-	/**
+    
+    /**
      * Gets the query builder
      * 
      * @return QueryBuilder 

@@ -50,7 +50,7 @@ class SimplePaginator extends AbstractPaginator
     public function setResults($results)
     {
         $this->resetIterator();
-	$this->objects = $results;
+    $this->objects = $results;
     }
 
     /**
@@ -73,6 +73,6 @@ class SimplePaginator extends AbstractPaginator
     protected function retrieveObject($offset)
     {
         $results = $this->objects;
-	return $results[$offset];
+    return $results[$offset];
     }
 }
