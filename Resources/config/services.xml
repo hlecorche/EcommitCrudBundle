@@ -4,6 +4,7 @@
   <parameters>
       <parameter key="ecommit_crud.helper.class">Ecommit\CrudBundle\Helper\CrudHelper</parameter>
       <parameter key="ecommit_crud.helper.twig.extension.crud.class">Ecommit\CrudBundle\Helper\Twig\CrudExtension</parameter>
+      <parameter key="ecommit_crud.form.type.entity_picker.class">Ecommit\CrudBundle\Form\Type\EntityPickerType</parameter>
   </parameters>
   
   <services>
@@ -18,5 +19,10 @@
         <tag name="twig.extension" />
     </service>
     
+    <service id="ecommit_crud.form.type.entity_picker" class="%ecommit_crud.form.type.entity_picker.class%">
+        <argument type="service" id="ecommit_javascript.manager" />
+        <argument type="service" id="doctrine.orm.default_entity_manager" on-invalid="null" />
+        <tag name="form.type" alias="entity_picker" />
+    </service>
   </services>
 </container>
