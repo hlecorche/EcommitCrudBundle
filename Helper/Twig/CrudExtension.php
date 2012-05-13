@@ -103,11 +103,12 @@ class CrudExtension extends Twig_Extension
      * Twig function: "crud_display_config"
      * 
      * @param CrudManager $crud
+     * @param bool $modal   Include (or not) inside a modal
      * @param array $ajax_options   Ajax options
      * @param string $image_url   Url image (button)
      * @return string 
      */
-    public function display_config(CrudManager $crud, $ajax_options = array(), $image_url = 'ecr/images/i16/list.png')
+    public function display_config(CrudManager $crud, $modal = true, $ajax_options = array(), $image_url = 'ecr/images/i16/list.png')
     {
         if(!isset($ajax_options['update']))
         {
@@ -115,7 +116,8 @@ class CrudExtension extends Twig_Extension
         }
         
         $form = $this->crud_helper->getFormDisplayConfig($crud);
-        return $this->templating->render('EcommitCrudBundle:Crud:form_config.html.twig', 
+        $template_name = $modal? 'EcommitCrudBundle:Crud:form_config_modal.html.twig' : 'EcommitCrudBundle:Crud:form_config_nomodal.html.twig';
+        return $this->templating->render($template_name, 
                 array('form' => $form, 'url' => $crud->getUrl(), 'ajax_options' => $ajax_options, 'image_url' => $image_url));
     }
     

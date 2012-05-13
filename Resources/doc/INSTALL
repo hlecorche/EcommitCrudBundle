@@ -7,8 +7,8 @@
  ***************************************************
 
 * Install prerequisites:
-  - EcommitJavascriptBundle (branch: 1.0.x)
-  - EcommitUtilBundle (branch: 1.0.x)
+  - EcommitJavascriptBundle (branch: 1.1.x)
+  - EcommitUtilBundle (branch: 1.1.x)
 
 * Add EcommitCrudBundle to your /vendor/bundles/Ecommit dir
 

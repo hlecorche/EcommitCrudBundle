@@ -254,3 +254,19 @@ span.field_required
 {
     font-weight: bold;
 }
+
+/* Propriétés d'affichage */
+#display_config.nomodal
+{
+    display: none;
+    width: 90%;
+    padding: 10px;
+    margin: auto;
+    background-color: #DEDCDD;
+}
+
+#display_config.nomodal .title
+{
+    text-align: center;
+    font-weight: bold;
+}
