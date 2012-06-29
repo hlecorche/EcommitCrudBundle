@@ -7,19 +7,10 @@
  ***************************************************
 
 * Install prerequisites:
-  - EcommitJavascriptBundle (branch: 1.1.x)
-  - EcommitUtilBundle (branch: 1.1.x)
+  - EcommitJavascriptBundle (branch: 1.2.x)
+  - EcommitUtilBundle (branch: 1.2.x)
 
-* Add EcommitCrudBundle to your /vendor/bundles/Ecommit dir
-
-* Add the Ecommit namespace to your autoloader:
-
-// app/autoload.php 
-$loader->registerNamespaces(array(
-        // your other namespaces
-        'Ecommit' => __DIR__.'/../vendor/bundles',
-    );
-
+* Add EcommitCrudBundle to your vendor dir
 
 * Add EcommitCrudBundle to your application kernel
 

@@ -12,10 +12,11 @@
 namespace Ecommit\CrudBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilder;
-use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormViewInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Exception\FormException;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityManager;
 use Ecommit\JavascriptBundle\jQuery\Manager;
 use Ecommit\JavascriptBundle\Form\DataTransformer\EntityToAutoCompleteTransformer;
@@ -38,7 +39,7 @@ class EntityPickerType extends AbstractType
     }
     
     
-    public function buildForm(FormBuilder $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('key', 'hidden');
         $builder->add('text', 'text');
@@ -73,7 +74,7 @@ class EntityPickerType extends AbstractType
             throw new FormException('"query_builder" or "class" option is required');
         }
         
-        $builder->appendClientTransformer(new EntityToAutoCompleteTransformer($query_builder, $alias, $options['method'], $options['key_method']));
+        $builder->addViewTransformer(new EntityToAutoCompleteTransformer($query_builder, $alias, $options['method'], $options['key_method']));
         
         $builder->setAttribute('list_url', $options['list_url']);
         $builder->setAttribute('list_ajax_options', $options['list_ajax_options']);
@@ -86,29 +87,29 @@ class EntityPickerType extends AbstractType
     }
 
     
-    public function buildView(FormView $view, FormInterface $form)
+    public function buildView(FormViewInterface $view, FormInterface $form, array $options)
     {
         $this->javascript_manager->enablejQueryTools();
         
-        $view->set('list_url', $form->getAttribute('list_url'));
-        $view->set('list_ajax_options', $form->getAttribute('list_ajax_options'));
-        $view->set('add_enabled', $form->getAttribute('add_enabled'));
-        $view->set('add_url', $form->getAttribute('add_url'));
-        $view->set('add_ajax_options', $form->getAttribute('add_ajax_options'));
-        $view->set('modal_id', $form->getAttribute('modal_id'));
-        $view->set('image_add', $form->getAttribute('image_add'));
-        $view->set('image_list', $form->getAttribute('image_list'));
+        $view->setVar('list_url', $form->getAttribute('list_url'));
+        $view->setVar('list_ajax_options', $form->getAttribute('list_ajax_options'));
+        $view->setVar('add_enabled', $form->getAttribute('add_enabled'));
+        $view->setVar('add_url', $form->getAttribute('add_url'));
+        $view->setVar('add_ajax_options', $form->getAttribute('add_ajax_options'));
+        $view->setVar('modal_id', $form->getAttribute('modal_id'));
+        $view->setVar('image_add', $form->getAttribute('image_add'));
+        $view->setVar('image_list', $form->getAttribute('image_list'));
     }
     
     
-    public function getParent(array $options)
+    public function getParent()
     {
         return 'form';
     }
 
-    public function getDefaultOptions(array $options)
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        return array(
+        $resolver->setDefaults(array(
             'list_url'          => null,
             'list_ajax_options' => null,
             'add_enabled'       => true,
@@ -125,7 +126,7 @@ class EntityPickerType extends AbstractType
             'image_list'        => 'ecr/images/i16/form_search.png',
             
             'error_bubbling'    => false,
-        );
+        ));
     }
 
     public function getName()

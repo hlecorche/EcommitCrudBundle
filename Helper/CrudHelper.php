@@ -214,7 +214,7 @@ class CrudHelper
     {
         $this->javascript_manager->enablejQueryTools();
         
-        $form = $this->form_factory->createNamed(new DisplayConfigType($crud), 'crud_display_config');
+        $form = $this->form_factory->createNamed('crud_display_config', new DisplayConfigType($crud));
         return $form->createView();
     }
     
@@ -366,22 +366,21 @@ class CrudHelper
      * @param string $name   Flash name
      * @param const $type   Type
      * @param string|boolean $close_label   Close label. If false, label is disabled
-     * @param bool    Remove flash message after display
      * @return string 
      */
-    public function flashMessage($name, $type, $close_label, $remove)
+    public function flashMessage($name, $type, $close_label)
     {
         $session = $this->util->get('session');
-        if($session->hasFlash($name))
+        $flash = $session->getFlashBag();
+        $return = '';
+        if($flash->has($name))
         {
-            $message = $session->getFlash($name);
-            if($remove)
+            foreach($flash->get($name) as $message)
             {
-                $session->removeFlash($name);
+                $return .= $this->message($message, $type, $close_label);
             }
-            return $this->message($message, $type, $close_label);
         }
-        return '';
+        return $return;
     }
     
     /**

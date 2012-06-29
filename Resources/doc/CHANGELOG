@@ -1,6 +1,9 @@
 CHANGELOG
 =========
 
+* 1.2.x
+  * [BC break] Suppression du paramètre "remove" dans fonctions twig "flash_confirm" et "flash_error"
+
 * 1.1.x
 
   * Ajout Form Field "entity_picker"

@@ -1,5 +1,5 @@
 {% extends 'form_div_layout.html.twig' %}
-{% block field_errors %}
+{% block form_errors %}
 {% spaceless %}
     {% if errors|length > 0 %}
     <ul class="form_error">
@@ -9,13 +9,13 @@
     </ul>
     {% endif %}
 {% endspaceless %}
-{% endblock field_errors %}
+{% endblock form_errors %}
 
-{% block field_label %}
+{% block form_label %}
 {% spaceless %}
     {{ parent() }}
     {% if required %}
         <span class="field_required" title="This field is required">*</span>
     {% endif %}
 {% endspaceless %}
-{% endblock field_label %}
+{% endblock form_label %}

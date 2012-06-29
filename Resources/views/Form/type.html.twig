@@ -11,8 +11,8 @@
     <script type="text/javascript">
     function picker_update_{{ id }}(key, text)
     {
-        $('#{{ form.children.key.vars.id }}').val(key);
-        $('#{{ form.children.text.vars.id }}').val(text);
+        $('#{{ form.all.key.vars.id }}').val(key);
+        $('#{{ form.all.text.vars.id }}').val(text);
         var api = $("#{{modal_id}}").data("overlay");
         api.close();
     }

@@ -213,7 +213,7 @@ class CrudManager
     {
         $this->form_filter_values_object = $form_filter_values_object;
                 
-        $form_builder = $this->controller->get('form.factory')->createNamedBuilder(new FormSearchType(), 'crud_search');
+        $form_builder = $this->controller->get('form.factory')->createNamedBuilder('crud_search', new FormSearchType());
         foreach($form_filter_values_object->getFieldsFilter() as $field)
         {
             if(!($field instanceof \Ecommit\CrudBundle\Form\Filter\FormFilterAbstract ))
