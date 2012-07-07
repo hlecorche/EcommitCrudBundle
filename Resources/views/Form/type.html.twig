@@ -1,7 +1,7 @@
 {% use 'form_div_layout.html.twig' %}
 {% block entity_picker_widget %}
 {% spaceless %}
-    {{ form_widget(form.text, { 'attr': {'disabled': 'disabled'} }) }}
+    {{ form_widget(form.text, { 'attr': {'readonly': 'readonly'} }) }}
     {{ form_widget(form.key) }}
     <img src="{{ asset(image_list) }}" id="{{id}}_img_list" style="margin-left: 5px; cursor: pointer;" alt="list" />
     {% if add_enabled %}
