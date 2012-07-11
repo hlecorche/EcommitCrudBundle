@@ -126,7 +126,6 @@ class EntityPickerType extends AbstractType
             'image_list'        => 'ecr/images/i16/form_search.png',
             
             'error_bubbling'    => false,
-            'compound'          => false,
         ));
     }
 
