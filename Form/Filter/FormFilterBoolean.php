@@ -102,8 +102,8 @@ class FormFilterBoolean extends FormFilterAbstract
     public static function getChoices()
     {
         return array(
-            'T' => 'True',
-            'F' => 'False',
+            'T' => 'filter.true',
+            'F' => 'filter.false',
         );
     }
 }

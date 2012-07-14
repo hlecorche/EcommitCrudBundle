@@ -8,3 +8,5 @@ Reset: R.A.Z
 '{0} No results|{1} 1 result found|]1,Inf] %count% results found': '{0} Pas de résultat|{1} 1 résultat trouvé|]1,Inf] %count% résultats trouvés'
 Page %firstPage%/%lastPage%: Page %page%/%lastPage%
 Results %first%-%last%: Résultats %first%-%last%
+filter.true: Oui
+filter.false: Non
