@@ -61,7 +61,10 @@ abstract class CrudAbstractController extends Controller
         $data = $this->processSearch();
         $render_search = $this->renderView($this->getPathView('search'), \array_merge($data, array('crud' => $this->cm)));
         $render_list = $this->renderView($this->getPathView('list'), \array_merge($data, array('crud' => $this->cm)));
-        return $this->render('EcommitCrudBundle:Crud:double_search.html.twig', array('render_search' => $render_search,
+        return $this->render('EcommitCrudBundle:Crud:double_search.html.twig', array(
+            'id_search' => $this->cm->getDivIdSearch(),
+            'id_list' => $this->cm->getDivIdList(),
+            'render_search' => $render_search,
             'render_list' => $render_list));
     }
     

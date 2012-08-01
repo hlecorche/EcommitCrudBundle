@@ -1,6 +1,6 @@
 {% autoescape true js %}
 <script type="text/javascript">
-        jQuery('#crud_search').html('{{ render_search }}');
-    jQuery('#crud_list').html('{{ render_list }}');
+    jQuery('#{{ id_search|default('crud_search') }}').html('{{ render_search }}');
+    jQuery('#{{ id_list|default('crud_list') }}').html('{{ render_list }}');
 </script>
 {% endautoescape %}

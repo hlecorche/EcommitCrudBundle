@@ -112,7 +112,7 @@ class CrudExtension extends Twig_Extension
     {
         if(!isset($ajax_options['update']))
         {
-            $ajax_options['update'] = 'crud_list';
+            $ajax_options['update'] = $crud->getDivIdList();
         }
         
         $form = $this->crud_helper->getFormDisplayConfig($crud);

@@ -58,7 +58,7 @@ class CrudHelper
     {
         if(!isset($ajax_options['update']))
         {
-            $ajax_options['update'] = 'crud_list';
+            $ajax_options['update'] = $crud->getDivIdList();
         }
         $paginator = $crud->getPaginator();
         $url = $crud->getUrl();
@@ -132,7 +132,7 @@ class CrudHelper
     {
         if(!isset($ajax_options['update']))
         {
-            $ajax_options['update'] = 'crud_list';
+            $ajax_options['update'] = $crud->getDivIdList();
         }
         $image_up = $this->util->getAssetUrl($image_up);
         $image_down = $this->util->getAssetUrl($image_down);
