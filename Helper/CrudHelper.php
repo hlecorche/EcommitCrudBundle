@@ -230,7 +230,7 @@ class CrudHelper
     {
         if(!isset($ajax_options['update']))
         {
-            $ajax_options['update'] = 'js_holder_for_multi_update';
+            $ajax_options['update'] = 'js_holder_for_multi_update_'.md5($crud->getUrl());
         }
         return $this->javascript_manager->jQueryFormToRemote($crud->getSearchUrl(), $ajax_options, $html_options);
     }
@@ -249,7 +249,7 @@ class CrudHelper
     {
         if(!isset($ajax_options['update']))
         {
-            $ajax_options['update'] = 'js_holder_for_multi_update';
+            $ajax_options['update'] = 'js_holder_for_multi_update_'.md5($crud->getUrl());
         }
         if(!isset($html_options['class']))
         {

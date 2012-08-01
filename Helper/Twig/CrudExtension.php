@@ -118,7 +118,7 @@ class CrudExtension extends Twig_Extension
         $form = $this->crud_helper->getFormDisplayConfig($crud);
         $template_name = $modal? 'EcommitCrudBundle:Crud:form_config_modal.html.twig' : 'EcommitCrudBundle:Crud:form_config_nomodal.html.twig';
         return $this->templating->render($template_name, 
-                array('form' => $form, 'url' => $crud->getUrl(), 'ajax_options' => $ajax_options, 'image_url' => $image_url));
+                array('form' => $form, 'url' => $crud->getUrl(), 'ajax_options' => $ajax_options, 'image_url' => $image_url, 'suffix' => md5($crud->getUrl())));
     }
     
     /**
