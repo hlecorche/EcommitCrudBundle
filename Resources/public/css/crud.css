@@ -256,7 +256,7 @@ span.field_required
 }
 
 /* Propriétés d'affichage */
-#display_config.nomodal
+.display_config_nomodal
 {
     display: none;
     width: 90%;
@@ -265,7 +265,7 @@ span.field_required
     background-color: #DEDCDD;
 }
 
-#display_config.nomodal .title
+.display_config_nomodal .title
 {
     text-align: center;
     font-weight: bold;

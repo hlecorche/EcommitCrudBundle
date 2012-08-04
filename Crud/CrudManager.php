@@ -39,6 +39,8 @@ class CrudManager
     protected $build_paginator = true;
     protected $url = null;
     protected $search_url = null;
+    protected $div_id_search = 'crud_search';
+    protected $div_id_list = 'crud_list';
     
     /**
      * Constructor
@@ -624,5 +626,49 @@ class CrudManager
     public function getFilterForm()
     {
         return $this->form_filter;
+    }
+    
+    /**
+     * Returns the div id search
+     * 
+     * @return string
+     */
+    public function getDivIdSearch()
+    {
+        return $this->div_id_search;
+    }
+    
+    /**
+     * Sets the div id search
+     * 
+     * @param string
+     * @return CrudManager
+     */
+    public function setDivIdSearch($div_id_search)
+    {
+        $this->div_id_search = $div_id_search;
+        return $this;
+    }
+    
+    /**
+     * Returns the div id list
+     * 
+     * @return string
+     */
+    public function getDivIdList()
+    {
+        return $this->div_id_list;
+    }
+    
+    /**
+     * Sets the div id list
+     * 
+     * @param string
+     * @return CrudManager
+     */
+    public function setDivIdList($div_id_list)
+    {
+        $this->div_id_list = $div_id_list;
+        return $this;
     }
 }

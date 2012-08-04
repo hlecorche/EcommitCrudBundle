@@ -1,6 +1,6 @@
-{% set ajax_options = ajax_options|merge({ 'before': 'processCrudDisplayConfig();' }) %}
+{% set ajax_options = ajax_options|merge({ 'before': 'processCrudDisplayConfig'~suffix~'();' }) %}
 
-<div id="display_config" class="nomodal">
+<div id="display_config_{{ suffix }}" class="display_config_nomodal">
     <div class="title">{% trans %}Display Settings{% endtrans %}</div>
     {{ jQuery_ajax_form(url, ajax_options)  }}
         <b>{{ form_label(form.npp) }} :</b><br />
@@ -17,28 +17,28 @@
 </div>
 
 <script type="text/javascript">
-    function processCrudDisplayConfig()
+    function processCrudDisplayConfig{{ suffix }}()
     {
-       if($('#display_config input:checkbox:checked').length < 1)
+       if($('#display_config_{{ suffix }} input:checkbox:checked').length < 1)
        {
             alert('{% trans %}You need to select at least one column to display{% endtrans %}');
             return false;
        }
-       $("#display_config").hide("slow");
+       $("#display_config_{{ suffix }}").hide("slow");
     }
-    function ckick_change_config()
+    function click_change_config_{{ suffix }}()
     {
-        if($("#display_config").is(":visible"))
+        if($("#display_config_{{ suffix }}").is(":visible"))
         {
-            $("#display_config").hide("slow");
+            $("#display_config_{{ suffix }}").hide("slow");
         }
         else
         {
-            $("#display_config").show("slow");
+            $("#display_config_{{ suffix }}").show("slow");
         }
     }
 </script>
 
 
-<a href="#" onclick="ckick_change_config(); return false;"><img src="{{ asset(image_url) }}" alt="{% trans %}Display Settings{% endtrans %}" title="{% trans %}Display Settings{% endtrans %}" /></a>
-<div id="js_holder_for_multi_update" style="display: none;"></div>
+<a href="#" onclick="click_change_config_{{ suffix }}(); return false;"><img src="{{ asset(image_url) }}" alt="{% trans %}Display Settings{% endtrans %}" title="{% trans %}Display Settings{% endtrans %}" /></a>
+<div id="js_holder_for_multi_update_{{ suffix }}" style="display: none;"></div>
