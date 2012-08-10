@@ -29,29 +29,29 @@ class DoctrinePaginator extends AbstractPaginator
     {
         //Si le nombre de resultats n'est pas defini, on le calcule, sinon on le passe au pager
         if(is_null($this->totalResults))
-    {
+        {
             $count = Paginate::count($this->query->getQuery());
             $this->setNbResults($count);
-    }
-    else
-    {
+        }
+        else
+        {
             $this->setNbResults($this->totalResults);
-    }
+        }
         
         $this->query->setFirstResult(0);
         $this->query->setMaxResults(0);
         if ($this->getPage() == 0 || $this->getMaxPerPage() == 0 || $this->getNbResults() == 0)
-    {
+        {
             $this->setLastPage(0);
-    }
-    else
-    {
-            $offset = ($this->getPage() - 1) * $this->getMaxPerPage();
+        }
+        else
+        {
             $this->setLastPage(\ceil($this->getNbResults() / $this->getMaxPerPage()));
+            $offset = ($this->getPage() - 1) * $this->getMaxPerPage();
                 
             $this->query->setFirstResult($offset);
             $this->query->setMaxResults($this->getMaxPerPage());
-    }
+        }
     }
     
     

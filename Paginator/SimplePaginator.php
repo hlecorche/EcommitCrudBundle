@@ -34,8 +34,8 @@ class SimplePaginator extends AbstractPaginator
             $this->setLastPage(0);
         } else
         {
-            $offset = ($this->getPage() - 1) * $this->getMaxPerPage();
             $this->setLastPage(\ceil($this->getNbResults() / $this->getMaxPerPage()));
+            $offset = ($this->getPage() - 1) * $this->getMaxPerPage();
 
             $limit = $this->getMaxPerPage();
         }
