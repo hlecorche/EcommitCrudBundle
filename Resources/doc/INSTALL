@@ -7,8 +7,9 @@
  ***************************************************
 
 * Install prerequisites:
-  - EcommitJavascriptBundle (branch: 1.2.x)
-  - EcommitUtilBundle (branch: 1.2.x)
+  - Symfony 2.1
+  - EcommitJavascriptBundle branch: 1.2.x
+  - EcommitUtilBundle branch: 1.2.x
 
 * Add EcommitCrudBundle to your vendor dir
 
@@ -24,8 +25,8 @@ public function registerBundles()
     );
 }
 
-* Execute command line (Windows: Admin credentials required):
-    php app/console assets:install --symlink web
+* Execute command line
+    php app/console assets:install
 
 * In layout, add lines (If not present):
 
