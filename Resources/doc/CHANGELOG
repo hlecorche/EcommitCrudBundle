@@ -7,6 +7,8 @@ CHANGELOG
 
 * 1.1.x
 
+  * [CrudManager] Les IDs des DIVs qui affichent les filtres de recherches ainsi que les résultats peuvent être modifés
   * Ajout Form Field "entity_picker"
   * [BC break] Fonction Twig crud_display_config(CrudManager $crud, $ajax_options = array(), $image_url = 'ecr/images/i16/list.png')
     remplacée par crud_display_config(CrudManager $crud, $modal = true, $ajax_options = array(), $image_url = 'ecr/images/i16/list.png')
+    L'affichage des propriétés par une fenêtre modale peut désormais être désactivé.
