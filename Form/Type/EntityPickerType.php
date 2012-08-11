@@ -84,6 +84,8 @@ class EntityPickerType extends AbstractType
         $builder->setAttribute('modal_id', $options['modal_id']);
         $builder->setAttribute('image_add', $options['image_add']);
         $builder->setAttribute('image_list', $options['image_list']);
+        $builder->setAttribute('label_add', $options['label_add']);
+        $builder->setAttribute('label_list', $options['label_list']);
     }
 
     
@@ -99,6 +101,8 @@ class EntityPickerType extends AbstractType
         $view->setVar('modal_id', $form->getAttribute('modal_id'));
         $view->setVar('image_add', $form->getAttribute('image_add'));
         $view->setVar('image_list', $form->getAttribute('image_list'));
+        $view->setVar('label_add', $form->getAttribute('label_add'));
+        $view->setVar('label_list', $form->getAttribute('label_list'));
     }
     
     
@@ -124,6 +128,8 @@ class EntityPickerType extends AbstractType
             'key_method'        => 'getId',
             'image_add'         => 'ecr/images/i16/add.png',
             'image_list'        => 'ecr/images/i16/form_search.png',
+            'label_add'         => 'picker.add',
+            'label_list'        => 'picker.list',
             
             'error_bubbling'    => false,
         ));

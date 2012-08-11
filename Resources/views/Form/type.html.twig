@@ -3,9 +3,9 @@
 {% spaceless %}
     {{ form_widget(form.text, { 'attr': {'readonly': 'readonly'} }) }}
     {{ form_widget(form.key) }}
-    <img src="{{ asset(image_list) }}" id="{{id}}_img_list" style="margin-left: 5px; cursor: pointer;" alt="list" />
+    <img src="{{ asset(image_list) }}" id="{{id}}_img_list" style="margin-left: 5px; cursor: pointer;" alt="list" title="{{label_list|trans}}" />
     {% if add_enabled %}
-        <img src="{{ asset(image_add) }}" id="{{id}}_img_add" style="margin-left: 5px; cursor: pointer;" alt="add" />
+        <img src="{{ asset(image_add) }}" id="{{id}}_img_add" style="margin-left: 5px; cursor: pointer;" alt="add" title="{{label_add|trans}}" />
     {% endif %}
 
     <script type="text/javascript">

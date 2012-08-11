@@ -10,3 +10,5 @@ Page %firstPage%/%lastPage%: Page %page%/%lastPage%
 Results %first%-%last%: Résultats %first%-%last%
 filter.true: Oui
 filter.false: Non
+picker.add: Ajouter
+picker.list: Sélectionner
