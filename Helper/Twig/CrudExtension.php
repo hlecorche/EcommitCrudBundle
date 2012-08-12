@@ -52,7 +52,7 @@ class CrudExtension extends Twig_Extension
     public function getFunctions()
     {
         return array(
-            'crud_paginator_links' => new Twig_Function_Method($this, 'paginator_links', array('is_safe' => array('all'))),
+            'crud_paginator_links' => new Twig_Function_Method($this, 'crud_paginator_links', array('is_safe' => array('all'))),
             'crud_th' => new Twig_Function_Method($this, 'th', array('is_safe' => array('all'))),
             'crud_td' => new Twig_Function_Method($this, 'td', array('is_safe' => array('all'))),
             'crud_display_config' => new Twig_Function_Method($this, 'display_config', array('is_safe' => array('all'))),
@@ -72,11 +72,11 @@ class CrudExtension extends Twig_Extension
     /**
      * Twig function: "crud_paginator"
      *  
-     * @see CrudHelper:paginator
+     * @see CrudHelper:crudPaginatorLinks
      */
-    public function paginator_links(CrudManager $crud, $ajax_options = array(), $max_pages_before = 3, $max_pages_after = 3, $image_first = 'ecr/images/i16/resultset_first.png', $image_last = 'ecr/images/i16/resultset_last.png', $image_previous = 'ecr/images/i16/resultset_previous.png', $image_next = 'ecr/images/i16/resultset_next.png', $attribute_page = '?page=')
+    public function crud_paginator_links(CrudManager $crud, $options = array(), $ajax_options = array())
     {
-        return $this->crud_helper->paginatorLinks($crud, $ajax_options, $max_pages_before, $max_pages_after, $image_first, $image_last, $image_previous, $image_next, $attribute_page);
+        return $this->crud_helper->crudPaginatorLinks($crud, $options, $ajax_options);
     }
     
     /**

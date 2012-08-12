@@ -156,6 +156,26 @@ class CrudManager
     }
     
     /**
+     * Returns the route name
+     * 
+     * @return string
+     */
+    public function getRouteName()
+    {
+        return $this->route_name;
+    }
+    
+    /**
+     * Returns the route params
+     * 
+     * @return array
+     */
+    public function getRouteParams()
+    {
+        return $this->route_params;
+    }
+    
+    /**
      * Returns the list url
      * 
      * @param array $parameters   Additional parameters

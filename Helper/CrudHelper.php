@@ -11,11 +11,12 @@
 
 namespace Ecommit\CrudBundle\Helper;
 
-use Ecommit\UtilBundle\Helper\UtilHelper;
-use Ecommit\JavascriptBundle\jQuery\Manager;
 use Ecommit\CrudBundle\Crud\CrudManager;
-use Symfony\Component\Form\FormFactory;
 use Ecommit\CrudBundle\Form\Type\DisplayConfigType;
+use Ecommit\CrudBundle\Paginator\AbstractPaginator;
+use Ecommit\JavascriptBundle\jQuery\Manager;
+use Ecommit\UtilBundle\Helper\UtilHelper;
+use Symfony\Component\Form\FormFactory;
 
 class CrudHelper
 {
@@ -43,76 +44,172 @@ class CrudHelper
     /**
      * Returns links paginator
      * 
+     * @param AbstractPaginator $paginator
+     * @param string $route_name   Route name
+     * @param array $route_params   Route parameters
+     * @param array $options   Options:
+     *        * ajax_options: Ajax Options. If null, Ajax is not used. Default: null
+     *        * attribute_page: Attribute inside url. Default: page
+     *        * type: Type of links paginator: elastic (all links) or sliding. Default: sliding
+     *        * max_pages_before: Max links before current page (only if sliding type is used). Default: 3
+     *        * max_pages_after: Max links after current page (only if sliding type is used). Default: 3
+     *        * buttons: Type of buttons: text or image. Default: text
+     *        * image_first:  Url image "<<" (only if image buttons is used)
+     *        * image_previous:  Url image "<" (only if image buttons is used)
+     *        * image_next:  Url image ">" (only if image buttons is used)
+     *        * image_last:  Url image ">>" (only if image buttons is used)
+     *        * text_first:  Text "<<" (only if text buttons is used)
+     *        * text_previous:  Text "<" (only if text buttons is used)
+     *        * text_next:  Text ">" (only if text buttons is used)
+     *        * text_last:  Text ">>" (only if text buttons is used)
+     * @return string
+     */
+    public function paginatorLinks(AbstractPaginator $paginator, $route_name, $route_params, $options)
+    {
+        $default_options = array('ajax_options' => null,
+                                 'attribute_page' => 'page',
+                                 'type' => 'sliding',
+                                 'max_pages_before' => 3,
+                                 'max_pages_after' => 3,
+                                 'buttons' => 'text',
+                                 'image_first' => 'ecr/images/i16/resultset_first.png',
+                                 'image_previous' => 'ecr/images/i16/resultset_previous.png',
+                                 'image_next' => 'ecr/images/i16/resultset_next.png',
+                                 'image_last' => 'ecr/images/i16/resultset_last.png',
+                                 'text_first' => '<<',
+                                 'text_previous' => '<',
+                                 'text_next' => '>',
+                                 'text_last' => '>>',
+                                );
+        $options = \array_merge($default_options, $options);
+        if(!\in_array($options['type'], array('sliding', 'elastic')))
+        {
+            throw new \Exception('Option sliding is not valid');
+        }
+        if(!\in_array($options['buttons'], array('text', 'image')))
+        {
+            throw new \Exception('Option sliding is not valid');
+        }
+        
+        foreach(array('image_first', 'image_previous', 'image_next', 'image_last') as $image_name)
+        {
+            $image = $options[$image_name];
+            if(!empty($image))
+            {
+                $options[$image_name] = $this->util->getAssetUrl($image);
+            }
+        }
+        
+        $navigation = '';
+        if($paginator->haveToPaginate())
+        {
+            $navigation .= '<div class="pagination">';
+            
+            //First page / Previous page
+            if ($paginator->getPage() != 1)
+            {
+                $navigation .= $this->elementPaginatorLinks(1, $options, 'first', $route_name, $route_params);
+                $navigation .= $this->elementPaginatorLinks($paginator->getPreviousPage(), $options, 'previous', $route_name, $route_params);
+            }
+            
+            //Pages before the current page
+            $limit = ($options['type'] == 'sliding')? $paginator->getPage() - $options['max_pages_before'] : 1;
+            for($page = $limit; $page < $paginator->getPage(); $page++)
+            {
+                if($page <= $paginator->getLastPage() && $page >= $paginator->getFirstPage())
+                {
+                    //The page exists, displays it
+                    $navigation .= $this->elementPaginatorLinks($page, $options, 'page', $route_name, $route_params);
+                }
+            }
+            
+            //Current page
+            $navigation .= $this->elementPaginatorLinks($paginator->getPage(), $options, 'page', $route_name, $route_params, true);
+            
+            //Pages after the current page
+            $limit = ($options['type'] == 'sliding')? $paginator->getPage() + $options['max_pages_after'] : $paginator->getLastPage();
+            for($page = $paginator->getPage() + 1; $page <= $limit; $page++)
+            {
+                if($page <= $paginator->getLastPage() && $page >= $paginator->getFirstPage())
+                {
+                    //The page exists, displays it
+                    $navigation .= $this->elementPaginatorLinks($page, $options, 'page', $route_name, $route_params);
+                }
+            }
+            
+            //Next page / Last page
+            if($paginator->getPage() != $paginator->getLastPage())
+            {
+                $navigation .= $this->elementPaginatorLinks($paginator->getNextPage(), $options, 'next', $route_name, $route_params);
+                $navigation .= $this->elementPaginatorLinks($paginator->getLastPage(), $options, 'last', $route_name, $route_params);
+            }
+            
+            $navigation .= '</div>';
+        }
+        return $navigation;
+    }
+    
+    /**
+     * Paginator links: Display one element
+     * 
+     * @param int $page  Page number
+     * @param array $options   Options
+     * @param string $element_name   first, previous, page, next or last
+     * @param string $route_name
+     * @param array $route_params
+     * @param bool $actual   If element is the actual page
+     */
+    protected function elementPaginatorLinks($page, $options, $element_name, $route_name, $route_params, $actual = false)
+    {
+        $url = $this->util->get('router')->generate($route_name, \array_merge($route_params, array($options['attribute_page'] => $page)));
+        if($element_name == 'page')
+        {
+            if($actual)
+            {
+                $class = 'pagination_actual';
+                $content = $page;
+            }
+            else
+            {
+                $class = 'pagination_no_actual';
+                $content = $this->listePrivateLink($page, $url, array(), $options['ajax_options']);
+            }            
+        }
+        else
+        {
+            $class = $options['buttons'].' '.$element_name;
+            $button_name = $options['buttons'].'_'.$element_name;
+            $button = $options[$button_name];
+            if($options['buttons'] == 'text')
+            {
+                $content = $this->listePrivateLink($button, $url, array(), $options['ajax_options']);
+            }
+            else
+            {
+                $image = $this->util->tag('img', array('src' => $button, 'alt' => $element_name));
+                $content = $this->listePrivateLink($image, $url, array(), $options['ajax_options']);
+            }
+        }
+        
+        return \sprintf('<span class="%s">%s</span>', $class, $content);
+    }
+    
+    /**
+     * Returns CRUD links paginator
+     * 
      * @param CrudManager $crud
+     * @param array $options   Options. See CrudHelper::paginatorLinks (ajax_options is ignored)
      * @param array $ajax_options   Ajax Options
-     * @param int $max_pages_before   Number of displayed pages, before curent page
-     * @param int $max_pages_after   Number of displayed pages, after curent page
-     * @param string $image_first   Url image "<<"
-     * @param string $image_last   Url image ">>"
-     * @param string $image_previous   Url image "<"
-     * @param sting $image_next   Url image ">"
-     * @param sring $attribute_page   Text between the url page and the num page (ex. : "?page=")
      * @return string 
      */
-    public function paginatorLinks(CrudManager $crud, $ajax_options, $max_pages_before, $max_pages_after, $image_first, $image_last, $image_previous, $image_next, $attribute_page)
+    public function crudPaginatorLinks(CrudManager $crud, $options, $ajax_options)
     {
         if(!isset($ajax_options['update']))
         {
             $ajax_options['update'] = $crud->getDivIdList();
         }
-        $paginator = $crud->getPaginator();
-        $url = $crud->getUrl();
-        $image_first = $this->util->getAssetUrl($image_first);
-        $image_last = $this->util->getAssetUrl($image_last);
-        $image_previous = $this->util->getAssetUrl($image_previous);
-        $image_next = $this->util->getAssetUrl($image_next);
-        
-        $navigation = '';
-    if ($paginator->haveToPaginate())
-    {
-            //First page / Previous page
-            if ($paginator->getPage() != 1)
-            {
-                $navigation .= $this->listePrivateLink($this->util->tag('img', array('src' => $image_first, 'alt' => 'first', 'style' => 'vertical-align: top;')), $url.$attribute_page.'1', array(), $ajax_options);
-                $navigation .= $this->listePrivateLink($this->util->tag('img', array('src' => $image_previous, 'alt' => 'previous', 'style' => 'vertical-align: top;')), $url.$attribute_page.$paginator->getPreviousPage(), array(), $ajax_options).' ';
-            }
-            
-            //Links
-            $links = array();
-            
-            //Pages before the current page
-            for($page = $paginator->getPage() - $max_pages_before; $page < $paginator->getPage(); $page++)
-            {
-                if($page <= $paginator->getLastPage() && $page >= $paginator->getFirstPage())
-                {
-                    //The page exists, displays it
-                    $links[] = $this->listePrivateLink($page, $url.$attribute_page.$page, array('class' => 'pagination_no_actual'), $ajax_options);
-                }
-            }
-            
-            //Current page
-            $links[] = '<span class="pagination_actual">[ '.$paginator->getPage().' ]</span>';
-            
-            //Pages after the current page
-            for($page = $paginator->getPage() + 1; $page <= $paginator->getPage() + $max_pages_after; $page++)
-            {
-                if($page <= $paginator->getLastPage() && $page >= $paginator->getFirstPage())
-                {
-                    //The page exists, displays it
-                    $links[] = $this->listePrivateLink($page, $url.$attribute_page.$page, array('class' => 'pagination_no_actual'), $ajax_options);
-                }
-            }
-            
-            $navigation .= \join('&nbsp;&nbsp;', $links);
-            
-            //Next page / Last page
-            if ($paginator->getPage() != $paginator->getLastPage())
-        {
-                $navigation .= '&nbsp;&nbsp;'.$this->listePrivateLink($this->util->tag('img', array('src' => $image_next, 'alt' => 'next', 'style' => 'vertical-align: top;')), $url.$attribute_page.$paginator->getNextPage(), array(), $ajax_options);
-                $navigation .= $this->listePrivateLink($this->util->tag('img', array('src' => $image_last, 'alt' => 'last', 'style' => 'vertical-align: top;')), $url.$attribute_page.$paginator->getLastPage(), array(), $ajax_options);
-        }
-        }
-        return $navigation;
+        $options['ajax_options'] = $ajax_options;
+        return $this->paginatorLinks($crud->getPaginator(), $crud->getRouteName(), $crud->getRouteParams(), $options);
     }
     
     /**
@@ -403,16 +500,16 @@ class CrudHelper
      */
     protected function listePrivateLink($name, $url, $options_link_to = array(), $ajax_options = null)
     {
-    if(is_null($ajax_options))
-    {
-            //No Ajax, Simple link
-            $options_link_to['href'] = $url;
-            return $this->util->tag('a', $options_link_to, $name);
-    }
-    else
-    {
-            //Ajax Request
-            return $this->javascript_manager->jQueryLinkToRemote($name, $url, $ajax_options, $options_link_to);
-    }
+        if(is_null($ajax_options))
+        {
+                //No Ajax, Simple link
+                $options_link_to['href'] = $url;
+                return $this->util->tag('a', $options_link_to, $name);
+        }
+        else
+        {
+                //Ajax Request
+                return $this->javascript_manager->jQueryLinkToRemote($name, $url, $ajax_options, $options_link_to);
+        }
     }
 }
