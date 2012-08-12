@@ -2,6 +2,7 @@ CHANGELOG
 =========
 
 * 1.2.x
+  * Ajout fonction Twig paginator_links
   * [BC break] Fonction Twig crud_paginator_links(CrudManager $crud, $ajax_options = array(), $max_pages_before = 3, $max_pages_after = 3, $image_first = 'ecr/images/i16/resultset_first.png', 
     $image_last = 'ecr/images/i16/resultset_last.png', $image_previous = 'ecr/images/i16/resultset_previous.png', $image_next = 'ecr/images/i16/resultset_next.png', $attribute_page = '?page=')
     remplacée par crud_paginator_links(CrudManager $crud, $options = array(), $ajax_options = array())

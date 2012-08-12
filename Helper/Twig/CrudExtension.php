@@ -11,11 +11,12 @@
 
 namespace Ecommit\CrudBundle\Helper\Twig;
 
+use Ecommit\CrudBundle\Crud\CrudManager;
+use Ecommit\CrudBundle\Helper\CrudHelper;
+use Ecommit\CrudBundle\Paginator\AbstractPaginator;
+use Twig_Environment;
 use Twig_Extension;
 use Twig_Function_Method;
-use Ecommit\CrudBundle\Helper\CrudHelper;
-use Ecommit\CrudBundle\Crud\CrudManager;
-use Twig_Environment;
 
 class CrudExtension extends Twig_Extension
 {
@@ -52,6 +53,7 @@ class CrudExtension extends Twig_Extension
     public function getFunctions()
     {
         return array(
+            'paginator_links' => new Twig_Function_Method($this, 'paginator_links', array('is_safe' => array('all'))),
             'crud_paginator_links' => new Twig_Function_Method($this, 'crud_paginator_links', array('is_safe' => array('all'))),
             'crud_th' => new Twig_Function_Method($this, 'th', array('is_safe' => array('all'))),
             'crud_td' => new Twig_Function_Method($this, 'td', array('is_safe' => array('all'))),
@@ -70,7 +72,17 @@ class CrudExtension extends Twig_Extension
     }
     
     /**
-     * Twig function: "crud_paginator"
+     * Twig function: "paginator_links"
+     *  
+     * @see CrudHelper:paginatorLinks
+     */
+    public function paginator_links(AbstractPaginator $paginator, $route_name, $route_params = array(), $options = array())
+    {
+        return $this->crud_helper->paginatorLinks($paginator, $route_name, $route_params, $options);
+    }
+    
+    /**
+     * Twig function: "crud_paginator_links"
      *  
      * @see CrudHelper:crudPaginatorLinks
      */
