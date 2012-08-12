@@ -141,9 +141,9 @@ class CrudExtension extends Twig_Extension
      * 
      * @see CrudHelper:searchResetButton 
      */
-    public function search_reset(CrudManager $crud, $label = 'Reset', $ajax_options = array(), $html_options = array(), $link_parameter = '?raz=1')
+    public function search_reset(CrudManager $crud, $options = array(), $ajax_options = array(), $html_options = array())
     {
-        return $this->crud_helper->searchResetButton($crud, $label, $ajax_options, $html_options, $link_parameter);
+        return $this->crud_helper->searchResetButton($crud, $options, $ajax_options, $html_options);
     }
     
     /**

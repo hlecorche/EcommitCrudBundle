@@ -245,14 +245,17 @@ class CrudHelper
      * Returns search reset button
      * 
      * @param CrudManager $crud
-     * @param string $label   Label
+     * @param array $options   Options :
+     *        * label: Label. Défault: Reset
      * @param array $ajax_options   Ajax options
      * @param array $html_options   Html options
-     * @param string $link_parameter   Suffix url
      * @return string 
      */
-    public function searchResetButton(CrudManager $crud, $label, $ajax_options, $html_options, $link_parameter)
+    public function searchResetButton(CrudManager $crud, $options, $ajax_options, $html_options)
     {
+        $default_options = array('label' => 'Reset',
+                                );
+        $options = \array_merge($default_options, $options);
         if(!isset($ajax_options['update']))
         {
             $ajax_options['update'] = 'js_holder_for_multi_update_'.md5($crud->getUrl());
@@ -261,8 +264,8 @@ class CrudHelper
         {
             $html_options['class'] = 'raz';
         }
-        $label = $this->util->translate($label);
-        return $this->javascript_manager->jQueryButtonToRemote($label, $crud->getSearchUrl().$link_parameter, $ajax_options, $html_options);
+        $label = $this->util->translate($options['label']);
+        return $this->javascript_manager->jQueryButtonToRemote($label, $crud->getSearchUrl(array('raz' => 1)), $ajax_options, $html_options);
     }
     
     /**

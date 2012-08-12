@@ -2,6 +2,8 @@ CHANGELOG
 =========
 
 * 1.2.x
+  * [BC brak] Fonction crud_search_reset(CrudManager $crud, $label = 'Reset', $ajax_options = array(), $html_options = array(), $link_parameter = '?raz=1')
+    remplacée par crud_search_reset(CrudManager $crud, $options = array(), $ajax_options = array(), $html_options = array())
   * [BC break] Fonction Twig crud_display_config(CrudManager $crud, $modal = true, $ajax_options = array(), $image_url = 'ecr/images/i16/list.png')
     remplacée par crud_display_config(CrudManager $crud, $options = array(), $ajax_options = array())
   * [BC break] Fonction Twig crud_th($column_id, CrudManager $crud, $th_options = array(), $ajax_options = array(), 
