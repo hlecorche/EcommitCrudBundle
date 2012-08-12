@@ -96,4 +96,13 @@ abstract class CrudAbstractController extends Controller
     {
         return array();
     }
+    
+    /**
+     * 
+     * @return ContainerInterface
+     */
+    public function getContainer()
+    {
+        return $this->container;
+    }
 }

@@ -2,6 +2,8 @@ CHANGELOG
 =========
 
 * 1.2.x
+  * [BC break] [CrudManager] Méthodes CrudManager::setUrl et CrudManager::setSearchUrl renommées en CrudManager::setRoute et CrudManager::setSearchRoute
+  * [CrudManager] Ajout d'un paramètre "parameters" aux méthodes CrudManager::getUrl et CrudManager::getSearchUrl
   * [EntityPickerType] Ajout options "label_add" et "label_list"
   * [BC break] Suppression du paramètre "remove" dans fonctions twig "flash_confirm" et "flash_error"
 

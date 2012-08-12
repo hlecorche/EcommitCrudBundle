@@ -34,11 +34,13 @@ class CrudManager
     protected $form_filter_values_object = null;
     protected $form_filter = null;
     protected $query_builder = null;
-    protected $controller = null;
+    protected $container = null;
     protected $paginator = null;
     protected $build_paginator = true;
-    protected $url = null;
-    protected $search_url = null;
+    protected $route_name = null;
+    protected $route_params = array();
+    protected $search_route_name = null;
+    protected $search_route_params = array();
     protected $div_id_search = 'crud_search';
     protected $div_id_list = 'crud_list';
     
@@ -56,7 +58,7 @@ class CrudManager
             throw new \Exception('Variable session_name is required');
         }
         $this->session_name = $session_name;
-        $this->controller = $controller;
+        $this->container = $controller->getContainer();
         $this->session_values = new CrudSessionManager();
         return $this;
     }
@@ -140,49 +142,55 @@ class CrudManager
     }
     
     /**
-     * Sets the list url
+     * Sets the list route
      * 
      * @param string $route_name
      * @param array $parameters 
      * @return CrudManager
      */
-    public function setUrl($route_name, $parameters = array())
+    public function setRoute($route_name, $parameters = array())
     {
-        $this->url = $this->controller->get('router')->generate($route_name, $parameters);
+        $this->route_name = $route_name;
+        $this->route_params = $parameters;
         return $this;
     }
     
     /**
      * Returns the list url
      * 
+     * @param array $parameters   Additional parameters
      * @return string
      */
-    public function getUrl()
+    public function getUrl($parameters = array())
     {
-        return $this->url;
+        $parameters = \array_merge($this->route_params, $parameters);
+        return $this->container->get('router')->generate($this->route_name, $parameters);
     }
     
     /**
-     * Sets the search url
+     * Sets the search route
      * 
      * @param string $route_name
      * @param array $parameters
      * @return CrudManager
      */
-    public function setSearchUrl($route_name, $parameters = array())
+    public function setSearchRoute($route_name, $parameters = array())
     {
-        $this->search_url = $this->controller->get('router')->generate($route_name, $parameters);
+        $this->search_route_name = $route_name;
+        $this->search_route_params = $parameters;
         return $this;
     }
     
     /**
      * Returns the search url
      * 
+     * @param array $parameters   Additional parameters
      * @return string
      */
-    public function getSearchUrl()
+    public function getSearchUrl($parameters = array())
     {
-        return $this->search_url;
+        $parameters = \array_merge($this->search_route_params, $parameters);
+        return $this->container->get('router')->generate($this->search_route_name, $parameters);
     }
     
     /**
@@ -215,7 +223,7 @@ class CrudManager
     {
         $this->form_filter_values_object = $form_filter_values_object;
                 
-        $form_builder = $this->controller->get('form.factory')->createNamedBuilder('crud_search', new FormSearchType());
+        $form_builder = $this->container->get('form.factory')->createNamedBuilder('crud_search', new FormSearchType());
         foreach($form_filter_values_object->getFieldsFilter() as $field)
         {
             if(!($field instanceof \Ecommit\CrudBundle\Form\Filter\FormFilterAbstract ))
@@ -239,13 +247,12 @@ class CrudManager
             throw new NotFoundHttpException('Crud: Form filter does not exist');
         }
         
-        $request = $this->controller->get('request');
+        $request = $this->container->get('request');
         if($request->query->has('raz'))
         {
             $this->raz();
             return;
         }
-        $a = 'toto';
         if ($request->getMethod() == 'POST')
         {
             $this->form_filter->bindRequest($request);             
@@ -265,10 +272,10 @@ class CrudManager
     {
         //Cheks not empty values
         $check_values = array('available_columns', 'available_number_results_displayed', 'default_sort',
-            'default_sense', 'default_number_results_displayed', 'query_builder', 'url');
+            'default_sense', 'default_number_results_displayed', 'query_builder', 'route_name');
         if(!empty($this->form_filter_values_object))
         {
-            $check_values[] = 'search_url';
+            $check_values[] = 'search_route_name';
         }
         foreach($check_values as $value)
         {
@@ -285,7 +292,7 @@ class CrudManager
         $this->processRequest();
         
         //Filter form: Allocates object (Defaults values and validators)
-         $request = $this->controller->get('request');
+         $request = $this->container->get('request');
         if(!empty($this->form_filter_values_object) && !$request->query->has('raz'))
         {
             //IMPORTANT
@@ -330,7 +337,7 @@ class CrudManager
         //Builds paginator
         if($this->build_paginator)
         {
-            $request = $this->controller->get('request');
+            $request = $this->container->get('request');
             $page = $request->query->get('page', 1);
 
             $this->paginator = new DoctrinePaginator($this->session_values->number_results_displayed);
@@ -346,7 +353,7 @@ class CrudManager
      */
     protected function load()
     {
-        $session = $this->controller->get('request')->getSession();
+        $session = $this->container->get('request')->getSession();
         $object = $session->get($this->session_name);
         if(empty($object))
         {
@@ -372,7 +379,7 @@ class CrudManager
      */
     protected function save()
     {
-        $session = $this->controller->get('request')->getSession();
+        $session = $this->container->get('request')->getSession();
         if(is_object($this->session_values->form_filter_values_object))
         {
             $this->session_values->form_filter_values_object->clear();
@@ -397,7 +404,7 @@ class CrudManager
      */
     protected function processRequest()
     {
-        $request = $this->controller->get('request');
+        $request = $this->container->get('request');
         if($request->request->has('crud_display_config'))
         {
             $display_config = $request->request->get('crud_display_config');
@@ -562,7 +569,6 @@ class CrudManager
      */
     public function clearTemplate()
     {
-        $this->controller = null;
         $this->query_builder = null;
         if(empty($this->form_filter_values_object))
         {
