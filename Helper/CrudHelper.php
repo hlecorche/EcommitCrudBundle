@@ -120,22 +120,27 @@ class CrudHelper
      * 
      * @param string $column_id   Column id
      * @param CrudManager $crud
+     * @param array $options   Options :
+     *        * label: Label. If null, default label is displayed
+     *        * image_up: Url image "^"
+     *        * image_down: Url image "V"
      * @param array $th_options   Html options
      * @param array $ajax_options   Ajax Options
-     * @param string $label   Label. If null, default label is displayed
-     * @param string $image_up   Url image "^"
-     * @param string $image_down   Url image "V"
-     * @param string $attribute_page   Text between the url page and attributes (ex. : "?")
      * @return string 
      */
-    public function th($column_id, CrudManager $crud, $th_options, $ajax_options, $label, $image_up, $image_down, $attribute_page)
+    public function th($column_id, CrudManager $crud, $options, $th_options, $ajax_options)
     {
+        $default_options = array('label' => null,
+                                 'image_up' => 'ecr/images/i16/sort_incr.png',
+                                 'image_down' => 'ecr/images/i16/sort_decrease.png',
+                                );
+        $options = \array_merge($default_options, $options);
         if(!isset($ajax_options['update']))
         {
             $ajax_options['update'] = $crud->getDivIdList();
         }
-        $image_up = $this->util->getAssetUrl($image_up);
-        $image_down = $this->util->getAssetUrl($image_down);
+        $image_up = $this->util->getAssetUrl($options['image_up']);
+        $image_down = $this->util->getAssetUrl($options['image_down']);
 
         //If the column is not to be shown, returns empty
         $session_values =  $crud->getSessionValues();
@@ -146,7 +151,8 @@ class CrudHelper
         
         //If the label was not defined, we take default label
         $column = $crud->getColumn($column_id);
-        if(empty($label))
+        $label = $options['label'];
+        if(\is_null($label))
         {
             $label = $column->label;
         }
@@ -164,7 +170,7 @@ class CrudHelper
         //Case n°2: We can sort on this column, but the sorting is not active on her at present
         if($session_values->sort != $column_id)
         {
-            $content = $this->listePrivateLink($label, $crud->getUrl().$attribute_page.'sort='.$column_id, array(), $ajax_options);
+            $content = $this->listePrivateLink($label, $crud->getUrl(array('sort' => $column_id)), array(), $ajax_options);
             return $this->util->tag('th', $th_options, $content);
         }
         
@@ -173,7 +179,7 @@ class CrudHelper
         $image_alt = ($session_values->sense == CrudManager::ASC)? 'V' : '^';
         $new_sense = ($session_values->sense == CrudManager::ASC)? CrudManager::DESC : CrudManager::ASC;
         $image = $this->util->tag('img', array('src' => $image_src, 'alt' => $image_alt));
-        $link = $this->listePrivateLink($label, $crud->getUrl().$attribute_page.'sense='.$new_sense, array(), $ajax_options);
+        $link = $this->listePrivateLink($label, $crud->getUrl(array('sense' => $new_sense)), array(), $ajax_options);
         return $this->util->tag('th', $th_options, $link.$image);
     }
     

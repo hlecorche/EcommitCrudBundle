@@ -84,9 +84,9 @@ class CrudExtension extends Twig_Extension
      *  
      * @see CrudHelper:th
      */
-    public function th($column_id, CrudManager $crud, $th_options = array(), $ajax_options = array(), $label = null, $image_up = 'ecr/images/i16/sort_incr.png', $image_down = 'ecr/images/i16/sort_decrease.png', $attribute_page = '?')
+    public function th($column_id, CrudManager $crud, $options = array(), $th_options = array(), $ajax_options = array())
     {
-        return $this->crud_helper->th($column_id, $crud, $th_options, $ajax_options, $label, $image_up, $image_down, $attribute_page);
+        return $this->crud_helper->th($column_id, $crud, $options, $th_options, $ajax_options);
     }
     
     /**

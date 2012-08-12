@@ -2,6 +2,9 @@ CHANGELOG
 =========
 
 * 1.2.x
+  * [BC break] Fonction Twig crud_th($column_id, CrudManager $crud, $th_options = array(), $ajax_options = array(), 
+    $label = null, $image_up = 'ecr/images/i16/sort_incr.png', $image_down = 'ecr/images/i16/sort_decrease.png', 
+    $attribute_page = '?') remplacée par crud_th($column_id, CrudManager $crud, $options = array(), $th_options = array(), $ajax_options = array())
   * [BC break] [CrudManager] Méthodes CrudManager::setUrl et CrudManager::setSearchUrl renommées en CrudManager::setRoute et CrudManager::setSearchRoute
   * [CrudManager] Ajout d'un paramètre "parameters" aux méthodes CrudManager::getUrl et CrudManager::getSearchUrl
   * [EntityPickerType] Ajout options "label_add" et "label_list"
