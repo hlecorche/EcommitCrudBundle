@@ -11,15 +11,15 @@
 
 namespace Ecommit\CrudBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormViewInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\Exception\FormException;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityManager;
-use Ecommit\JavascriptBundle\jQuery\Manager;
 use Ecommit\JavascriptBundle\Form\DataTransformer\EntityToAutoCompleteTransformer;
+use Ecommit\JavascriptBundle\jQuery\Manager;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Exception\FormException;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class EntityPickerType extends AbstractType
 {
@@ -75,34 +75,23 @@ class EntityPickerType extends AbstractType
         }
         
         $builder->addViewTransformer(new EntityToAutoCompleteTransformer($query_builder, $alias, $options['method'], $options['key_method']));
-        
-        $builder->setAttribute('list_url', $options['list_url']);
-        $builder->setAttribute('list_ajax_options', $options['list_ajax_options']);
-        $builder->setAttribute('add_enabled', $options['add_enabled']);
-        $builder->setAttribute('add_url', $options['add_url']);
-        $builder->setAttribute('add_ajax_options', $options['add_ajax_options']);
-        $builder->setAttribute('modal_id', $options['modal_id']);
-        $builder->setAttribute('image_add', $options['image_add']);
-        $builder->setAttribute('image_list', $options['image_list']);
-        $builder->setAttribute('label_add', $options['label_add']);
-        $builder->setAttribute('label_list', $options['label_list']);
     }
 
     
-    public function buildView(FormViewInterface $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $this->javascript_manager->enablejQueryTools();
         
-        $view->setVar('list_url', $form->getAttribute('list_url'));
-        $view->setVar('list_ajax_options', $form->getAttribute('list_ajax_options'));
-        $view->setVar('add_enabled', $form->getAttribute('add_enabled'));
-        $view->setVar('add_url', $form->getAttribute('add_url'));
-        $view->setVar('add_ajax_options', $form->getAttribute('add_ajax_options'));
-        $view->setVar('modal_id', $form->getAttribute('modal_id'));
-        $view->setVar('image_add', $form->getAttribute('image_add'));
-        $view->setVar('image_list', $form->getAttribute('image_list'));
-        $view->setVar('label_add', $form->getAttribute('label_add'));
-        $view->setVar('label_list', $form->getAttribute('label_list'));
+        $view->vars['list_url'] = $options['list_url'];
+        $view->vars['list_ajax_options'] = $options['list_ajax_options'];
+        $view->vars['add_enabled'] = $options['add_enabled'];
+        $view->vars['add_url'] = $options['add_url'];
+        $view->vars['add_ajax_options'] = $options['add_ajax_options'];
+        $view->vars['modal_id'] = $options['modal_id'];
+        $view->vars['image_add'] = $options['image_add'];
+        $view->vars['image_list'] = $options['image_list'];
+        $view->vars['label_add'] = $options['label_add'];
+        $view->vars['label_list'] = $options['label_list'];
     }
     
     
