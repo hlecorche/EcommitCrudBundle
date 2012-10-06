@@ -25,17 +25,14 @@ class FormFilterAutoComplete extends FormFilterAbstract
      */
     public function __construct($column_id, $field_name, $options = array(), $field_options = array())
     {
+        if(empty($options['class']))
+        {
+            throw new \Exception(\get_class($this).'"class" option is required');
+        }
+        
         if(!empty($options['query_builder']))
         {
             $field_options['query_builder'] = $options['query_builder'];
-        }
-        elseif(!empty($options['class']))
-        {
-            $field_options['class'] = $options['class'];
-        }
-        else
-        {
-            throw new \Exception(\get_class($this).'"query_builder" or "class" option is required');
         }
         
         if(!empty($options['url']))
@@ -50,10 +47,6 @@ class FormFilterAutoComplete extends FormFilterAbstract
         if(!empty($options['alias']))
         {
             $field_options['alias'] = $options['alias'];
-        }
-        else
-        {
-            throw new \Exception(\get_class($this).'"alias" option is required');
         }
         
         if(!empty($options['key_method']))
