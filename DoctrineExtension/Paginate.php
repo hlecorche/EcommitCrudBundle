@@ -12,6 +12,7 @@
 namespace Ecommit\CrudBundle\DoctrineExtension;
 
 use Doctrine\ORM\Query;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class Paginate
 {
@@ -23,14 +24,7 @@ class Paginate
      */
     static public function count(Query $query)
     {
-        $countQuery = clone $query;
-
-        //Whene clones Query object, parameters are deleted
-        $countQuery->setParameters($query->getParameters());
-        
-        $countQuery->setHint(Query::HINT_CUSTOM_TREE_WALKERS, array('Ecommit\CrudBundle\DoctrineExtension\CountSqlWalker'));
-        $countQuery->setFirstResult(null)->setMaxResults(null);
-
-        return $countQuery->getSingleScalarResult();
+        $doctrine_paginator = new Paginator($query, false);
+        return $doctrine_paginator->count();
     }
 }
