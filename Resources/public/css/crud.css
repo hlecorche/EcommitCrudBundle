@@ -1,7 +1,7 @@
 /*Boutons */
 input.add
 {
-    background-image: url('../images/i16/edit_add.png');
+    background-image: url('/ecr/images/i16/edit_add.png');
     background-repeat:no-repeat;
     background-position: 2px 2px;
     background-color: #ece9d8;
@@ -16,7 +16,7 @@ input.add
 
 input.back
 {
-    background-image: url('../images/i16/rotate.png');
+    background-image: url('/ecr/images/i16/rotate.png');
     background-repeat:no-repeat;
     background-position: 2px 2px;
     background-color: #ece9d8;
@@ -31,7 +31,7 @@ input.back
 
 input.save
 {
-    background-image: url('../images/i16/apply.png');
+    background-image: url('/ecr/images/i16/apply.png');
     background-repeat:no-repeat;
     background-position: 2px 2px;
     background-color: #ece9d8;
@@ -46,7 +46,7 @@ input.save
 
 input.edit
 {
-    background-image: url('../images/i16/edit.png');
+    background-image: url('/ecr/images/i16/edit.png');
     background-repeat:no-repeat;
     background-position: 2px 2px;
     background-color: #ece9d8;
@@ -61,7 +61,7 @@ input.edit
 
 input.search
 {
-    background-image: url('../images/i16/search.png');
+    background-image: url('/ecr/images/i16/search.png');
     background-repeat:no-repeat;
     background-position: 2px 2px;
     background-color: #ece9d8;
@@ -76,7 +76,7 @@ input.search
 
 input.raz
 {
-    background-image: url('../images/i16/delete_table.png');
+    background-image: url('/ecr/images/i16/delete_table.png');
     background-repeat:no-repeat;
     background-position: 2px 2px;
     background-color: #ece9d8;
@@ -91,7 +91,7 @@ input.raz
 
 input.delete
 {
-    background-image: url('../images/i16/editdelete.png');
+    background-image: url('/ecr/images/i16/editdelete.png');
     background-repeat:no-repeat;
     background-position: 2px 2px;
     background-color: #ece9d8;
@@ -106,7 +106,7 @@ input.delete
 
 input.active
 {
-    background-image: url('../images/i16/page_add.png');
+    background-image: url('/ecr/images/i16/page_add.png');
     background-repeat:no-repeat;
     background-position: 2px 2px;
     background-color: #ece9d8;
@@ -121,7 +121,7 @@ input.active
 
 input.desactive
 {
-    background-image: url('../images/i16/page_delete.png');
+    background-image: url('/ecr/images/i16/page_delete.png');
     background-repeat:no-repeat;
     background-position: 2px 2px;
     background-color: #ece9d8;
@@ -156,7 +156,7 @@ input.desactive
 
 .crud_modal .close
 { 
-    background-image:url('../images/i36/close.png'); 
+    background-image:url('/ecr/images/i36/close.png'); 
     position:absolute; 
     right:-15px; 
     top:-15px; 
@@ -179,13 +179,13 @@ input.desactive
 .crud_message.message_confirm
 {
     background-color: green;
-    background-image: url('../images/i24/apply.png');
+    background-image: url('/ecr/images/i24/apply.png');
 }
 
 .crud_message.message_error
 {
     background-color: #CC3333;
-    background-image: url('../images/i24/error.png');
+    background-image: url('/ecr/images/i24/error.png');
 }
 
 .crud_message .message
@@ -219,7 +219,7 @@ ul.form_error
 ul.form_error li
 {
     background-color: #CC3333;
-    background-image: url('../images/i16/error.png');
+    background-image: url('/ecr/images/i16/error.png');
     background-repeat: no-repeat;
     padding-top: 2px;
     padding-bottom: 2px;

@@ -32,7 +32,9 @@ public function registerBundles()
 
 <head>
 ...
-<link media="screen" rel="stylesheet" href="/ecr/css/crud.css" type="text/css" />
+{% stylesheets '@EcommitCrudBundle/Resources/public/css/crud.css' filter='?yui_css' output='css/compiled/crud.css' %}
+    <link rel="stylesheet" type="text/css" href="{{ asset_url }}" />
+{% endstylesheets %}
 ...
 </head>
 
