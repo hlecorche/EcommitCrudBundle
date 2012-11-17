@@ -29,6 +29,7 @@ class FormFilterAutoComplete extends FormFilterAbstract
         {
             throw new \Exception(\get_class($this).'"class" option is required');
         }
+        $field_options['class'] = $options['class'];
         
         if(!empty($options['query_builder']))
         {
