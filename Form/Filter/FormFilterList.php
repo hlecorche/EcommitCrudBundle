@@ -58,6 +58,7 @@ class FormFilterList extends FormFilterAbstract
     public function changeQuery(QueryBuilder $query_builder, FilterTypeAbstract $type, CrudColumn $column)
     {
         $value_list = $type->get($this->field_name);
+        $parameter_name = 'value_list'.str_replace(' ', '', $this->field_name);
         if(empty($value_list))
         {
             return $query_builder;
@@ -73,7 +74,8 @@ class FormFilterList extends FormFilterAbstract
             {
                 return $query_builder; 
             }
-            $query_builder->andWhere($query_builder->expr()->in($this->getAliasSearch($column), $value_list));
+            $query_builder->andWhere($query_builder->expr()->in($this->getAliasSearch($column), ':'.$parameter_name))
+            ->setParameter($parameter_name, $value_list);
         }
         else
         {
@@ -81,7 +83,6 @@ class FormFilterList extends FormFilterAbstract
             {
                 return $query_builder;
             }
-            $parameter_name = 'value_list'.str_replace(' ', '', $this->field_name);
             $query_builder->andWhere(sprintf('%s = :%s',$this->getAliasSearch($column), $parameter_name))
             ->setParameter($parameter_name, $value_list);
         }

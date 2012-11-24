@@ -61,7 +61,7 @@ class FormFilterInteger extends FormFilterAbstract
         if(!is_null($value_integer) && is_numeric($value_integer))  //Important: Is_null but not is_empty 
         {
             $parameter_name = 'value_integer_'.str_replace(' ', '', $this->field_name);
-            $query_builder->andWhere(sprintf('%s %s :%s', $column->alias, $this->comparator, $parameter_name))
+            $query_builder->andWhere(sprintf('%s %s :%s', $this->getAliasSearch($column), $this->comparator, $parameter_name))
             ->setParameter($parameter_name, $value_integer);
         }
         return $query_builder;

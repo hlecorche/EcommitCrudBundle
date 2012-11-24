@@ -48,7 +48,7 @@ class FormFilterEmpty extends FormFilterAbstract
         
         if($value_empty == 1)
         {
-            $query_builder->andWhere(sprintf('(%s IS NULL OR %s = \'\')',$column->alias, $column->alias));
+            $query_builder->andWhere(sprintf('(%s IS NULL OR %s = \'\')',$this->getAliasSearch($column), $this->getAliasSearch($column)));
         }
         return $query_builder;
     }

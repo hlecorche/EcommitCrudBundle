@@ -46,16 +46,26 @@ class FormFilterText extends FormFilterAbstract
     public function changeQuery(QueryBuilder $query_builder, FilterTypeAbstract $type, CrudColumn $column)
     {
         $value_text = $type->get($this->field_name);
+        $parameter_name = 'value_integer_'.str_replace(' ', '', $this->field_name);
         if(empty($value_text) || !is_scalar($value_text))
         {
             return $query_builder;
         }
         
-        $after = ($this->must_begin)? '' : '%';
-        $before = ($this->must_end)? '' : '%';
-        $value_text = addcslashes($value_text, '%_');
-        $like = $query_builder->expr()->literal($after.$value_text.$before);
-        $query_builder->andWhere($query_builder->expr()->like($column->alias, $like));
+        if($this->must_begin && $this->must_end)
+        {
+            $query_builder->andWhere(sprintf('%s = :%s', $this->getAliasSearch($column), $parameter_name))
+            ->setParameter($parameter_name, $value_text);
+        }
+        else
+        {
+            $after = ($this->must_begin)? '' : '%';
+            $before = ($this->must_end)? '' : '%';
+            $value_text = addcslashes($value_text, '%_');
+            $like = $after.$value_text.$before;
+            $query_builder->andWhere($query_builder->expr()->like($this->getAliasSearch($column), ':'.$parameter_name))
+            ->setParameter($parameter_name, $like);
+        }
         return $query_builder;
     }
 }

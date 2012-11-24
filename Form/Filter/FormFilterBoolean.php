@@ -63,13 +63,13 @@ class FormFilterBoolean extends FormFilterAbstract
             if($this->not_null_is_true)
             {
                 $parameter_name_false = 'value_false'.str_replace(' ', '', $this->field_name);
-                $query_builder->andWhere(sprintf('(%s = :%s OR (%s IS NOT NULL AND %s != :%s))',$column->alias, $parameter_name, $column->alias, $column->alias, $parameter_name_false))
+                $query_builder->andWhere(sprintf('(%s = :%s OR (%s IS NOT NULL AND %s != :%s))',$this->getAliasSearch($column), $parameter_name, $this->getAliasSearch($column), $this->getAliasSearch($column), $parameter_name_false))
                 ->setParameter($parameter_name, $this->value_true)
                 ->setParameter($parameter_name_false, $this->value_false);  
             }
             else
             {
-                $query_builder->andWhere(sprintf('%s = :%s',$column->alias, $parameter_name))
+                $query_builder->andWhere(sprintf('%s = :%s',$this->getAliasSearch($column), $parameter_name))
                 ->setParameter($parameter_name, $this->value_true);
             }
             return $query_builder;
@@ -79,16 +79,16 @@ class FormFilterBoolean extends FormFilterAbstract
             $parameter_name = 'value_false'.str_replace(' ', '', $this->field_name);
             if(is_null($this->value_false))
             {
-                $query_builder->andWhere(sprintf('%s IS NULL',$column->alias));
+                $query_builder->andWhere(sprintf('%s IS NULL',$this->getAliasSearch($column)));
             }
             elseif($this->null_is_false)
             {
-                $query_builder->andWhere(sprintf('(%s = :%s OR %s IS NULL)',$column->alias, $parameter_name, $column->alias))
+                $query_builder->andWhere(sprintf('(%s = :%s OR %s IS NULL)',$this->getAliasSearch($column), $parameter_name, $this->getAliasSearch($column)))
                 ->setParameter($parameter_name, $this->value_false);
             }
             else
             {
-                $query_builder->andWhere(sprintf('%s = :%s',$column->alias, $parameter_name))
+                $query_builder->andWhere(sprintf('%s = :%s',$this->getAliasSearch($column), $parameter_name))
                 ->setParameter($parameter_name, $this->value_false);
             }
             return $query_builder;

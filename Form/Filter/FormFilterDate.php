@@ -76,14 +76,14 @@ class FormFilterDate extends FormFilterAbstract
                 case FormFilterDate::GREATER_EQUAL:
                     $value_date->setTime(0, 0, 0);
                     $value_date = $value_date->format('Y-m-d H:i:s');
-                    $query_builder->andWhere(sprintf('%s %s :%s', $column->alias, $this->comparator, $parameter_name))
+                    $query_builder->andWhere(sprintf('%s %s :%s', $this->getAliasSearch($column), $this->comparator, $parameter_name))
                     ->setParameter($parameter_name, $value_date);
                     break;
                 case FormFilterDate::SMALLER_EQUAL:
                 case FormFilterDate::GREATER_THAN:
                     $value_date->setTime(23, 59, 59);
                     $value_date = $value_date->format('Y-m-d H:i:s');
-                    $query_builder->andWhere(sprintf('%s %s :%s', $column->alias, $this->comparator, $parameter_name))
+                    $query_builder->andWhere(sprintf('%s %s :%s', $this->getAliasSearch($column), $this->comparator, $parameter_name))
                     ->setParameter($parameter_name, $value_date);
                     break;
                 default:
@@ -95,7 +95,7 @@ class FormFilterDate extends FormFilterAbstract
                     $value_date_sup = $value_date_sup->format('Y-m-d H:i:s');
                     $parameter_name_inf = 'value_date_inf_'.str_replace(' ', '', $this->field_name);
                     $parameter_name_sup = 'value_date_sup_'.str_replace(' ', '', $this->field_name);
-                    $query_builder->andWhere(sprintf('%s >= :%s AND %s <= :%s', $column->alias, $parameter_name_inf, $column->alias, $parameter_name_sup))
+                    $query_builder->andWhere(sprintf('%s >= :%s AND %s <= :%s', $this->getAliasSearch($column), $parameter_name_inf, $this->getAliasSearch($column), $parameter_name_sup))
                     ->setParameter($parameter_name_inf, $value_date_inf)
                     ->setParameter($parameter_name_sup, $value_date_sup);
                     break;
