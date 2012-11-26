@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormBuilder;
 use Doctrine\ORM\QueryBuilder;
 use Ecommit\CrudBundle\Crud\CrudColumn;
 
-class FormFilterBoolean extends FormFilterAbstract
+class FieldFilterBoolean extends FieldFilterAbstract
 {
     protected $value_true;
     protected $value_false;
@@ -49,7 +49,7 @@ class FormFilterBoolean extends FormFilterAbstract
     /**
      * {@inheritDoc} 
      */
-    public function changeQuery(QueryBuilder $query_builder, FilterTypeAbstract $type, CrudColumn $column)
+    public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $type, CrudColumn $column)
     {
         $value_bool = $type->get($this->field_name);
         if(empty($value_bool) || !is_scalar($value_bool))

@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormBuilder;
 use Doctrine\ORM\QueryBuilder;
 use Ecommit\CrudBundle\Crud\CrudColumn;
 
-class FormFilterDate extends FormFilterAbstract
+class FieldFilterDate extends FieldFilterAbstract
 {
     const GREATER_THAN = '>';
     const GREATER_EQUAL = '>=';
@@ -64,7 +64,7 @@ class FormFilterDate extends FormFilterAbstract
     /**
      * {@inheritDoc} 
      */
-    public function changeQuery(QueryBuilder $query_builder, FilterTypeAbstract $type, CrudColumn $column)
+    public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $type, CrudColumn $column)
     {
         $value_date = $type->get($this->field_name);
         if(!empty($value_date) && $value_date instanceof \DateTime)
@@ -72,15 +72,15 @@ class FormFilterDate extends FormFilterAbstract
             $parameter_name = 'value_date_'.str_replace(' ', '', $this->field_name);
             
             switch($this->comparator):
-                case FormFilterDate::SMALLER_THAN:
-                case FormFilterDate::GREATER_EQUAL:
+                case FieldFilterDate::SMALLER_THAN:
+                case FieldFilterDate::GREATER_EQUAL:
                     $value_date->setTime(0, 0, 0);
                     $value_date = $value_date->format('Y-m-d H:i:s');
                     $query_builder->andWhere(sprintf('%s %s :%s', $this->getAliasSearch($column), $this->comparator, $parameter_name))
                     ->setParameter($parameter_name, $value_date);
                     break;
-                case FormFilterDate::SMALLER_EQUAL:
-                case FormFilterDate::GREATER_THAN:
+                case FieldFilterDate::SMALLER_EQUAL:
+                case FieldFilterDate::GREATER_THAN:
                     $value_date->setTime(23, 59, 59);
                     $value_date = $value_date->format('Y-m-d H:i:s');
                     $query_builder->andWhere(sprintf('%s %s :%s', $this->getAliasSearch($column), $this->comparator, $parameter_name))

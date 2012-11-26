@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormBuilder;
 use Doctrine\ORM\QueryBuilder;
 use Ecommit\CrudBundle\Crud\CrudColumn;
 
-class FormFilterEmpty extends FormFilterAbstract
+class FieldFilterEmpty extends FieldFilterAbstract
 {
     /**
      * {@inheritDoc} 
@@ -38,7 +38,7 @@ class FormFilterEmpty extends FormFilterAbstract
     /**
      * {@inheritDoc} 
      */
-    public function changeQuery(QueryBuilder $query_builder, FilterTypeAbstract $type, CrudColumn $column)
+    public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $type, CrudColumn $column)
     {
         $value_empty = $type->get($this->field_name);
         if(empty($value_empty) || !is_scalar($value_empty))

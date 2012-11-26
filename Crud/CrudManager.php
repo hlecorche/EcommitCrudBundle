@@ -15,7 +15,7 @@ use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Ecommit\CrudBundle\Controller\CrudAbstractController;
 use Ecommit\CrudBundle\Paginator\DoctrinePaginator;
-use Ecommit\CrudBundle\Form\Filter\FilterTypeAbstract;
+use Ecommit\CrudBundle\Form\Filter\FormFilterAbstract;
 use Ecommit\CrudBundle\Form\Type\FormSearchType;
 
 class CrudManager
@@ -236,10 +236,10 @@ class CrudManager
     /**
      * Adds search form
      * 
-     * @param FilterTypeAbstract $form_filter_values_object
+     * @param FormFilterAbstract $form_filter_values_object
      * @return CrudManager 
      */
-    public function createFilterForm(FilterTypeAbstract $form_filter_values_object)
+    public function createFilterForm(FormFilterAbstract $form_filter_values_object)
     {
         $this->form_filter_values_object = $form_filter_values_object;
                 
@@ -247,9 +247,9 @@ class CrudManager
         $form_builder = $this->container->get('form.factory')->createNamedBuilder($form_name, new FormSearchType());
         foreach($form_filter_values_object->getFieldsFilter() as $field)
         {
-            if(!($field instanceof \Ecommit\CrudBundle\Form\Filter\FormFilterAbstract ))
+            if(!($field instanceof \Ecommit\CrudBundle\Form\Filter\FieldFilterAbstract ))
             {
-                throw new \Exception('Crud: FilterType: getFieldsFilter() must only returns FormFilterAbstract implementations');
+                throw new \Exception('Crud: FormFilterAbstract: getFieldsFilter() must only returns FieldFilterAbstract implementations');
             }
             $form_builder = $field->addField($form_builder);
         }
@@ -346,7 +346,7 @@ class CrudManager
             {
                 if(!isset($this->available_columns[$field->getColumnId()]))
                 {
-                    throw new \Exception('Crud: FilterType: getFieldsFilter(): Column id does not exit: '.$field->getColumnId());
+                    throw new \Exception('Crud: FormFilterAbstract: getFieldsFilter(): Column id does not exit: '.$field->getColumnId());
                 }
                 $column = $this->available_columns[$field->getColumnId()];
                 $this->query_builder = $field->changeQuery($this->query_builder, 

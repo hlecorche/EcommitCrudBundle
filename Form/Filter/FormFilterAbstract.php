@@ -11,76 +11,61 @@
 
 namespace Ecommit\CrudBundle\Form\Filter;
 
-use Symfony\Component\Form\FormBuilder;
-use Doctrine\ORM\QueryBuilder;
-use Ecommit\CrudBundle\Crud\CrudColumn;
-
 abstract class FormFilterAbstract
 {
-    protected $column_id;
-    protected $field_name;
-    protected $field_options;
+    protected $fields_filter;
+
+    /**
+     * Declares fields
+     * 
+     * @return array
+     */
+    abstract public function configureFieldsFilter();
     
     /**
-     * Adds the field into the form
+     * Gets field value
      * 
-     * @param FormBuilder $form_builder
-     * @return FormBuilder
+     * @param string $field   Field Name
+     * @return mixed 
      */
-    abstract public function addField(FormBuilder $form_builder);
-    
-    /**
-     * Changes the query
-     * 
-     * @param QueryBuilder $query_builder
-     * @param FilterTypeAbastract $type
-     * @param CrudColumn $column
-     * @return QueryBuilder
-     */
-    abstract public function changeQuery(QueryBuilder $query_builder, FilterTypeAbstract $type, CrudColumn $column);
-    
-    /**
-     * Constructor
-     * 
-     * @param string $column_id   Column id
-     * @param string $field_name   Field Name (search form)
-     * @param array $options   Options
-     * @param array $field_options   Field options
-     */
-    public function __construct($column_id, $field_name, $options = array(), $field_options = array())
+    public function get($field)
     {
-        $this->column_id = $column_id;
-        $this->field_name = $field_name;
-        
-        if(!isset($field_options['required']))
+        if(isset($this->$field))
         {
-            $field_options['required'] = false;
+            return $this->$field;
         }
-        $this->field_options = $field_options;
+        return null;
     }
     
     /**
-     * Returns the column id associated at this object
-     * 
-     * @return string 
+     * Clears this objet
+     * Used before storing this object in session
+     * If one propertie is not public and it doesn't bebin
+     * by "field_", it will be deleted
      */
-    public function getColumnId()
+    public function clear()
     {
-        return $this->column_id;
+        foreach($this as $key => $value)
+        {
+            $variable = new \ReflectionProperty($this, $key);
+            if(!$variable->isPublic() && !\preg_match('/^field_/', $key))
+            {
+                unset($this->$key);
+            }
+        }
     }
     
     /**
-     * Returns the SQL alias used for search query
+     * Returns fields
      * 
-     * @param CrudColumn $column
-     * @return string 
+     * @return array 
      */
-    public function getAliasSearch(CrudColumn $column)
+    public function getFieldsFilter()
     {
-        if(empty($column->alias_search))
+        if(!$this->fields_filter)
         {
-            return $column->alias;
+            $this->fields_filter = $this->configureFieldsFilter();
         }
-        return $column->alias_search;
+        return $this->fields_filter;
     }
 }

@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormBuilder;
 use Doctrine\ORM\QueryBuilder;
 use Ecommit\CrudBundle\Crud\CrudColumn;
 
-class FormFilterInteger extends FormFilterAbstract
+class FieldFilterInteger extends FieldFilterAbstract
 {
     const GREATER_THAN = '>';
     const GREATER_EQUAL = '>=';
@@ -55,7 +55,7 @@ class FormFilterInteger extends FormFilterAbstract
     /**
      * {@inheritDoc} 
      */
-    public function changeQuery(QueryBuilder $query_builder, FilterTypeAbstract $type, CrudColumn $column)
+    public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $type, CrudColumn $column)
     {
         $value_integer = $type->get($this->field_name);
         if(!is_null($value_integer) && is_numeric($value_integer))  //Important: Is_null but not is_empty 

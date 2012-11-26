@@ -13,7 +13,7 @@ namespace Ecommit\CrudBundle\Form\Filter;
 
 use Symfony\Component\Form\FormBuilder;
 
-class FormFilterEntity extends FormFilterList
+class FieldFilterEntity extends FieldFilterList
 {
     /**
      * {@inheritDoc} 

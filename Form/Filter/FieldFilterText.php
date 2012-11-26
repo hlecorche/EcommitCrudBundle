@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormBuilder;
 use Doctrine\ORM\QueryBuilder;
 use Ecommit\CrudBundle\Crud\CrudColumn;
 
-class FormFilterText extends FormFilterAbstract
+class FieldFilterText extends FieldFilterAbstract
 {
     protected $must_begin;
     protected $must_end;
@@ -43,7 +43,7 @@ class FormFilterText extends FormFilterAbstract
     /**
      * {@inheritDoc} 
      */
-    public function changeQuery(QueryBuilder $query_builder, FilterTypeAbstract $type, CrudColumn $column)
+    public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $type, CrudColumn $column)
     {
         $value_text = $type->get($this->field_name);
         $parameter_name = 'value_integer_'.str_replace(' ', '', $this->field_name);

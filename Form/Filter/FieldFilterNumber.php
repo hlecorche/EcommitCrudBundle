@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormBuilder;
 use Doctrine\ORM\QueryBuilder;
 use Ecommit\CrudBundle\Crud\CrudColumn;
 
-class FormFilterNumber extends FormFilterInteger
+class FieldFilterNumber extends FieldFilterInteger
 {
     /**
      * {@inheritDoc} 

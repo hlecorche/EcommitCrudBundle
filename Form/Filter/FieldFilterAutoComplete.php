@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormBuilder;
 use Doctrine\ORM\QueryBuilder;
 use Ecommit\CrudBundle\Crud\CrudColumn;
 
-class FormFilterAutoComplete extends FormFilterAbstract
+class FieldFilterAutoComplete extends FieldFilterAbstract
 {
     protected $multiple;
     protected $limit = 50;
@@ -93,7 +93,7 @@ class FormFilterAutoComplete extends FormFilterAbstract
     /**
      * {@inheritDoc} 
      */
-    public function changeQuery(QueryBuilder $query_builder, FilterTypeAbstract $type, CrudColumn $column)
+    public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $type, CrudColumn $column)
     {
         $value_list = $type->get($this->field_name);
         $parameter_name = 'value_autocomplete'.str_replace(' ', '', $this->field_name);
