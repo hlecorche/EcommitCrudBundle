@@ -27,6 +27,7 @@ class CrudManager
     protected $session_values;
     
     protected $available_columns = array();
+    protected $available_virtual_columns = array();
     protected $available_number_results_displayed = array();
     protected $default_sort = null;
     protected $default_sense = null;
@@ -91,11 +92,26 @@ class CrudManager
         $default_options = array(
             'sortable' => true,
             'default_displayed' => true,
-            'alias_search' => true
+            'alias_search' => null
         );
         $options = \array_merge($default_options, $options);
         $column = new CrudColumn($id, $alias, $label, $options['sortable'], $options['default_displayed'], $options['alias_search']);
         $this->available_columns[$id] = $column;
+        return $this;
+    }
+    
+    /**
+     * Add a virtual column inside the crud
+     * 
+     * @param string $id   Column id (used everywhere inside the crud)
+     * @param string $alias   Column SQL alias
+     * @param string $alias_search   Column SQL alias, used during searchs. If null, $alias is used.
+     * @return CrudManager 
+     */
+    public function addVirtualColumn($id, $alias, $alias_search = null)
+    {
+        $column = new CrudColumn($id, $alias, null, false, false, $alias_search);
+        $this->available_virtual_columns[$id] = $column;
         return $this;
     }
     
@@ -360,11 +376,18 @@ class CrudManager
         {
             foreach($this->form_filter_values_object->getFieldsFilter() as $field)
             {
-                if(!isset($this->available_columns[$field->getColumnId()]))
+                if(isset($this->available_columns[$field->getColumnId()]))
+                {
+                    $column = $this->available_columns[$field->getColumnId()];
+                }
+                elseif(isset($this->available_virtual_columns[$field->getColumnId()]))
+                {
+                    $column = $this->available_virtual_columns[$field->getColumnId()];
+                }
+                else
                 {
                     throw new \Exception('Crud: FormFilterAbstract: getFieldsFilter(): Column id does not exit: '.$field->getColumnId());
                 }
-                $column = $this->available_columns[$field->getColumnId()];
                 $this->query_builder = $field->changeQuery($this->query_builder, 
                         $this->session_values->form_filter_values_object, $column);
             }
