@@ -1,6 +1,6 @@
-{% set ajax_options = ajax_options|merge({ 'before': 'processCrudDisplayConfig();' }) %}
+{% set ajax_options = ajax_options|merge({ 'before': 'processCrudDisplayConfig_'~suffix~'();' }) %}
 
-<div id="display_config" class="crud_modal" style="width: 500px; text-align: left;">
+<div id="display_config_{{ suffix }}" class="crud_modal" style="width: 500px; text-align: left;">
 <div class="contentWrap">
     <div class="titre">{% trans %}Display Settings{% endtrans %}</div>
     {{ jQuery_ajax_form(url, ajax_options)  }}
@@ -21,21 +21,21 @@
 </div>
 
 <script type="text/javascript">
-    var dialog_display_config = $('#display_config').overlay({oneInstance: false, api: true});
-    function processCrudDisplayConfig()
+    var dialog_display_config_{{ suffix }} = $('#display_config_{{ suffix }}').overlay({oneInstance: false, api: true});
+    function processCrudDisplayConfig_{{ suffix }}()
     {
-       if($('#display_config input:checkbox:checked').length < 1)
+       if($('#display_config_{{ suffix }} input:checkbox:checked').length < 1)
        {
             alert('{% trans %}You need to select at least one column to display{% endtrans %}');
             return false;
        }
-       dialog_display_config.close();
+       dialog_display_config_{{ suffix }}.close();
     }
-    function change_display_config()
+    function change_display_config_{{ suffix }}()
     {
-        dialog_display_config.load();
+        dialog_display_config_{{ suffix }}.load();
     }
 </script>
 
-<a href="#" onclick="change_display_config(); return false;"><img src="{{ asset(image_url) }}" alt="{% trans %}Display Settings{% endtrans %}" title="{% trans %}Display Settings{% endtrans %}" /></a>
+<a href="#" onclick="change_display_config_{{ suffix }}(); return false;"><img src="{{ asset(image_url) }}" alt="{% trans %}Display Settings{% endtrans %}" title="{% trans %}Display Settings{% endtrans %}" /></a>
 <div id="js_holder_for_multi_update_{{ suffix }}" style="display: none;"></div>

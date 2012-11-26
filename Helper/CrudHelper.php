@@ -317,7 +317,8 @@ class CrudHelper
     {
         $this->javascript_manager->enablejQueryTools();
         
-        $form = $this->form_factory->createNamed('crud_display_config', new DisplayConfigType($crud));
+        $form_name = sprintf('crud_display_config_%s', $crud->getSessionName());
+        $form = $this->form_factory->createNamed($form_name, new DisplayConfigType($crud));
         return $form->createView();
     }
     
@@ -333,7 +334,7 @@ class CrudHelper
     {
         if(!isset($ajax_options['update']))
         {
-            $ajax_options['update'] = 'js_holder_for_multi_update_'.md5($crud->getUrl());
+            $ajax_options['update'] = 'js_holder_for_multi_update_'.$crud->getSessionName();
         }
         return $this->javascript_manager->jQueryFormToRemote($crud->getSearchUrl(), $ajax_options, $html_options);
     }
@@ -355,7 +356,7 @@ class CrudHelper
         $options = \array_merge($default_options, $options);
         if(!isset($ajax_options['update']))
         {
-            $ajax_options['update'] = 'js_holder_for_multi_update_'.md5($crud->getUrl());
+            $ajax_options['update'] = 'js_holder_for_multi_update_'.$crud->getSessionName();
         }
         if(!isset($html_options['class']))
         {

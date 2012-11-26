@@ -53,9 +53,9 @@ class CrudManager
      */
     public function __construct($session_name, CrudAbstractController $controller)
     {
-        if(empty($session_name))
+        if(!\preg_match('/^[a-zA-Z0-9_]+$/', $session_name))
         {
-            throw new \Exception('Variable session_name is required');
+            throw new \Exception('Variable session_name is not given or is invalid');
         }
         $this->session_name = $session_name;
         $this->container = $controller->getContainer();
@@ -243,7 +243,8 @@ class CrudManager
     {
         $this->form_filter_values_object = $form_filter_values_object;
                 
-        $form_builder = $this->container->get('form.factory')->createNamedBuilder('crud_search', new FormSearchType());
+        $form_name = sprintf('crud_search_%s', $this->session_name);
+        $form_builder = $this->container->get('form.factory')->createNamedBuilder($form_name, new FormSearchType());
         foreach($form_filter_values_object->getFieldsFilter() as $field)
         {
             if(!($field instanceof \Ecommit\CrudBundle\Form\Filter\FormFilterAbstract ))
@@ -425,9 +426,10 @@ class CrudManager
     protected function processRequest()
     {
         $request = $this->container->get('request');
-        if($request->request->has('crud_display_config'))
+        $display_config_form_name = sprintf('crud_display_config_%s', $this->session_name);
+        if($request->request->has($display_config_form_name))
         {
-            $display_config = $request->request->get('crud_display_config');
+            $display_config = $request->request->get($display_config_form_name);
             if(isset($display_config['displayed_columns']))
             {
                 $this->changeColumnsDisplayed($display_config['displayed_columns']);
@@ -509,7 +511,7 @@ class CrudManager
     {
         if(!is_array($value))
         {
-            $this->getDefaultDisplayedColumns();
+            $value = $this->getDefaultDisplayedColumns();
         }
         $new_displayed_columns = array();
         $available_columns = $this->available_columns;
@@ -696,5 +698,15 @@ class CrudManager
     {
         $this->div_id_list = $div_id_list;
         return $this;
+    }
+    
+    /**
+     * Gets session name
+     * 
+     * @return string
+     */
+    public function getSessionName()
+    {
+        return $this->session_name;
     }
 }
