@@ -49,7 +49,7 @@ class CrudManager
     protected $router;
     protected $form_factory;
     protected $request;
-
+    protected $doctrine;
 
     /**
      * Constructor
@@ -69,6 +69,7 @@ class CrudManager
         $this->router = $container->get('router');
         $this->form_factory = $container->get('form.factory');
         $this->request = $container->get('request');
+        $this->doctrine = $container->get('doctrine');
         $this->session_values = new CrudSessionManager();
         return $this;
     }
@@ -255,7 +256,7 @@ class CrudManager
                 
         $form_name = sprintf('crud_search_%s', $this->session_name);
         $form_builder = $this->form_factory->createNamedBuilder($form_name, new FormSearchType());
-        foreach($form_filter_values_object->getFieldsFilter() as $field)
+        foreach($form_filter_values_object->getFieldsFilter($this->doctrine) as $field)
         {
             if(!($field instanceof \Ecommit\CrudBundle\Form\Filter\FieldFilterAbstract ))
             {
@@ -600,6 +601,7 @@ class CrudManager
         $this->query_builder = null;
         $this->form_factory = null;
         $this->request = null;
+        $this->doctrine = null;
         if(empty($this->form_filter_values_object))
         {
             $this->form_filter = null;

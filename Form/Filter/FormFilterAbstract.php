@@ -60,11 +60,18 @@ abstract class FormFilterAbstract
      * 
      * @return array 
      */
-    public function getFieldsFilter()
+    public function getFieldsFilter($registry = null)
     {
         if(!$this->fields_filter)
         {
-            $this->fields_filter = $this->configureFieldsFilter();
+            foreach($this->configureFieldsFilter() as $field)
+            {
+                $this->fields_filter[] = $field;
+                if(!empty($registry) && $field instanceof \Ecommit\CrudBundle\Form\Filter\FieldFilterDoctrineInterface)
+                {
+                    $field->setRegistry($registry);
+                }
+            }
         }
         return $this->fields_filter;
     }

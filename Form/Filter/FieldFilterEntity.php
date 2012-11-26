@@ -13,51 +13,94 @@ namespace Ecommit\CrudBundle\Form\Filter;
 
 use Symfony\Component\Form\FormBuilder;
 
-class FieldFilterEntity extends FieldFilterList
+class FieldFilterEntity extends FieldFilterList implements FieldFilterDoctrineInterface
 {
+    protected $registry;
+    
+    protected $key_method;
+    protected $method;
+    protected $query_builder;
+    protected $class;
+    protected $em;
+
     /**
      * {@inheritDoc} 
      */
     public function __construct($column_id, $field_name, $options = array(), $field_options = array())
     {
-        $key_method = isset($options['key_method'])? $options['key_method'] : 'getId';
-        $method = isset($options['method'])? $options['method'] : '__toString';
+        $this->key_method = isset($options['key_method'])? $options['key_method'] : 'getId';
+        $this->method = isset($options['method'])? $options['method'] : '__toString';
         
+        if(empty($options['class']))
+        {
+            throw new \Exception(\get_class($this).': Options "class" is required');
+        }
+        $this->class = $options['class'];
         
         if(!empty($options['query_builder']))
         {
-            $query_builder = $options['query_builder'];
-            if(!($query_builder instanceof \Doctrine\ORM\QueryBuilder))
-            {
-                throw new \Exception(\get_class($this).': Option "query_builder": Bad format (\Doctrine\ORM\QueryBuilder required)');
-            }
-            $query = $query_builder->getQuery();
+            $this->query_builder = $options['query_builder'];
         }
-        elseif(!empty($options['class']) && !empty($options['em']))
+        if(!empty($options['em']))
         {
-            $em = $options['em'];
-            if(!($em instanceof \Doctrine\ORM\EntityManager))
-            {
-                throw new \Exception(\get_class($this).': Option "em": Bad format (\Doctrine\ORM\EntityManager required)');
-            }
-            $query = $em->createQueryBuilder();
-            $query = $query->from($options['class'], 'c')
-            ->select('c')
-            ->getQuery();
+            $this->em = $options['em'];
+        }
+        
+        $options['choices'] = array();
+        
+        parent::__construct($column_id, $field_name, $options, $field_options);
+    }
+    
+    /**
+     * {@inheritDoc} 
+     */
+    public function addField(FormBuilder $form_builder)
+    {
+        if(empty($this->em))
+        {
+            $em = $this->registry->getManagerForClass($this->class);
         }
         else
         {
-            throw new \Exception(\get_class($this).': Options "class / em" or "query_builder" are required');
+            $em = $this->registry->getManager($this->em);
         }
         
+        $query_builder = $this->query_builder;
+        if(empty($query_builder))
+        {
+            $query_builder= $em->createQueryBuilder()
+            ->from($this->class, 'c')
+            ->select('c');
+        }
+            
+        if($query_builder instanceof \Closure)
+        {
+            $query_builder = $query_builder($em->getRepository($this->class));
+        }        
+        if(!$query_builder instanceof \Doctrine\ORM\QueryBuilder)
+        {
+            throw new \Exception(\get_class($this).': "query_builder" must be an instance of Doctrine\ORM\QueryBuilder');
+        }
         
         $choices = array();
-        foreach($query->execute() as $choice)
+        $key_method = $this->key_method;
+        $method = $this->method;
+        foreach($query_builder->getQuery()->execute() as $choice)
         {
             $choices[$choice->$key_method()] = $choice->$method();
         }
-        $options['choices'] = $choices;
         
-        parent::__construct($column_id, $field_name, $options, $field_options);
+        $this->field_options['choices'] = $choices;
+        return parent::addField($form_builder);
+    }
+
+    public function getRegistry()
+    {
+        return $this->registry;
+    }
+
+    public function setRegistry(\Doctrine\Common\Persistence\ManagerRegistry $registry)
+    {
+        $this->registry = $registry;
     }
 }
