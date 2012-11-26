@@ -80,14 +80,21 @@ class CrudManager
      * @param string $id   Column id (used everywhere inside the crud)
      * @param string $alias   Column SQL alias
      * @param string $label   Column label (used in the header table)
-     * @param bool $sortable   If the column is sortable
-     * @param bool $default_displayed   If the column is displayed, by default
-     * @param type $alias_search   Column SQL alias, used during searchs. If null, $alias is used.
+     * @param array  $options   Options:
+     *      * sortable: If the column is sortable (Default: true)
+     *      * default_displayed: If the column is displayed, by default (Default: true)
+     *      * alias_search: Column SQL alias, used during searchs. If null, $alias is used.
      * @return CrudManager 
      */
-    public function addColumn($id, $alias, $label, $sortable = true, $default_displayed = true, $alias_search = null)
+    public function addColumn($id, $alias, $label, $options = array())
     {
-        $column = new CrudColumn($id, $alias, $label, $sortable, $default_displayed, $alias_search);
+        $default_options = array(
+            'sortable' => true,
+            'default_displayed' => true,
+            'alias_search' => true
+        );
+        $options = \array_merge($default_options, $options);
+        $column = new CrudColumn($id, $alias, $label, $options['sortable'], $options['default_displayed'], $options['alias_search']);
         $this->available_columns[$id] = $column;
         return $this;
     }
