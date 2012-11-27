@@ -104,13 +104,12 @@ class CrudManager
      * Add a virtual column inside the crud
      * 
      * @param string $id   Column id (used everywhere inside the crud)
-     * @param string $alias   Column SQL alias
-     * @param string $alias_search   Column SQL alias, used during searchs. If null, $alias is used.
+     * @param string $alias_search   Column SQL alias, used during searchs.
      * @return CrudManager 
      */
-    public function addVirtualColumn($id, $alias, $alias_search = null)
+    public function addVirtualColumn($id, $alias_search)
     {
-        $column = new CrudColumn($id, $alias, null, false, false, $alias_search);
+        $column = new CrudColumn($id, $alias_search, null, false, false, null);
         $this->available_virtual_columns[$id] = $column;
         return $this;
     }
