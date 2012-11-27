@@ -55,9 +55,9 @@ class FieldFilterList extends FieldFilterAbstract
     /**
      * {@inheritDoc} 
      */
-    public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $type, CrudColumn $column)
+    public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $form_data, CrudColumn $column)
     {
-        $value_list = $type->get($this->field_name);
+        $value_list = $form_data->get($this->field_name);
         $parameter_name = 'value_list'.str_replace(' ', '', $this->field_name);
         if(empty($value_list))
         {

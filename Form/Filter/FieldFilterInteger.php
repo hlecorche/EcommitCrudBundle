@@ -55,9 +55,9 @@ class FieldFilterInteger extends FieldFilterAbstract
     /**
      * {@inheritDoc} 
      */
-    public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $type, CrudColumn $column)
+    public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $form_data, CrudColumn $column)
     {
-        $value_integer = $type->get($this->field_name);
+        $value_integer = $form_data->get($this->field_name);
         if(!is_null($value_integer) && is_numeric($value_integer))  //Important: Is_null but not is_empty 
         {
             $parameter_name = 'value_integer_'.str_replace(' ', '', $this->field_name);

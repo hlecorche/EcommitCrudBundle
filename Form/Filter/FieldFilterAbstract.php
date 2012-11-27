@@ -33,11 +33,11 @@ abstract class FieldFilterAbstract
      * Changes the query
      * 
      * @param QueryBuilder $query_builder
-     * @param FormFilterAbstract $type
+     * @param FormFilterAbstract $form_data
      * @param CrudColumn $column
      * @return QueryBuilder
      */
-    abstract public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $type, CrudColumn $column);
+    abstract public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $form_data, CrudColumn $column);
     
     /**
      * Constructor

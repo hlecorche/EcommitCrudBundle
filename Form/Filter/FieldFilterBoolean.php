@@ -49,9 +49,9 @@ class FieldFilterBoolean extends FieldFilterAbstract
     /**
      * {@inheritDoc} 
      */
-    public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $type, CrudColumn $column)
+    public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $form_data, CrudColumn $column)
     {
-        $value_bool = $type->get($this->field_name);
+        $value_bool = $form_data->get($this->field_name);
         if(empty($value_bool) || !is_scalar($value_bool))
         {
             return $query_builder;

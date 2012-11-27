@@ -38,9 +38,9 @@ class FieldFilterEmpty extends FieldFilterAbstract
     /**
      * {@inheritDoc} 
      */
-    public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $type, CrudColumn $column)
+    public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $form_data, CrudColumn $column)
     {
-        $value_empty = $type->get($this->field_name);
+        $value_empty = $form_data->get($this->field_name);
         if(empty($value_empty) || !is_scalar($value_empty))
         {
             return $query_builder;

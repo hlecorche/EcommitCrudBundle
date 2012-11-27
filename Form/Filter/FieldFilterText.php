@@ -43,9 +43,9 @@ class FieldFilterText extends FieldFilterAbstract
     /**
      * {@inheritDoc} 
      */
-    public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $type, CrudColumn $column)
+    public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $form_data, CrudColumn $column)
     {
-        $value_text = $type->get($this->field_name);
+        $value_text = $form_data->get($this->field_name);
         $parameter_name = 'value_integer_'.str_replace(' ', '', $this->field_name);
         if(empty($value_text) || !is_scalar($value_text))
         {

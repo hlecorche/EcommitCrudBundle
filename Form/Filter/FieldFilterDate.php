@@ -64,9 +64,9 @@ class FieldFilterDate extends FieldFilterAbstract
     /**
      * {@inheritDoc} 
      */
-    public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $type, CrudColumn $column)
+    public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $form_data, CrudColumn $column)
     {
-        $value_date = $type->get($this->field_name);
+        $value_date = $form_data->get($this->field_name);
         if(!empty($value_date) && $value_date instanceof \DateTime)
         {
             $parameter_name = 'value_date_'.str_replace(' ', '', $this->field_name);
