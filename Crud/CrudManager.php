@@ -11,12 +11,12 @@
 
 namespace Ecommit\CrudBundle\Crud;
 
-use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Ecommit\CrudBundle\Controller\CrudAbstractController;
-use Ecommit\CrudBundle\Paginator\DoctrinePaginator;
 use Ecommit\CrudBundle\Form\Filter\FormFilterAbstract;
 use Ecommit\CrudBundle\Form\Type\FormSearchType;
+use Ecommit\CrudBundle\Paginator\DbalPaginator;
+use Ecommit\CrudBundle\Paginator\DoctrinePaginator;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CrudManager
 {
@@ -35,6 +35,7 @@ class CrudManager
     protected $form_filter_values_object = null;
     protected $form_filter = null;
     protected $query_builder = null;
+    protected $use_dbal = false;
     protected $paginator = null;
     protected $build_paginator = true;
     protected $route_name = null;
@@ -120,7 +121,7 @@ class CrudManager
      * @param QueryBuilder $query_builder
      * @return CrudManager 
      */
-    public function setQueryBuilder(QueryBuilder $query_builder)
+    public function setQueryBuilder($query_builder)
     {
         $this->query_builder = $query_builder;
         return $this;
@@ -254,6 +255,17 @@ class CrudManager
     public function setBuildPaginator($value)
     {
         $this->build_paginator = $value;
+        return $this;
+    }
+    
+    /*
+     * Use (or not) DBAL
+     * 
+     * @param bool $value
+     */
+    public function setUseDbal($value)
+    {
+        $this->use_dbal = $value;
         return $this;
     }
     
@@ -398,9 +410,17 @@ class CrudManager
         if($this->build_paginator)
         {
             $page = $this->request->query->get('page', 1);
-
-            $this->paginator = new DoctrinePaginator($this->session_values->number_results_displayed);
-            $this->paginator->setQueryBuilder($this->query_builder);
+            
+            if($this->use_dbal)
+            {
+                $this->paginator = new DbalPaginator($this->session_values->number_results_displayed);
+                $this->paginator->setDbalQueryBuilder($this->query_builder);
+            }
+            else
+            {
+                $this->paginator = new DoctrinePaginator($this->session_values->number_results_displayed);
+                $this->paginator->setQueryBuilder($this->query_builder);
+            }
             $this->paginator->setPage($page);
             $this->paginator->init();
         }

@@ -12,7 +12,6 @@
 namespace Ecommit\CrudBundle\Form\Filter;
 
 use Symfony\Component\Form\FormBuilder;
-use Doctrine\ORM\QueryBuilder;
 use Ecommit\CrudBundle\Crud\CrudColumn;
 
 class FieldFilterNumber extends FieldFilterInteger

@@ -12,7 +12,6 @@
 namespace Ecommit\CrudBundle\Form\Filter;
 
 use Symfony\Component\Form\FormBuilder;
-use Doctrine\ORM\QueryBuilder;
 use Ecommit\CrudBundle\Crud\CrudColumn;
 
 abstract class FieldFilterAbstract
@@ -37,7 +36,7 @@ abstract class FieldFilterAbstract
      * @param CrudColumn $column
      * @return QueryBuilder
      */
-    abstract public function changeQuery(QueryBuilder $query_builder, FormFilterAbstract $form_data, CrudColumn $column);
+    abstract public function changeQuery($query_builder, FormFilterAbstract $form_data, CrudColumn $column);
     
     /**
      * Constructor
