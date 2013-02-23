@@ -254,6 +254,7 @@ class CrudManager
     public function setBuildPaginator($value)
     {
         $this->build_paginator = $value;
+        return $this;
     }
     
     /**
