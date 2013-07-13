@@ -12,3 +12,4 @@ filter.true: Oui
 filter.false: Non
 picker.add: Ajouter
 picker.list: Sélectionner
+reset_display_settings: Réinitialiser paramètres par défaut

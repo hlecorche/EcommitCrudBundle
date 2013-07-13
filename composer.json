@@ -11,6 +11,7 @@
     ],
     "require": {
         "symfony/framework-bundle": ">=2.2.0,<2.4",
+        "doctrine/orm": "*",
         "ecommit/util-bundle": "1.4.*@dev",
         "ecommit/javascript-bundle": "1.4.*@dev"
     },

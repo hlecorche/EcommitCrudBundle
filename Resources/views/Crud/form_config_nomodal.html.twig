@@ -1,4 +1,5 @@
 {% set ajax_options = ajax_options|merge({ 'before': 'processCrudDisplayConfig'~suffix~'();' }) %}
+{% set reset_ajax_options = ajax_options|merge({ 'before': 'reset_display_config_'~suffix~'();' }) %}
 
 <div id="display_config_{{ suffix }}" class="display_config_nomodal">
     <div class="title">{% trans %}Display Settings{% endtrans %}</div>
@@ -13,6 +14,7 @@
         {{ form_rest(form) }}
 
         <input type="submit" class="save" value="{% trans %}Save{% endtrans %}" />
+        {{ jQuery_ajax_button('reset_display_settings'|trans, reset_settings_url, reset_ajax_options, {'class': 'raz'}) }}
     </form>
 </div>
 
@@ -36,6 +38,17 @@
         {
             $("#display_config_{{ suffix }}").show("slow");
         }
+    }
+    function reset_display_config_{{ suffix }}()
+    {
+        $('#{{ form.npp.vars.id }}').val({{ default_npp }});
+        {% for choice, child in form.displayed_columns %}
+            {% if child.vars.value in default_columns %}
+                $('#{{ child.vars.id }}').attr('checked', true);
+            {% else %}
+                $('#{{ child.vars.id }}').attr('checked', false);
+            {% endif %}
+        {% endfor %}
     }
 </script>
 

@@ -1,4 +1,5 @@
 {% set ajax_options = ajax_options|merge({ 'before': 'processCrudDisplayConfig_'~suffix~'();' }) %}
+{% set reset_ajax_options = ajax_options|merge({ 'before': 'reset_display_config_'~suffix~'();' }) %}
 
 <div id="display_config_{{ suffix }}" class="crud_modal" style="width: 500px; text-align: left;">
 <div class="contentWrap">
@@ -15,6 +16,7 @@
 
         <div style="text-align: center;">
             <input type="submit" class="save" value="{% trans %}Save{% endtrans %}" />
+            {{ jQuery_ajax_button('reset_display_settings'|trans, reset_settings_url, reset_ajax_options, {'class': 'raz'}) }}
         </div>
     </form>
 </div>
@@ -34,6 +36,18 @@
     function change_display_config_{{ suffix }}()
     {
         dialog_display_config_{{ suffix }}.load();
+    }
+    function reset_display_config_{{ suffix }}()
+    {
+        $('#{{ form.npp.vars.id }}').val({{ default_npp }});
+        {% for choice, child in form.displayed_columns %}
+            {% if child.vars.value in default_columns %}
+                $('#{{ child.vars.id }}').attr('checked', true);
+            {% else %}
+                $('#{{ child.vars.id }}').attr('checked', false);
+            {% endif %}
+        {% endfor %}
+        dialog_display_config_{{ suffix }}.close();
     }
 </script>
 

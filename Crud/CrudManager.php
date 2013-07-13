@@ -12,6 +12,7 @@
 namespace Ecommit\CrudBundle\Crud;
 
 use Ecommit\CrudBundle\Controller\CrudAbstractController;
+use Ecommit\CrudBundle\Entity\UserCrudSettings;
 use Ecommit\CrudBundle\Form\Filter\FormFilterAbstract;
 use Ecommit\CrudBundle\Form\Type\FormSearchType;
 use Ecommit\CrudBundle\Paginator\DbalPaginator;
@@ -36,6 +37,8 @@ class CrudManager
     protected $form_filter = null;
     protected $query_builder = null;
     protected $use_dbal = false;
+    protected $persistent_settings = false;
+    protected $update_database = false;
     protected $paginator = null;
     protected $build_paginator = true;
     protected $route_name = null;
@@ -52,6 +55,7 @@ class CrudManager
     protected $form_factory;
     protected $request;
     protected $doctrine;
+    protected $user;
 
     /**
      * Constructor
@@ -62,7 +66,7 @@ class CrudManager
      */
     public function __construct($session_name, CrudAbstractController $controller)
     {
-        if(!\preg_match('/^[a-zA-Z0-9_]+$/', $session_name))
+        if(!\preg_match('/^[a-zA-Z0-9_]{1,30}$/', $session_name))
         {
             throw new \Exception('Variable session_name is not given or is invalid');
         }
@@ -72,6 +76,7 @@ class CrudManager
         $this->form_factory = $container->get('form.factory');
         $this->request = $container->get('request');
         $this->doctrine = $container->get('doctrine');
+        $this->user = $controller->getUser();
         $this->session_values = new CrudSessionManager();
         return $this;
     }
@@ -90,6 +95,11 @@ class CrudManager
      */
     public function addColumn($id, $alias, $label, $options = array())
     {
+        if(\strlen($id) > 30)
+        {
+            throw new \Exception('Column id is too long');
+        }
+        
         $default_options = array(
             'sortable' => true,
             'default_displayed' => true,
@@ -269,6 +279,17 @@ class CrudManager
         return $this;
     }
     
+    /*
+     * Use (or not) persistent settings
+     * 
+     * @param bool $value
+     */
+    public function setPersistentSettings($value)
+    {
+        $this->persistent_settings = $value;
+        return $this;
+    }
+    
     /**
      * Sets the paginator
      * 
@@ -434,22 +455,43 @@ class CrudManager
     protected function load()
     {
         $session = $this->request->getSession();
-        $object = $session->get($this->session_name);
-        if(empty($object))
-        {
-            $this->session_values->columns_diplayed = $this->getDefaultDisplayedColumns();
-            $this->session_values->number_results_displayed = $this->default_number_results_displayed;
-            $this->session_values->sense = $this->default_sense;
-            $this->session_values->sort = $this->default_sort;
-            if(!empty($this->form_filter_values_object))
-            {
-                $this->session_values->form_filter_values_object = clone $this->form_filter_values_object;
-            }
-        }
-        else
+        $object = $session->get($this->session_name); //Load from session
+        
+        if(!empty($object))
         {
             $this->session_values = $object;
             $this->checkCrudSessionManager();
+            return;
+        }
+        
+        //If session is null => Retrieve from database
+        //Only if persistent settings is enabled
+        if($this->persistent_settings)
+        {
+            $object_database = $this->doctrine->getRepository('EcommitCrudBundle:UserCrudSettings')->findOneBy(array(
+                'user' => $this->user,
+                'crud_name' => $this->session_name
+            ));
+            if($object_database)
+            {
+                $this->session_values = $object_database->transformToCrudSessionManager(new CrudSessionManager());
+                if(!empty($this->form_filter_values_object))
+                {
+                    $this->session_values->form_filter_values_object = clone $this->form_filter_values_object;
+                }
+                $this->checkCrudSessionManager();
+                return;
+            }
+        }
+        
+        //Session and database values are null: Default values;
+        $this->session_values->columns_diplayed = $this->getDefaultDisplayedColumns();
+        $this->session_values->number_results_displayed = $this->default_number_results_displayed;
+        $this->session_values->sense = $this->default_sense;
+        $this->session_values->sort = $this->default_sort;
+        if(!empty($this->form_filter_values_object))
+        {
+            $this->session_values->form_filter_values_object = clone $this->form_filter_values_object;
         }
     }
     
@@ -459,12 +501,46 @@ class CrudManager
      */
     protected function save()
     {
+        //Save in session
         $session = $this->request->getSession();
         if(is_object($this->session_values->form_filter_values_object))
         {
             $this->session_values->form_filter_values_object->clear();
         }
         $session->set($this->session_name, $this->session_values);
+        
+        //Save in database
+        if($this->persistent_settings && $this->update_database)
+        {
+            $object_database = $this->doctrine->getRepository('EcommitCrudBundle:UserCrudSettings')->findOneBy(array(
+                'user' => $this->user,
+                'crud_name' => $this->session_name
+            ));
+            $em = $this->doctrine->getManager();
+            
+            if($object_database)
+            {
+                //Update object in database
+                $object_database->updateFromSessionManager($this->session_values);
+                $em->flush();
+            }
+            else
+            {
+                //Create object in database only if not default values
+                if($this->session_values->columns_diplayed != $this->getDefaultDisplayedColumns() ||
+                        $this->session_values->number_results_displayed != $this->default_number_results_displayed ||
+                        $this->session_values->sense != $this->default_sense ||
+                        $this->session_values->sort != $this->default_sort)
+                {
+                    $object_database = new UserCrudSettings();
+                    $object_database->setUser($this->user);
+                    $object_database->setCrudName($this->session_name);
+                    $object_database->updateFromSessionManager($this->session_values);
+                    $em->persist($object_database);
+                    $em->flush();
+                }
+            }
+        }
     }
     
     /**
@@ -478,6 +554,29 @@ class CrudManager
         $this->changePage(1);
         $this->save();
     }
+    
+    /**
+     * Reset display settings
+     * 
+     */
+    protected function razDisplaySettings()
+    {
+        $this->session_values->columns_diplayed = $this->getDefaultDisplayedColumns();
+        $this->session_values->number_results_displayed = $this->default_number_results_displayed;
+        $this->session_values->sense = $this->default_sense;
+        $this->session_values->sort = $this->default_sort;
+        
+        if($this->persistent_settings)
+        {
+            //Remove settings in database
+            $qb = $this->doctrine->getManager()->createQueryBuilder();
+            $qb->delete('EcommitCrudBundle:UserCrudSettings', 's')
+                    ->andWhere('s.user = :user AND s.crud_name = :crud_name')
+                    ->setParameters(array('user' => $this->user, 'crud_name' => $this->session_name))
+                    ->getQuery()
+                    ->execute();
+        }
+    }
 
     /**
      * Process request
@@ -485,6 +584,12 @@ class CrudManager
      */
     protected function processRequest()
     {
+        if($this->request->query->has('razsettings'))
+        {
+            //Reset display settings
+            $this->razDisplaySettings();
+            return;
+        }
         $display_config_form_name = sprintf('crud_display_config_%s', $this->session_name);
         if($this->request->request->has($display_config_form_name))
         {
@@ -517,7 +622,7 @@ class CrudManager
      * 
      * @return array
      */
-    protected function getDefaultDisplayedColumns()
+    public function getDefaultDisplayedColumns()
     {
         $columns = array();
         foreach($this->available_columns as $column)
@@ -534,6 +639,23 @@ class CrudManager
         return $columns;
     }
     
+    
+    /**
+     * Return default number of results
+     * @return int
+     */
+    public function getDefaultNumberResultsDisplayed()
+    {
+        return $this->default_number_results_displayed;
+    }
+
+    protected function testIfDatabaseMustMeUpdated($old_value, $new_value)
+    {
+        if($old_value != $new_value)
+        {
+            $this->update_database = true;
+        }
+    }
     
     /**
      * Checks user values
@@ -556,6 +678,7 @@ class CrudManager
      */
     protected function changeNumberResultsDisplayed($value)
     {
+        $old_value = $this->session_values->number_results_displayed;
         if(in_array($value, $this->available_number_results_displayed))
         {
              $this->session_values->number_results_displayed = $value;
@@ -564,6 +687,7 @@ class CrudManager
         {
             $this->session_values->number_results_displayed = $this->default_number_results_displayed;
         }
+        $this->testIfDatabaseMustMeUpdated($old_value, $value);
     }
     
     /**
@@ -573,6 +697,7 @@ class CrudManager
      */
     protected function changeColumnsDisplayed($value)
     {
+        $old_value = $this->session_values->columns_diplayed;
         if(!is_array($value))
         {
             $value = $this->getDefaultDisplayedColumns();
@@ -591,6 +716,7 @@ class CrudManager
             $new_displayed_columns = $this->getDefaultDisplayedColumns();
         }
         $this->session_values->columns_diplayed = $new_displayed_columns;
+        $this->testIfDatabaseMustMeUpdated($old_value, $new_displayed_columns);
     }
     
     /**
@@ -600,14 +726,17 @@ class CrudManager
      */
     protected function changeSort($value)
     {
+        $old_value = $this->session_values->sort;
         $available_columns = $this->available_columns;
         if(array_key_exists($value, $available_columns) && $available_columns[$value]->sortable)
         {
             $this->session_values->sort = $value;
+            $this->testIfDatabaseMustMeUpdated($old_value, $value);
         }
         else
         {
             $this->session_values->sort = $this->default_sort;
+            $this->testIfDatabaseMustMeUpdated($old_value, $this->default_sort);
         }
     }
     
@@ -618,13 +747,16 @@ class CrudManager
      */
     protected function changeSense($value)
     {
+        $old_value = $this->session_values->sense;
         if($value == self::ASC || $value == self::DESC)
         {
             $this->session_values->sense = $value;
+            $this->testIfDatabaseMustMeUpdated($old_value, $value);
         }
         else
         {
             $this->session_values->sense = $this->default_sense;
+            $this->testIfDatabaseMustMeUpdated($old_value, $this->default_sense);
         }
     }
     

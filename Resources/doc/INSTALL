@@ -40,3 +40,7 @@ public function registerBundles()
 
 * Add into .htaccess file (before Symfony lines):
     RewriteRule ^ecr/(.+)$ bundles/ecommitcrud/$1 [L]
+
+* Add into config.yml (adapt value):
+    resolve_target_entities:
+            Ecommit\CrudBundle\Entity\UserCrudInterface: Ecc\UserBundle\Entity\User
