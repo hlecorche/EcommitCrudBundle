@@ -325,6 +325,7 @@ class CrudManager
             if($this->form_filter->isValid())
             {
                 $this->changeFilterValues($this->form_filter->getData());
+                $this->changePage(1);
                 $this->save();
             }
         }
@@ -409,7 +410,7 @@ class CrudManager
         //Builds paginator
         if($this->build_paginator)
         {
-            $page = $this->request->query->get('page', 1);
+            $page = $this->session_values->page;
             
             if($this->use_dbal)
             {
@@ -474,6 +475,7 @@ class CrudManager
     {
         $new_value = clone $this->form_filter_values_object;
         $this->changeFilterValues($new_value);
+        $this->changePage(1);
         $this->save();
     }
 
@@ -503,6 +505,10 @@ class CrudManager
         if($this->request->query->has('sense'))
         {
             $this->changeSense($this->request->query->get('sense'));
+        }
+        if($this->request->query->has('page'))
+        {
+            $this->changePage($this->request->query->get('page'));
         }
     }
     
@@ -540,6 +546,7 @@ class CrudManager
         $this->changeSort($this->session_values->sort);
         $this->changeSense($this->session_values->sense);
         $this->changeFilterValues($this->session_values->form_filter_values_object);
+        $this->changePage($this->session_values->page);
     }
     
     /**
@@ -619,6 +626,21 @@ class CrudManager
         {
             $this->session_values->sense = $this->default_sense;
         }
+    }
+    
+    /**
+     * User action: Changes page number
+     * 
+     * @param string $value   Page number
+     */
+    protected function changePage($value)
+    {
+        $value = \intval($value);
+        if($value > 1000000000000)
+        {
+            $value = 1;
+        }
+        $this->session_values->page = $value;
     }
     
     /**

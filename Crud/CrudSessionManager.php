@@ -48,4 +48,11 @@ class CrudSessionManager
      * @var type 
      */
     public $sense = null;
+    
+    /**
+     * Page number
+     * 
+     * @var int 
+     */
+    public $page = 1;
 }
