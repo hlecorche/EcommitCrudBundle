@@ -46,7 +46,7 @@ class EntityPickerType extends AbstractType
         $builder->add('key', 'hidden');
         $builder->add('text', 'text');
         
-        $builder->addViewTransformer(new EntityToAutoCompleteTransformer($options['query_builder'], $options['alias'], $options['method'], $options['key_method']));
+        $builder->addViewTransformer(new EntityToAutoCompleteTransformer($options['query_builder'], $options['alias'], $options['render_method'], $options['key_method']));
     }
 
     
@@ -131,7 +131,7 @@ class EntityPickerType extends AbstractType
             'em'                => null,
             'query_builder'     => null,
             'alias'             => null,
-            'method'            => '__toString',
+            'render_method'     => '__toString',
             'key_method'        => 'getId',
             'image_add'         => 'ecr/images/i16/add.png',
             'image_list'        => 'ecr/images/i16/form_search.png',
