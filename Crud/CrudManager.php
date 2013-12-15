@@ -342,7 +342,7 @@ class CrudManager
         }
         if ($this->request->getMethod() == 'POST')
         {
-            $this->form_filter->bind($this->request);             
+            $this->form_filter->handleRequest($this->request);             
             if($this->form_filter->isValid())
             {
                 $this->changeFilterValues($this->form_filter->getData());
