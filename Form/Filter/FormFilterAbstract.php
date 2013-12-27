@@ -11,6 +11,8 @@
 
 namespace Ecommit\CrudBundle\Form\Filter;
 
+use Symfony\Component\Form\FormBuilderInterface;
+
 abstract class FormFilterAbstract
 {
     protected $fields_filter;
@@ -64,6 +66,7 @@ abstract class FormFilterAbstract
     {
         if(!$this->fields_filter)
         {
+            $this->fields_filter = array();
             foreach($this->configureFieldsFilter() as $field)
             {
                 $this->fields_filter[] = $field;
@@ -74,5 +77,27 @@ abstract class FormFilterAbstract
             }
         }
         return $this->fields_filter;
+    }
+    
+    /**
+     * Changes the form (global change)
+     * 
+     * @param \Symfony\Component\Form\FormBuilderInterface $form_builder
+     * @return \Symfony\Component\Form\FormBuilderInterface
+     */
+    public function globalBuildForm(FormBuilderInterface $form_builder)
+    {
+        return $form_builder;
+    }
+    
+    /**
+     * Changes the query (global change)
+     * 
+     * @param QueryBuilder $query_builder
+     * @return QueryBuilder
+     */
+    public function globalChangeQuery($query_builder)
+    {
+        return $query_builder;
     }
 }

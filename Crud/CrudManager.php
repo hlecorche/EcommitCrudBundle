@@ -320,6 +320,8 @@ class CrudManager
             }
             $form_builder = $field->addField($form_builder);
         }
+        //Global 
+        $form_builder = $form_filter_values_object->globalBuildForm($form_builder);
         $this->form_filter = $form_builder->getForm();
         return $this;
     }
@@ -426,6 +428,8 @@ class CrudManager
                         $this->session_values->form_filter_values_object, $column);
             }
         }
+        //Global change Query
+        $this->query_builder = $this->session_values->form_filter_values_object->globalChangeQuery($this->query_builder);
         
         
         //Builds paginator
