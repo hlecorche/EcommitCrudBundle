@@ -53,9 +53,9 @@ class FieldFilterAutoComplete extends FieldFilterAbstract
         {
             $field_options['key_method'] = $options['key_method'];
         }
-        if(!empty($options['method']))
+        if(!empty($options['render_method']))
         {
-            $field_options['method'] = $options['method'];
+            $field_options['render_method'] = $options['render_method'];
         }
         
         $this->multiple = isset($options['multiple'])? $options['multiple'] : false;

@@ -29,7 +29,7 @@ class FieldFilterEntity extends FieldFilterList implements FieldFilterDoctrineIn
     public function __construct($column_id, $field_name, $options = array(), $field_options = array())
     {
         $this->key_method = isset($options['key_method'])? $options['key_method'] : 'getId';
-        $this->method = isset($options['method'])? $options['method'] : '__toString';
+        $this->method = isset($options['render_method'])? $options['render_method'] : '__toString';
         
         if(empty($options['class']))
         {
