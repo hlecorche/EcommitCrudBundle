@@ -23,7 +23,7 @@
 </div>
 
 <script type="text/javascript">
-    var dialog_display_config_{{ suffix }} = $('#display_config_{{ suffix }}').overlay({oneInstance: false, api: true});
+    var dialog_display_config_{{ suffix }} = $('#display_config_{{ suffix }}').overlay({oneInstance: false, api: true, fixed: false});
     function processCrudDisplayConfig_{{ suffix }}()
     {
        if($('#display_config_{{ suffix }} input:checkbox:checked').length < 1)
