@@ -260,7 +260,7 @@ class CrudManager
     /**
      * Enables (or not) the auto build paginator
      * 
-     * @param bool $value 
+     * @param bool|closure $value 
      */
     public function setBuildPaginator($value)
     {
@@ -433,8 +433,18 @@ class CrudManager
         
         
         //Builds paginator
-        if($this->build_paginator)
+        if(is_object($this->build_paginator) && $this->build_paginator instanceof \Closure)
         {
+            //Case: Manual paginator (by closure) is enabled
+            $this->paginator = $this->build_paginator->__invoke(
+                    $this->query_builder,
+                    $this->session_values->page,
+                    $this->session_values->number_results_displayed
+            );
+        }
+        elseif($this->build_paginator)
+        {
+            //Case: Auto paginator is enabled
             $page = $this->session_values->page;
             
             if($this->use_dbal)
