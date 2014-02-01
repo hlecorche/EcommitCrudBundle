@@ -20,11 +20,13 @@ class Paginate
      * Returns total results (SQL function "count")
      * 
      * @param Query $query
+     * @param bool $simplified_request  Use simplified request (not subrequest and not order by) or not
      * @return int 
      */
-    static public function count(Query $query)
+    static public function count(Query $query, $simplified_request = false)
     {
         $doctrine_paginator = new Paginator($query, false);
+        $doctrine_paginator->setUseOutputWalkers(!$simplified_request);
         return $doctrine_paginator->count();
     }
 }
