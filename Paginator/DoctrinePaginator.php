@@ -18,7 +18,7 @@ use Ecommit\CrudBundle\DoctrineExtension\Paginate;
 class DoctrinePaginator extends AbstractPaginator
 {
     protected $query = null;
-    protected $totalResults = null;
+    protected $totalResults = null; //Manual total results
     
     /**
      * Initializes the pager.

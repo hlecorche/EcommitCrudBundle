@@ -14,6 +14,8 @@ namespace Ecommit\CrudBundle\Paginator;
 class SimplePaginator extends AbstractPaginator
 {
 
+    protected $totalResults = null; //Manual total results
+    
     /**
      * Initializes the pager.
      * 
@@ -25,21 +27,39 @@ class SimplePaginator extends AbstractPaginator
         {
             throw new \Exception('Objects are required (array)');
         }
-        $this->setNbResults(\count($this->objects));
-
-        $offset = 0;
-        $limit = 0;
-        if ($this->getPage() == 0 || $this->getMaxPerPage() == 0 || $this->getNbResults() == 0)
+        
+        if(is_null($this->totalResults))
         {
-            $this->setLastPage(0);
-        } else
-        {
-            $this->setLastPage(\ceil($this->getNbResults() / $this->getMaxPerPage()));
-            $offset = ($this->getPage() - 1) * $this->getMaxPerPage();
+            $this->setNbResults(\count($this->objects));
+            
+            $offset = 0;
+            $limit = 0;
+            if ($this->getPage() == 0 || $this->getMaxPerPage() == 0 || $this->getNbResults() == 0)
+            {
+                $this->setLastPage(0);
+            }
+            else
+            {
+                $this->setLastPage(\ceil($this->getNbResults() / $this->getMaxPerPage()));
+                $offset = ($this->getPage() - 1) * $this->getMaxPerPage();
 
-            $limit = $this->getMaxPerPage();
+                $limit = $this->getMaxPerPage();
+            }
+            $this->objects = \array_slice($this->objects, $offset, $limit);
         }
-        $this->objects = \array_slice($this->objects, $offset, $limit);
+        else
+        {
+            $this->setNbResults($this->totalResults);
+            
+            if ($this->getPage() == 0 || $this->getMaxPerPage() == 0 || $this->getNbResults() == 0)
+            {
+                $this->setLastPage(0);
+            }
+            else
+            {
+                $this->setLastPage(\ceil($this->getNbResults() / $this->getMaxPerPage()));
+            }
+        }
     }
     
     /**
@@ -50,7 +70,20 @@ class SimplePaginator extends AbstractPaginator
     public function setResults($results)
     {
         $this->resetIterator();
-    $this->objects = $results;
+        $this->objects = $results;
+    }
+    
+    /**
+     * Set an array of results without slice
+     * 
+     * @param array $results
+     * @param Int $totalResults 
+     */
+    public function setResultsWithoutSlice($results, $totalResults)
+    {
+        $this->resetIterator();
+        $this->objects = $results;
+        $this->totalResults = $totalResults;
     }
 
     /**
@@ -73,6 +106,6 @@ class SimplePaginator extends AbstractPaginator
     protected function retrieveObject($offset)
     {
         $results = $this->objects;
-    return $results[$offset];
+        return $results[$offset];
     }
 }
