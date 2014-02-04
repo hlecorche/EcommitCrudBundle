@@ -91,6 +91,7 @@ class CrudManager
      *      * sortable: If the column is sortable (Default: true)
      *      * default_displayed: If the column is displayed, by default (Default: true)
      *      * alias_search: Column SQL alias, used during searchs. If null, $alias is used.
+     *      * alias_sort: Column(s) SQL alias (string or array of strings), used during sorting. If null, $alias is used.
      * @return CrudManager 
      */
     public function addColumn($id, $alias, $label, $options = array())
@@ -103,10 +104,11 @@ class CrudManager
         $default_options = array(
             'sortable' => true,
             'default_displayed' => true,
-            'alias_search' => null
+            'alias_search' => null,
+            'alias_sort' => null,
         );
         $options = \array_merge($default_options, $options);
-        $column = new CrudColumn($id, $alias, $label, $options['sortable'], $options['default_displayed'], $options['alias_search']);
+        $column = new CrudColumn($id, $alias, $label, $options['sortable'], $options['default_displayed'], $options['alias_search'], $options['alias_sort']);
         $this->available_columns[$id] = $column;
         return $this;
     }
@@ -120,7 +122,7 @@ class CrudManager
      */
     public function addVirtualColumn($id, $alias_search)
     {
-        $column = new CrudColumn($id, $alias_search, null, false, false, null);
+        $column = new CrudColumn($id, $alias_search, null, false, false, null, null);
         $this->available_virtual_columns[$id] = $column;
         return $this;
     }
@@ -404,8 +406,26 @@ class CrudManager
     {
         //Builds query
         $column_sort_id = $this->session_values->sort;
-        $column_sort_alias = $this->available_columns[$column_sort_id]->alias;
-        $this->query_builder->orderBy($column_sort_alias, $this->session_values->sense);
+        $column_sort_alias = $this->available_columns[$column_sort_id]->alias_sort;
+        if(empty($column_sort_alias))
+        {
+            //Sort alias is not defined. Alias is used
+            $column_sort_alias = $this->available_columns[$column_sort_id]->alias;
+            $this->query_builder->orderBy($column_sort_alias, $this->session_values->sense);
+        }
+        elseif(is_array($column_sort_alias))
+        {
+            //Sort alias is defined in many columns
+            foreach($column_sort_alias as $one_column_sort_alias)
+            {
+                $this->query_builder->addOrderBy($one_column_sort_alias, $this->session_values->sense);
+            }
+        }
+        else
+        {
+            //Sort alias is defined in one column
+            $this->query_builder->orderBy($column_sort_alias, $this->session_values->sense);
+        }
         
         //Adds form filter filters
         if(!empty($this->form_filter_values_object))
@@ -427,9 +447,10 @@ class CrudManager
                 $this->query_builder = $field->changeQuery($this->query_builder, 
                         $this->session_values->form_filter_values_object, $column);
             }
+            
+            //Global change Query
+            $this->query_builder = $this->session_values->form_filter_values_object->globalChangeQuery($this->query_builder);
         }
-        //Global change Query
-        $this->query_builder = $this->session_values->form_filter_values_object->globalChangeQuery($this->query_builder);
         
         
         //Builds paginator
