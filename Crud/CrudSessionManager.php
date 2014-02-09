@@ -19,7 +19,7 @@ class CrudSessionManager
      * 
      * @var Object
      */
-    public $form_filter_values_object = null;
+    public $form_searcher_values_object = null;
     
     /**
      * Number of results, in one page

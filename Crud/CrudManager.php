@@ -13,7 +13,7 @@ namespace Ecommit\CrudBundle\Crud;
 
 use Ecommit\CrudBundle\Controller\CrudAbstractController;
 use Ecommit\CrudBundle\Entity\UserCrudSettings;
-use Ecommit\CrudBundle\Form\Filter\FormFilterAbstract;
+use Ecommit\CrudBundle\Form\Searcher\FormSearcherAbstract;
 use Ecommit\CrudBundle\Form\Type\FormSearchType;
 use Ecommit\CrudBundle\Paginator\DbalPaginator;
 use Ecommit\CrudBundle\Paginator\DoctrinePaginator;
@@ -33,8 +33,8 @@ class CrudManager
     protected $default_sort = null;
     protected $default_sense = null;
     protected $default_number_results_displayed = null;
-    protected $form_filter_values_object = null;
-    protected $form_filter = null;
+    protected $form_searcher_values_object = null;
+    protected $form_searcher = null;
     protected $query_builder = null;
     protected $use_dbal = false;
     protected $persistent_settings = false;
@@ -305,26 +305,26 @@ class CrudManager
     /**
      * Adds search form
      * 
-     * @param FormFilterAbstract $form_filter_values_object
+     * @param FormSearcherAbstract $form_searcher_values_object
      * @return CrudManager 
      */
-    public function createFilterForm(FormFilterAbstract $form_filter_values_object)
+    public function createSearcherForm(FormSearcherAbstract $form_searcher_values_object)
     {
-        $this->form_filter_values_object = $form_filter_values_object;
+        $this->form_searcher_values_object = $form_searcher_values_object;
                 
         $form_name = sprintf('crud_search_%s', $this->session_name);
         $form_builder = $this->form_factory->createNamedBuilder($form_name, new FormSearchType());
-        foreach($form_filter_values_object->getFieldsFilter($this->doctrine) as $field)
+        foreach($form_searcher_values_object->getFieldsFilter($this->doctrine) as $field)
         {
             if(!($field instanceof \Ecommit\CrudBundle\Form\Filter\FieldFilterAbstract ))
             {
-                throw new \Exception('Crud: FormFilterAbstract: getFieldsFilter() must only returns FieldFilterAbstract implementations');
+                throw new \Exception('Crud: FormSearcherAbstract: getFieldsFilter() must only returns FieldFilterAbstract implementations');
             }
             $form_builder = $field->addField($form_builder);
         }
         //Global 
-        $form_builder = $form_filter_values_object->globalBuildForm($form_builder);
-        $this->form_filter = $form_builder->getForm();
+        $form_builder = $form_searcher_values_object->globalBuildForm($form_builder);
+        $this->form_searcher = $form_builder->getForm();
         return $this;
     }
     
@@ -334,9 +334,9 @@ class CrudManager
      */
     public function processForm()
     {
-        if(empty($this->form_filter_values_object))
+        if(empty($this->form_searcher_values_object))
         {
-            throw new NotFoundHttpException('Crud: Form filter does not exist');
+            throw new NotFoundHttpException('Crud: Form searcher does not exist');
         }
         
         if($this->request->query->has('raz'))
@@ -346,10 +346,10 @@ class CrudManager
         }
         if ($this->request->getMethod() == 'POST')
         {
-            $this->form_filter->handleRequest($this->request);             
-            if($this->form_filter->isValid())
+            $this->form_searcher->handleRequest($this->request);             
+            if($this->form_searcher->isValid())
             {
-                $this->changeFilterValues($this->form_filter->getData());
+                $this->changeFilterValues($this->form_searcher->getData());
                 $this->changePage(1);
                 $this->save();
             }
@@ -365,7 +365,7 @@ class CrudManager
         //Cheks not empty values
         $check_values = array('available_columns', 'available_number_results_displayed', 'default_sort',
             'default_sense', 'default_number_results_displayed', 'query_builder', 'route_name');
-        if(!empty($this->form_filter_values_object))
+        if(!empty($this->form_searcher_values_object))
         {
             $check_values[] = 'search_route_name';
         }
@@ -383,15 +383,15 @@ class CrudManager
         //Process request (npp, sort, sense, change_columns)
         $this->processRequest();
         
-        //Filter form: Allocates object (Defaults values and validators)
-        if(!empty($this->form_filter_values_object) && !$this->request->query->has('raz'))
+        //Searcher form: Allocates object (Defaults values and validators)
+        if(!empty($this->form_searcher_values_object) && !$this->request->query->has('raz'))
         {
             //IMPORTANT
-            //We have not to allocate directelly the "$this->session_values->form_filter_values_object" object
+            //We have not to allocate directelly the "$this->session_values->form_searcher_values_object" object
             //because otherwise it will be linked to form, and will be updated when the "bind" function will
             //be called (If form is not valid, the session values will still be updated: Undesirable behavior)
-            $values = clone $this->session_values->form_filter_values_object;
-            $this->form_filter->setData($values);
+            $values = clone $this->session_values->form_searcher_values_object;
+            $this->form_searcher->setData($values);
         }
         
         //Saves
@@ -427,10 +427,10 @@ class CrudManager
             $this->query_builder->orderBy($column_sort_alias, $this->session_values->sense);
         }
         
-        //Adds form filter filters
-        if(!empty($this->form_filter_values_object))
+        //Adds form searcher filters
+        if(!empty($this->form_searcher_values_object))
         {
-            foreach($this->form_filter_values_object->getFieldsFilter() as $field)
+            foreach($this->form_searcher_values_object->getFieldsFilter() as $field)
             {
                 if(isset($this->available_columns[$field->getColumnId()]))
                 {
@@ -442,14 +442,14 @@ class CrudManager
                 }
                 else
                 {
-                    throw new \Exception('Crud: FormFilterAbstract: getFieldsFilter(): Column id does not exit: '.$field->getColumnId());
+                    throw new \Exception('Crud: FormSearcherAbstract: getFieldsFilter(): Column id does not exit: '.$field->getColumnId());
                 }
                 $this->query_builder = $field->changeQuery($this->query_builder, 
-                        $this->session_values->form_filter_values_object, $column);
+                        $this->session_values->form_searcher_values_object, $column);
             }
             
             //Global change Query
-            $this->query_builder = $this->session_values->form_filter_values_object->globalChangeQuery($this->query_builder);
+            $this->query_builder = $this->session_values->form_searcher_values_object->globalChangeQuery($this->query_builder);
         }
         
         
@@ -510,9 +510,9 @@ class CrudManager
             if($object_database)
             {
                 $this->session_values = $object_database->transformToCrudSessionManager(new CrudSessionManager());
-                if(!empty($this->form_filter_values_object))
+                if(!empty($this->form_searcher_values_object))
                 {
-                    $this->session_values->form_filter_values_object = clone $this->form_filter_values_object;
+                    $this->session_values->form_searcher_values_object = clone $this->form_searcher_values_object;
                 }
                 $this->checkCrudSessionManager();
                 return;
@@ -524,9 +524,9 @@ class CrudManager
         $this->session_values->number_results_displayed = $this->default_number_results_displayed;
         $this->session_values->sense = $this->default_sense;
         $this->session_values->sort = $this->default_sort;
-        if(!empty($this->form_filter_values_object))
+        if(!empty($this->form_searcher_values_object))
         {
-            $this->session_values->form_filter_values_object = clone $this->form_filter_values_object;
+            $this->session_values->form_searcher_values_object = clone $this->form_searcher_values_object;
         }
     }
     
@@ -538,9 +538,9 @@ class CrudManager
     {
         //Save in session
         $session = $this->request->getSession();
-        if(is_object($this->session_values->form_filter_values_object))
+        if(is_object($this->session_values->form_searcher_values_object))
         {
-            $this->session_values->form_filter_values_object->clear();
+            $this->session_values->form_searcher_values_object->clear();
         }
         $session->set($this->session_name, $this->session_values);
         
@@ -584,7 +584,7 @@ class CrudManager
      */
     protected function raz()
     {
-        $new_value = clone $this->form_filter_values_object;
+        $new_value = clone $this->form_searcher_values_object;
         $this->changeFilterValues($new_value);
         $this->changePage(1);
         $this->save();
@@ -702,7 +702,7 @@ class CrudManager
         $this->changeColumnsDisplayed($this->session_values->columns_diplayed);
         $this->changeSort($this->session_values->sort);
         $this->changeSense($this->session_values->sense);
-        $this->changeFilterValues($this->session_values->form_filter_values_object);
+        $this->changeFilterValues($this->session_values->form_searcher_values_object);
         $this->changePage($this->session_values->page);
     }
     
@@ -817,17 +817,17 @@ class CrudManager
      */
     protected function changeFilterValues($value)
     {
-        if(empty($this->form_filter_values_object))
+        if(empty($this->form_searcher_values_object))
         {
             return;
         }
-        if(\get_class($value) == \get_class($this->form_filter_values_object))
+        if(\get_class($value) == \get_class($this->form_searcher_values_object))
         {
-            $this->session_values->form_filter_values_object = $value;
+            $this->session_values->form_searcher_values_object = $value;
         }
         else
         {
-            $this->session_values->form_filter_values_object = clone $this->form_filter_values_object;
+            $this->session_values->form_searcher_values_object = clone $this->form_searcher_values_object;
         }
     }
     
@@ -841,15 +841,15 @@ class CrudManager
         $this->form_factory = null;
         $this->request = null;
         $this->doctrine = null;
-        if(empty($this->form_filter_values_object))
+        if(empty($this->form_searcher_values_object))
         {
-            $this->form_filter = null;
+            $this->form_searcher = null;
         }
         else
         {
-            $this->form_filter = $this->form_filter->createView();
+            $this->form_searcher = $this->form_searcher->createView();
         }
-        $this->form_filter_values_object = null;
+        $this->form_searcher_values_object = null;
     }
     
     /**
@@ -900,9 +900,9 @@ class CrudManager
      * 
      * @return Form (before clearTemplate) or FormView (after clearTemplate)
      */
-    public function getFilterForm()
+    public function getSearcherForm()
     {
-        return $this->form_filter;
+        return $this->form_searcher;
     }
     
     /**

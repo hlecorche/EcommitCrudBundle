@@ -10,10 +10,10 @@
         }
     ],
     "require": {
-        "symfony/framework-bundle": ">=2.2.0,<2.5",
+        "symfony/framework-bundle": "~2.4.0",
         "doctrine/orm": "*",
-        "ecommit/util-bundle": "1.4.*@dev",
-        "ecommit/javascript-bundle": "1.4.*@dev"
+        "ecommit/util-bundle": "1.5.*@dev",
+        "ecommit/javascript-bundle": "1.5.*@dev"
     },
     "autoload": {
         "psr-0": { "Ecommit\\CrudBundle": "" }
@@ -21,7 +21,7 @@
     "target-dir": "Ecommit/CrudBundle",
     "extra": {
         "branch-alias": {
-            "dev-master": "1.4.x-dev"
+            "dev-master": "1.5.x-dev"
         }
     }
 }

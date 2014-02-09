@@ -11,8 +11,9 @@
 
 namespace Ecommit\CrudBundle\Form\Filter;
 
-use Symfony\Component\Form\FormBuilder;
 use Ecommit\CrudBundle\Crud\CrudColumn;
+use Ecommit\CrudBundle\Form\Searcher\FormSearcherAbstract;
+use Symfony\Component\Form\FormBuilder;
 
 class FieldFilterText extends FieldFilterAbstract
 {
@@ -42,7 +43,7 @@ class FieldFilterText extends FieldFilterAbstract
     /**
      * {@inheritDoc} 
      */
-    public function changeQuery($query_builder, FormFilterAbstract $form_data, CrudColumn $column)
+    public function changeQuery($query_builder, FormSearcherAbstract $form_data, CrudColumn $column)
     {
         $value_text = $form_data->get($this->field_name);
         $parameter_name = 'value_integer_'.str_replace(' ', '', $this->field_name);

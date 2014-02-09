@@ -9,11 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Ecommit\CrudBundle\Form\Filter;
+namespace Ecommit\CrudBundle\Form\Searcher;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
-abstract class FormFilterAbstract
+abstract class FormSearcherAbstract
 {
     protected $fields_filter;
 
