@@ -171,49 +171,6 @@ input.desactive, button.desactive
     opacity: 1;
 }
 
-/*Messages */
-.crud_message
-{
-    background-repeat: no-repeat;
-    padding-top: 4px;
-    padding-bottom: 8px;
-    background-position: 2px 2px;
-    margin-bottom: 1px;
-    position: relative;
-}
-
-.crud_message.message_confirm
-{
-    background-color: green;
-    background-image: url('/ecr/images/i24/apply.png');
-}
-
-.crud_message.message_error
-{
-    background-color: #CC3333;
-    background-image: url('/ecr/images/i24/error.png');
-}
-
-.crud_message .message
-{
-    margin-left: 32px;
-    font-weight: bold;
-    color: white;
-    font-style: italic;
-}
-
-.crud_message .message_close
-{
-    position: absolute;
-    right: 2px;
-    top: 1px;
-}
-
-.crud_message .message_close a
-{
-    color: #ffffff;
-}
-
 /*Erreurs formulaire */
 ul.form_error
 {

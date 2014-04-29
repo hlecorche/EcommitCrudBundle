@@ -63,10 +63,6 @@ class CrudExtension extends Twig_Extension
             'crud_declare_modal' => new Twig_Function_Method($this, 'declare_modal', array('is_safe' => array('all'))),
             'crud_remote_modal' => new Twig_Function_Method($this, 'remote_modal', array('is_safe' => array('all'))),
             'crud_form_modal' => new Twig_Function_Method($this, 'form_modal', array('is_safe' => array('all'))),
-            'message_confirm' => new Twig_Function_Method($this, 'message_confirm', array('is_safe' => array('all'))),
-            'message_error' => new Twig_Function_Method($this, 'message_error', array('is_safe' => array('all'))),
-            'flash_confirm' => new Twig_Function_Method($this, 'flash_confirm', array('is_safe' => array('all'))),
-            'flash_error' => new Twig_Function_Method($this, 'flash_error', array('is_safe' => array('all'))),
             'display_first_error' => new Twig_Function_Method($this, 'display_first_error', array('is_safe' => array('all'))),
         );
     }
@@ -195,46 +191,6 @@ class CrudExtension extends Twig_Extension
     public function form_modal($modal_id, $url, $ajax_options = array(), $html_options = array())
     {
         return $this->crud_helper->formModal($modal_id, $url, $ajax_options, $html_options);
-    }
-    
-    /**
-     * Twig function: "message_confirm"
-     * 
-     * @see CrudHelper:message 
-     */
-    public function message_confirm($message, $close_label = 'Close')
-    {
-        return $this->crud_helper->message($message, CrudHelper::MESSAGE_CONFIRM, $close_label);
-    }
-    
-    /**
-     * Twig function: "message_error"
-     * 
-     * @see CrudHelper:message 
-     */
-    public function message_error($message, $close_label = 'Close')
-    {
-        return $this->crud_helper->message($message, CrudHelper::MESSAGE_ERROR, $close_label);
-    }
-    
-    /**
-     * Twig function: "flash_confirm"
-     * 
-     * @see CrudHelper:flashMessage 
-     */
-    public function flash_confirm($name, $close_label = 'Close')
-    {
-        return $this->crud_helper->flashMessage($name, CrudHelper::MESSAGE_CONFIRM, $close_label);
-    }
-    
-    /**
-     * Twig function: "flash_error"
-     * 
-     * @see CrudHelper:flashMessage 
-     */
-    public function flash_error($name, $close_label = 'Close')
-    {
-        return $this->crud_helper->flashMessage($name, CrudHelper::MESSAGE_ERROR, $close_label);
     }
     
     /**

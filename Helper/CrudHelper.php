@@ -453,59 +453,6 @@ class CrudHelper
     }
     
     /**
-     * Displays a message
-     * 
-     * @param string $message   Message
-     * @param const $type   Type
-     * @param string|boolean $close_label   Close label. If false, label is disabled
-     * @return string 
-     */
-    public function message($message, $type, $close_label)
-    {
-        if(is_null($message))
-        {
-            return '';
-        }
-        
-        $this->javascript_manager->enablejQuery();
-        $message = \htmlentities($this->util->translate($message), ENT_QUOTES, 'UTF-8');
-        $render = \sprintf('<div class="crud_message %s">', $type);
-        $render .= \sprintf('<div class="message">%s</div>', $message);
-        
-        if($close_label !== false)
-        {
-            $close_label = \htmlentities($this->util->translate($close_label), ENT_QUOTES, 'UTF-8');
-            $render .= \sprintf('<div class="message_close"><a href="#" title="%s" onclick="$(this).parent().parent().remove(); return false;">x</a></div>', $close_label);
-        }
-        
-        $render .= '</div>';
-        return $render;
-    }
-    
-    /**
-     * Displays a flash message
-     * 
-     * @param string $name   Flash name
-     * @param const $type   Type
-     * @param string|boolean $close_label   Close label. If false, label is disabled
-     * @return string 
-     */
-    public function flashMessage($name, $type, $close_label)
-    {
-        $session = $this->util->get('session');
-        $flash = $session->getFlashBag();
-        $return = '';
-        if($flash->has($name))
-        {
-            foreach($flash->get($name) as $message)
-            {
-                $return .= $this->message($message, $type, $close_label);
-            }
-        }
-        return $return;
-    }
-    
-    /**
      * Creates a link
      * 
      * @param string $name   Name link
