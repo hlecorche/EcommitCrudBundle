@@ -142,7 +142,8 @@ class CrudExtension extends Twig_Extension
                     'image_url' => $options['image_url'],
                     'suffix' => $crud->getSessionName(),
                     'default_npp' => $crud->getDefaultNumberResultsDisplayed(),
-                    'default_columns' => $crud->getDefaultDisplayedColumns()
+                    'default_columns' => $crud->getDefaultDisplayedColumns(),
+                    'use_bootstrap' => $this->crud_helper->useBootstrap(),
                  ));
     }
     

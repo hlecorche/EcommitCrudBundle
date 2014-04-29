@@ -26,19 +26,30 @@ class CrudHelper
     protected $util;
     protected $javascript_manager;
     protected $form_factory;
+    protected $use_bootstrap;
     
     /**
      * Constructor
      * 
      * @param UtilHelper $util
      * @param Manager $javascript_manager
-     * @param FormFactory $form_factory 
+     * @param FormFactory $form_factory
+     * @param bool $use_boostrap
      */
-    public function __construct(UtilHelper $util, Manager $javascript_manager, FormFactory $form_factory)
+    public function __construct(UtilHelper $util, Manager $javascript_manager, FormFactory $form_factory, $use_boostrap)
     {
         $this->util = $util;
         $this->javascript_manager = $javascript_manager;
         $this->form_factory = $form_factory;
+        $this->use_bootstrap = $use_boostrap;
+    }
+
+    /**
+     * @return bool
+     */
+    public function useBootstrap()
+    {
+        return $this->use_bootstrap;
     }
     
     /**
@@ -360,9 +371,13 @@ class CrudHelper
         }
         if(!isset($html_options['class']))
         {
-            $html_options['class'] = 'raz';
+            $html_options['class'] = ($this->use_bootstrap)? 'raz-bootstrap btn btn-default btn-sm' : 'raz';
         }
         $label = $this->util->translate($options['label']);
+        if($this->use_bootstrap)
+        {
+            $label = '<span class="glyphicon glyphicon-fire"></span> '.$label;
+        }
         return $this->javascript_manager->jQueryButtonToRemote($label, $crud->getSearchUrl(array('raz' => 1)), $ajax_options, $html_options);
     }
     

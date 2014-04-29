@@ -12,6 +12,7 @@
         <argument type="service" id="ecommit_util.helper" />
         <argument type="service" id="ecommit_javascript.manager" />
         <argument type="service" id="form.factory" />
+        <argument>%ecommit_javascript.use_bootstrap%</argument>
     </service>
     <service id="ecommit_crud.helper.twig.extension.crud" class="%ecommit_crud.helper.twig.extension.crud.class%">
         <argument type="service" id="ecommit_crud.helper" />

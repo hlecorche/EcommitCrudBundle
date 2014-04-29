@@ -1,5 +1,5 @@
 /*Boutons */
-input.add
+input.add, button.add
 {
     background-image: url('/ecr/images/i16/edit_add.png');
     background-repeat:no-repeat;
@@ -14,7 +14,7 @@ input.add
     margin-left: 3px;
 }
 
-input.back
+input.back, button.back
 {
     background-image: url('/ecr/images/i16/rotate.png');
     background-repeat:no-repeat;
@@ -29,7 +29,7 @@ input.back
     margin-left: 3px;
 }
 
-input.save
+input.save, button.save
 {
     background-image: url('/ecr/images/i16/apply.png');
     background-repeat:no-repeat;
@@ -44,7 +44,7 @@ input.save
     margin-left: 3px;
 }
 
-input.edit
+input.edit, button.edit
 {
     background-image: url('/ecr/images/i16/edit.png');
     background-repeat:no-repeat;
@@ -59,7 +59,7 @@ input.edit
     margin-left: 3px;
 }
 
-input.search
+input.search, button.search
 {
     background-image: url('/ecr/images/i16/search.png');
     background-repeat:no-repeat;
@@ -74,7 +74,7 @@ input.search
     margin-left: 3px;
 }
 
-input.raz
+input.raz, button.raz
 {
     background-image: url('/ecr/images/i16/delete_table.png');
     background-repeat:no-repeat;
@@ -89,7 +89,7 @@ input.raz
     margin-left: 3px;
 }
 
-input.delete
+input.delete, button.delete
 {
     background-image: url('/ecr/images/i16/editdelete.png');
     background-repeat:no-repeat;
@@ -104,7 +104,7 @@ input.delete
     margin-left: 3px;
 }
 
-input.active
+input.active, button.active
 {
     background-image: url('/ecr/images/i16/page_add.png');
     background-repeat:no-repeat;
@@ -119,7 +119,7 @@ input.active
     margin-left: 3px;
 }
 
-input.desactive
+input.desactive, button.desactive
 {
     background-image: url('/ecr/images/i16/page_delete.png');
     background-repeat:no-repeat;
@@ -162,7 +162,13 @@ input.desactive
     top:-15px; 
     cursor:pointer; 
     height:35px; 
-    width:35px; 
+    width:35px;
+    opacity: 1;
+}
+
+.crud_modal .close:hover
+{
+    opacity: 1;
 }
 
 /*Messages */

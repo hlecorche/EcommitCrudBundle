@@ -13,8 +13,17 @@
          {% endfor %}
         {{ form_rest(form) }}
 
-        <input type="submit" class="save" value="{% trans %}Save{% endtrans %}" />
-        {{ jQuery_ajax_button('reset_display_settings'|trans, reset_settings_url, reset_ajax_options, {'class': 'raz'}) }}
+        <div style="text-align: center;">
+            {%  if use_bootstrap %}
+                <button type="submit" class="save-boostrap btn btn-success btn-sm">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> {% trans %}Save{% endtrans %}
+                </button>
+                {{ jQuery_ajax_button('<span class="glyphicon glyphicon-fire"></span>' ~ 'reset_display_settings'|trans, reset_settings_url, reset_ajax_options, {'class': 'raz-bootstrap btn btn-default btn-sm'}) }}
+            {%  else %}
+                <button type="submit" class="save">{% trans %}Save{% endtrans %}</button>
+                {{ jQuery_ajax_button('reset_display_settings'|trans, reset_settings_url, reset_ajax_options, {'class': 'raz'}) }}
+            {%  endif %}
+        </div>
     </form>
 </div>
 
@@ -53,5 +62,12 @@
 </script>
 
 
-<a href="#" onclick="click_change_config_{{ suffix }}(); return false;"><img src="{{ asset(image_url) }}" alt="{% trans %}Display Settings{% endtrans %}" title="{% trans %}Display Settings{% endtrans %}" /></a>
+{%  if use_bootstrap %}
+    <button type="button" class="display_settings-bootstrap btn btn-default btn-sm" onclick="click_change_config_{{ suffix }}(); return false;">
+        <span class="glyphicon glyphicon-cog"></span> {% trans %}Display Settings{% endtrans %}
+    </button>
+{% else %}
+    <a href="#" onclick="click_change_config_{{ suffix }}(); return false;"><img src="{{ asset(image_url) }}" alt="{% trans %}Display Settings{% endtrans %}" title="{% trans %}Display Settings{% endtrans %}" /></a>
+{%  endif %}
+
 <div id="js_holder_for_multi_update_{{ suffix }}" style="display: none;"></div>

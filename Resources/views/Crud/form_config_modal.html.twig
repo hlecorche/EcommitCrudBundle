@@ -3,7 +3,7 @@
 
 <div id="display_config_{{ suffix }}" class="crud_modal" style="width: 500px; text-align: left;">
 <div class="contentWrap">
-    <div class="titre">{% trans %}Display Settings{% endtrans %}</div>
+    <h1 class="titre">{% trans %}Display Settings{% endtrans %}</h1>
     {{ jQuery_ajax_form(url, ajax_options)  }}
         <b>{{ form_label(form.npp) }} :</b><br />
         {{ form_widget(form.npp) }}<br /><br />
@@ -15,8 +15,15 @@
         {{ form_rest(form) }}
 
         <div style="text-align: center;">
-            <input type="submit" class="save" value="{% trans %}Save{% endtrans %}" />
-            {{ jQuery_ajax_button('reset_display_settings'|trans, reset_settings_url, reset_ajax_options, {'class': 'raz'}) }}
+            {%  if use_bootstrap %}
+                <button type="submit" class="save-boostrap btn btn-success btn-sm">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> {% trans %}Save{% endtrans %}
+                </button>
+                {{ jQuery_ajax_button('<span class="glyphicon glyphicon-fire"></span>' ~ 'reset_display_settings'|trans, reset_settings_url, reset_ajax_options, {'class': 'raz-bootstrap btn btn-default btn-sm'}) }}
+            {%  else %}
+                <button type="submit" class="save">{% trans %}Save{% endtrans %}</button>
+                {{ jQuery_ajax_button('reset_display_settings'|trans, reset_settings_url, reset_ajax_options, {'class': 'raz'}) }}
+            {% endif %}
         </div>
     </form>
 </div>
@@ -51,5 +58,12 @@
     }
 </script>
 
-<a href="#" onclick="change_display_config_{{ suffix }}(); return false;"><img src="{{ asset(image_url) }}" alt="{% trans %}Display Settings{% endtrans %}" title="{% trans %}Display Settings{% endtrans %}" /></a>
+{%  if use_bootstrap %}
+    <button type="button" class="display_settings-bootstrap btn btn-default btn-sm" onclick="change_display_config_{{ suffix }}(); return false;">
+        <span class="glyphicon glyphicon-cog"></span> {% trans %}Display Settings{% endtrans %}
+    </button>
+{% else %}
+    <a href="#" onclick="change_display_config_{{ suffix }}(); return false;"><img src="{{ asset(image_url) }}" alt="{% trans %}Display Settings{% endtrans %}" title="{% trans %}Display Settings{% endtrans %}" /></a>
+{%  endif %}
+
 <div id="js_holder_for_multi_update_{{ suffix }}" style="display: none;"></div>
