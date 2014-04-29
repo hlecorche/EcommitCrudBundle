@@ -154,7 +154,7 @@ input.desactive, button.desactive
     font-size: 10pt;
 }
 
-.crud_modal .close
+.crud_modal div.close, .crud_modal a.close
 { 
     background-image:url('/ecr/images/i36/close.png'); 
     position:absolute; 
@@ -166,7 +166,7 @@ input.desactive, button.desactive
     opacity: 1;
 }
 
-.crud_modal .close:hover
+.crud_modal div.close:hover, .crud_modal a.close:hover
 {
     opacity: 1;
 }
