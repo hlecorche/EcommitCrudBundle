@@ -341,7 +341,6 @@ class CrudManager
         
         if($this->request->query->has('raz'))
         {
-            $this->raz();
             return;
         }
         if ($this->request->getMethod() == 'POST')
@@ -582,10 +581,13 @@ class CrudManager
      * Reset search form values
      * 
      */
-    protected function raz()
+    public function raz()
     {
-        $new_value = clone $this->form_searcher_values_object;
-        $this->changeFilterValues($new_value);
+        if ($this->form_searcher_values_object) {
+            $new_value = clone $this->form_searcher_values_object;
+            $this->changeFilterValues($new_value);
+            $this->form_searcher->setData(clone $new_value);
+        }
         $this->changePage(1);
         $this->save();
     }
@@ -623,6 +625,11 @@ class CrudManager
         {
             //Reset display settings
             $this->razDisplaySettings();
+            return;
+        }
+        if($this->request->query->has('raz'))
+        {
+            $this->raz();
             return;
         }
         $display_config_form_name = sprintf('crud_display_config_%s', $this->session_name);
