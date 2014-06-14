@@ -8,12 +8,14 @@
   </parameters>
   
   <services>
-    <service id="ecommit_crud.helper" class="%ecommit_crud.helper.class%">
-        <argument type="service" id="ecommit_util.helper" />
-        <argument type="service" id="ecommit_javascript.manager" />
-        <argument type="service" id="form.factory" />
-        <argument>%ecommit_javascript.use_bootstrap%</argument>
-    </service>
+      <service id="ecommit_crud.helper" class="%ecommit_crud.helper.class%">
+          <argument type="service" id="ecommit_util.helper" />
+          <argument type="service" id="ecommit_javascript.manager" />
+          <argument type="service" id="form.factory" />
+          <argument type="service" id="router" />
+          <argument type="service" id="translator" />
+          <argument>%ecommit_javascript.use_bootstrap%</argument>
+      </service>
     <service id="ecommit_crud.helper.twig.extension.crud" class="%ecommit_crud.helper.twig.extension.crud.class%">
         <argument type="service" id="ecommit_crud.helper" />
         <argument type="service" id="twig" />
@@ -21,7 +23,6 @@
     </service>
     
     <service id="ecommit_crud.form.type.entity_picker" class="%ecommit_crud.form.type.entity_picker.class%">
-        <argument type="service" id="ecommit_javascript.manager" />
         <argument type="service" id="doctrine" on-invalid="null" />
         <tag name="form.type" alias="entity_picker" />
     </service>

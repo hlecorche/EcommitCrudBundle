@@ -16,6 +16,8 @@ use Ecommit\CrudBundle\Form\Type\DisplayConfigType;
 use Ecommit\CrudBundle\Paginator\AbstractPaginator;
 use Ecommit\JavascriptBundle\jQuery\Manager;
 use Ecommit\UtilBundle\Helper\UtilHelper;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Symfony\Component\Form\FormFactory;
 
 class CrudHelper
@@ -26,6 +28,8 @@ class CrudHelper
     protected $util;
     protected $javascript_manager;
     protected $form_factory;
+    protected $router;
+    protected $translator;
     protected $use_bootstrap;
     
     /**
@@ -36,11 +40,13 @@ class CrudHelper
      * @param FormFactory $form_factory
      * @param bool $use_boostrap
      */
-    public function __construct(UtilHelper $util, Manager $javascript_manager, FormFactory $form_factory, $use_boostrap)
+    public function __construct(UtilHelper $util, Manager $javascript_manager, FormFactory $form_factory, Router $router, Translator $translator, $use_boostrap)
     {
         $this->util = $util;
         $this->javascript_manager = $javascript_manager;
         $this->form_factory = $form_factory;
+        $this->router = $router;
+        $this->translator = $translator;
         $this->use_bootstrap = $use_boostrap;
     }
 
@@ -83,10 +89,10 @@ class CrudHelper
                                  'max_pages_before' => 3,
                                  'max_pages_after' => 3,
                                  'buttons' => 'text',
-                                 'image_first' => 'ecr/images/i16/resultset_first.png',
-                                 'image_previous' => 'ecr/images/i16/resultset_previous.png',
-                                 'image_next' => 'ecr/images/i16/resultset_next.png',
-                                 'image_last' => 'ecr/images/i16/resultset_last.png',
+                                 'image_first' => '/ecr/images/i16/resultset_first.png',
+                                 'image_previous' => '/ecr/images/i16/resultset_previous.png',
+                                 'image_next' => '/ecr/images/i16/resultset_next.png',
+                                 'image_last' => '/ecr/images/i16/resultset_last.png',
                                  'text_first' => '<<',
                                  'text_previous' => '<',
                                  'text_next' => '>',
@@ -100,15 +106,6 @@ class CrudHelper
         if(!\in_array($options['buttons'], array('text', 'image')))
         {
             throw new \Exception('Option sliding is not valid');
-        }
-        
-        foreach(array('image_first', 'image_previous', 'image_next', 'image_last') as $image_name)
-        {
-            $image = $options[$image_name];
-            if(!empty($image))
-            {
-                $options[$image_name] = $this->util->getAssetUrl($image);
-            }
         }
         
         $navigation = '';
@@ -172,7 +169,7 @@ class CrudHelper
      */
     protected function elementPaginatorLinks($page, $options, $element_name, $route_name, $route_params, $actual = false)
     {
-        $url = $this->util->get('router')->generate($route_name, \array_merge($route_params, array($options['attribute_page'] => $page)));
+        $url = $this->router->generate($route_name, \array_merge($route_params, array($options['attribute_page'] => $page)));
         if($element_name == 'page')
         {
             if($actual)
@@ -239,16 +236,16 @@ class CrudHelper
     public function th($column_id, CrudManager $crud, $options, $th_options, $ajax_options)
     {
         $default_options = array('label' => null,
-                                 'image_up' => 'ecr/images/i16/sort_incr.png',
-                                 'image_down' => 'ecr/images/i16/sort_decrease.png',
+                                 'image_up' => '/ecr/images/i16/sort_incr.png',
+                                 'image_down' => '/ecr/images/i16/sort_decrease.png',
                                 );
         $options = \array_merge($default_options, $options);
         if(!isset($ajax_options['update']))
         {
             $ajax_options['update'] = $crud->getDivIdList();
         }
-        $image_up = $this->util->getAssetUrl($options['image_up']);
-        $image_down = $this->util->getAssetUrl($options['image_down']);
+        $image_up = $options['image_up'];
+        $image_down = $options['image_down'];
 
         //If the column is not to be shown, returns empty
         $session_values =  $crud->getSessionValues();
@@ -265,7 +262,7 @@ class CrudHelper
             $label = $column->label;
         }
         //I18N label
-        $label = $this->util->translate($label);
+        $label = $this->translator->trans($label);
         //XSS protection
         $label = \htmlentities($label, ENT_QUOTES, 'UTF-8');
         
@@ -326,8 +323,6 @@ class CrudHelper
      */
     public function getFormDisplayConfig(CrudManager $crud)
     {
-        $this->javascript_manager->enablejQueryTools();
-        
         $form_name = sprintf('crud_display_config_%s', $crud->getSessionName());
         $form = $this->form_factory->createNamed($form_name, new DisplayConfigType($crud));
         return $form->createView();
@@ -373,7 +368,7 @@ class CrudHelper
         {
             $html_options['class'] = ($this->use_bootstrap)? 'raz-bootstrap btn btn-default btn-sm' : 'raz';
         }
-        $label = $this->util->translate($options['label']);
+        $label = $this->translator->trans($options['label']);
         if($this->use_bootstrap)
         {
             $label = '<span class="glyphicon glyphicon-fire"></span> '.$label;
@@ -404,8 +399,6 @@ class CrudHelper
      */
     public function remoteModal($modal_id, $url, $js_on_close, $ajax_options)
     {
-        $this->javascript_manager->enablejQueryTools();
-        
         $modal_id = str_replace(' ', '', $modal_id);
         //Create Callback (Opening window)
         $js_modal = "$('#$modal_id .contentWrap').html(data); ";

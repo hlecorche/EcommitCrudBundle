@@ -13,7 +13,6 @@ namespace Ecommit\CrudBundle\Form\Type;
 
 use Doctrine\ORM\QueryBuilder;
 use Ecommit\JavascriptBundle\Form\DataTransformer\EntityToAutoCompleteTransformer;
-use Ecommit\JavascriptBundle\jQuery\Manager;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Exception\InvalidConfigurationException;
@@ -25,18 +24,15 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class EntityPickerType extends AbstractType
 {
-    protected $javascript_manager;
     protected $registry;
     
     /**
      * Constructor
-     * 
-     * @param Manager $javascript_manager
+     *
      * @param ManagerRegistry $registry
      */
-    public function __construct(Manager $javascript_manager, ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry)
     {
-        $this->javascript_manager = $javascript_manager;
         $this->registry = $registry;
     }
     
@@ -52,8 +48,6 @@ class EntityPickerType extends AbstractType
     
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $this->javascript_manager->enablejQueryTools();
-        
         $view->vars['list_url'] = $options['list_url'];
         $view->vars['list_ajax_options'] = $options['list_ajax_options'];
         $view->vars['add_enabled'] = $options['add_enabled'];
