@@ -14,7 +14,7 @@ namespace Ecommit\CrudBundle\Helper;
 use Ecommit\CrudBundle\Crud\CrudManager;
 use Ecommit\CrudBundle\Form\Type\DisplayConfigType;
 use Ecommit\CrudBundle\Paginator\AbstractPaginator;
-use Ecommit\JavascriptBundle\jQuery\Manager;
+use Ecommit\JavascriptBundle\Helper\JqueryHelper;
 use Ecommit\UtilBundle\Helper\UtilHelper;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Bundle\FrameworkBundle\Translation\Translator;
@@ -40,7 +40,7 @@ class CrudHelper
      * @param FormFactory $form_factory
      * @param bool $use_boostrap
      */
-    public function __construct(UtilHelper $util, Manager $javascript_manager, FormFactory $form_factory, Router $router, Translator $translator, $use_boostrap)
+    public function __construct(UtilHelper $util, JqueryHelper $javascript_manager, FormFactory $form_factory, Router $router, Translator $translator, $use_boostrap)
     {
         $this->util = $util;
         $this->javascript_manager = $javascript_manager;

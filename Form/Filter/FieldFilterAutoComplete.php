@@ -45,18 +45,18 @@ class FieldFilterAutoComplete extends FieldFilterAbstract
             throw new \Exception(\get_class($this).'"url" option is required');
         }
         
-        if(!empty($options['alias']))
+        if(!empty($options['root_alias']))
         {
-            $field_options['alias'] = $options['alias'];
+            $field_options['root_alias'] = $options['root_alias'];
         }
         
-        if(!empty($options['key_method']))
+        if(!empty($options['identifier']))
         {
-            $field_options['key_method'] = $options['key_method'];
+            $field_options['identifier'] = $options['identifier'];
         }
-        if(!empty($options['render_method']))
+        if(!empty($options['property']))
         {
-            $field_options['render_method'] = $options['render_method'];
+            $field_options['property'] = $options['property'];
         }
         
         $this->multiple = isset($options['multiple'])? $options['multiple'] : false;
@@ -81,11 +81,11 @@ class FieldFilterAutoComplete extends FieldFilterAbstract
     {
         if($this->multiple)
         {
-            $form_builder->add($this->field_name, 'multi_entity_autocomplete', $this->field_options);
+            $form_builder->add($this->field_name, 'ecommit_javascript_tokeninputentitiesajax', $this->field_options);
         }
         else
         {
-            $form_builder->add($this->field_name, 'entity_autocomplete', $this->field_options);
+            $form_builder->add($this->field_name, 'ecommit_javascript_jqueryautocompleteentityajax', $this->field_options);
         }
         return $form_builder;
     }

@@ -10,7 +10,7 @@
   <services>
       <service id="ecommit_crud.helper" class="%ecommit_crud.helper.class%">
           <argument type="service" id="ecommit_util.helper" />
-          <argument type="service" id="ecommit_javascript.manager" />
+          <argument type="service" id="ecommit_javascript.helper.jquery_helper" />
           <argument type="service" id="form.factory" />
           <argument type="service" id="router" />
           <argument type="service" id="translator" />
