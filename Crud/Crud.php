@@ -11,20 +11,24 @@
 
 namespace Ecommit\CrudBundle\Crud;
 
-use Ecommit\CrudBundle\Controller\CrudAbstractController;
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Ecommit\CrudBundle\Entity\UserCrudSettings;
 use Ecommit\CrudBundle\Form\Searcher\FormSearcherAbstract;
 use Ecommit\CrudBundle\Form\Type\FormSearchType;
 use Ecommit\CrudBundle\Paginator\DbalPaginator;
 use Ecommit\CrudBundle\Paginator\DoctrinePaginator;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\Form\FormFactory;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\User\UserInterface;
 
-class CrudManager
+class Crud
 {
     const DESC = 'DESC';
     const ASC = 'ASC';
     
-    protected $session_name;
+    protected $sessionName;
     protected $session_values;
     
     protected $available_columns = array();
@@ -47,37 +51,51 @@ class CrudManager
     protected $search_route_params = array();
     protected $div_id_search = 'crud_search';
     protected $div_id_list = 'crud_list';
-    
-    /*
-     * Services
+
+    /**
+     * @var Router
      */
     protected $router;
-    protected $form_factory;
+
+    /**
+     * @var FormFactory
+     */
+    protected $formFactory;
+
+    /**
+     * @var Request
+     */
     protected $request;
-    protected $doctrine;
+
+    /**
+     * @var Registry
+     */
+    protected $registry;
+
+    /**
+     * @var User
+     */
     protected $user;
 
     /**
      * Constructor
      * 
-     * @param string $session_name   Session name
-     * @param CrudAbstractController $controller
-     * @return CrudManager 
+     * @param string $sessionName   Session name
+     * @return Crud 
      */
-    public function __construct($session_name, CrudAbstractController $controller)
+    public function __construct($sessionName, Router $router, FormFactory $formFactory, Request $request, Registry $registry, UserInterface $user)
     {
-        if(!\preg_match('/^[a-zA-Z0-9_]{1,30}$/', $session_name))
-        {
-            throw new \Exception('Variable session_name is not given or is invalid');
+        if (!\preg_match('/^[a-zA-Z0-9_]{1,30}$/', $sessionName)) {
+            throw new \Exception('Variable sessionName is not given or is invalid');
         }
-        $this->session_name = $session_name;
-        $container = $controller->getContainer();
-        $this->router = $container->get('router');
-        $this->form_factory = $container->get('form.factory');
-        $this->request = $container->get('request');
-        $this->doctrine = $container->get('doctrine');
-        $this->user = $controller->getUser();
+        $this->sessionName = $sessionName;
+        $this->router = $router;
+        $this->formFactory = $formFactory;
+        $this->request = $request;
+        $this->registry = $registry;
+        $this->user = $user;
         $this->session_values = new CrudSessionManager();
+
         return $this;
     }
     
@@ -92,7 +110,7 @@ class CrudManager
      *      * default_displayed: If the column is displayed, by default (Default: true)
      *      * alias_search: Column SQL alias, used during searchs. If null, $alias is used.
      *      * alias_sort: Column(s) SQL alias (string or array of strings), used during sorting. If null, $alias is used.
-     * @return CrudManager 
+     * @return Crud 
      */
     public function addColumn($id, $alias, $label, $options = array())
     {
@@ -118,7 +136,7 @@ class CrudManager
      * 
      * @param string $id   Column id (used everywhere inside the crud)
      * @param string $alias_search   Column SQL alias, used during searchs.
-     * @return CrudManager 
+     * @return Crud 
      */
     public function addVirtualColumn($id, $alias_search)
     {
@@ -131,7 +149,7 @@ class CrudManager
      * Sets the query builder
      * 
      * @param QueryBuilder $query_builder
-     * @return CrudManager 
+     * @return Crud 
      */
     public function setQueryBuilder($query_builder)
     {
@@ -164,7 +182,7 @@ class CrudManager
      * 
      * @param array $available_number_results_displayed
      * @param int $default_value
-     * @return CrudManager
+     * @return Crud
      */
     public function setAvailableNumberResultsDisplayed(Array $available_number_results_displayed, $default_value)
     {
@@ -177,8 +195,8 @@ class CrudManager
      * Set the default sort
      * 
      * @param string $sort   Column id
-     * @param const $sense   Sense (CrudManager::ASC / CrudManager::DESC)
-     * @return CrudManager 
+     * @param const $sense   Sense (Crud::ASC / Crud::DESC)
+     * @return Crud 
      */
     public function setDefaultSort($sort, $sense)
     {
@@ -192,7 +210,7 @@ class CrudManager
      * 
      * @param string $route_name
      * @param array $parameters 
-     * @return CrudManager
+     * @return Crud
      */
     public function setRoute($route_name, $parameters = array())
     {
@@ -238,7 +256,7 @@ class CrudManager
      * 
      * @param string $route_name
      * @param array $parameters
-     * @return CrudManager
+     * @return Crud
      */
     public function setSearchRoute($route_name, $parameters = array())
     {
@@ -306,15 +324,15 @@ class CrudManager
      * Adds search form
      * 
      * @param FormSearcherAbstract $form_searcher_values_object
-     * @return CrudManager 
+     * @return Crud 
      */
     public function createSearcherForm(FormSearcherAbstract $form_searcher_values_object)
     {
         $this->form_searcher_values_object = $form_searcher_values_object;
                 
-        $form_name = sprintf('crud_search_%s', $this->session_name);
-        $form_builder = $this->form_factory->createNamedBuilder($form_name, new FormSearchType());
-        foreach($form_searcher_values_object->getFieldsFilter($this->doctrine) as $field)
+        $form_name = sprintf('crud_search_%s', $this->sessionName);
+        $form_builder = $this->formFactory->createNamedBuilder($form_name, new FormSearchType());
+        foreach($form_searcher_values_object->getFieldsFilter($this->registry) as $field)
         {
             if(!($field instanceof \Ecommit\CrudBundle\Form\Filter\FieldFilterAbstract ))
             {
@@ -489,7 +507,7 @@ class CrudManager
     protected function load()
     {
         $session = $this->request->getSession();
-        $object = $session->get($this->session_name); //Load from session
+        $object = $session->get($this->sessionName); //Load from session
         
         if(!empty($object))
         {
@@ -502,9 +520,9 @@ class CrudManager
         //Only if persistent settings is enabled
         if($this->persistent_settings)
         {
-            $object_database = $this->doctrine->getRepository('EcommitCrudBundle:UserCrudSettings')->findOneBy(array(
+            $object_database = $this->registry->getRepository('EcommitCrudBundle:UserCrudSettings')->findOneBy(array(
                 'user' => $this->user,
-                'crud_name' => $this->session_name
+                'crud_name' => $this->sessionName
             ));
             if($object_database)
             {
@@ -541,16 +559,16 @@ class CrudManager
         {
             $this->session_values->form_searcher_values_object->clear();
         }
-        $session->set($this->session_name, $this->session_values);
+        $session->set($this->sessionName, $this->session_values);
         
         //Save in database
         if($this->persistent_settings && $this->update_database)
         {
-            $object_database = $this->doctrine->getRepository('EcommitCrudBundle:UserCrudSettings')->findOneBy(array(
+            $object_database = $this->registry->getRepository('EcommitCrudBundle:UserCrudSettings')->findOneBy(array(
                 'user' => $this->user,
-                'crud_name' => $this->session_name
+                'crud_name' => $this->sessionName
             ));
-            $em = $this->doctrine->getManager();
+            $em = $this->registry->getManager();
             
             if($object_database)
             {
@@ -568,7 +586,7 @@ class CrudManager
                 {
                     $object_database = new UserCrudSettings();
                     $object_database->setUser($this->user);
-                    $object_database->setCrudName($this->session_name);
+                    $object_database->setCrudName($this->sessionName);
                     $object_database->updateFromSessionManager($this->session_values);
                     $em->persist($object_database);
                     $em->flush();
@@ -606,10 +624,10 @@ class CrudManager
         if($this->persistent_settings)
         {
             //Remove settings in database
-            $qb = $this->doctrine->getManager()->createQueryBuilder();
+            $qb = $this->registry->getManager()->createQueryBuilder();
             $qb->delete('EcommitCrudBundle:UserCrudSettings', 's')
                     ->andWhere('s.user = :user AND s.crud_name = :crud_name')
-                    ->setParameters(array('user' => $this->user, 'crud_name' => $this->session_name))
+                    ->setParameters(array('user' => $this->user, 'crud_name' => $this->sessionName))
                     ->getQuery()
                     ->execute();
         }
@@ -632,7 +650,7 @@ class CrudManager
             $this->raz();
             return;
         }
-        $display_config_form_name = sprintf('crud_display_config_%s', $this->session_name);
+        $display_config_form_name = sprintf('crud_display_config_%s', $this->sessionName);
         if($this->request->request->has($display_config_form_name))
         {
             $display_config = $this->request->request->get($display_config_form_name);
@@ -845,9 +863,9 @@ class CrudManager
     public function clearTemplate()
     {
         $this->query_builder = null;
-        $this->form_factory = null;
+        $this->formFactory = null;
         $this->request = null;
-        $this->doctrine = null;
+        $this->registry = null;
         if(empty($this->form_searcher_values_object))
         {
             $this->form_searcher = null;
@@ -926,7 +944,7 @@ class CrudManager
      * Sets the div id search
      * 
      * @param string
-     * @return CrudManager
+     * @return Crud
      */
     public function setDivIdSearch($div_id_search)
     {
@@ -948,7 +966,7 @@ class CrudManager
      * Sets the div id list
      * 
      * @param string
-     * @return CrudManager
+     * @return Crud
      */
     public function setDivIdList($div_id_list)
     {
@@ -963,6 +981,6 @@ class CrudManager
      */
     public function getSessionName()
     {
-        return $this->session_name;
+        return $this->sessionName;
     }
 }

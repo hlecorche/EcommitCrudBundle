@@ -11,7 +11,7 @@
 
 namespace Ecommit\CrudBundle\Helper;
 
-use Ecommit\CrudBundle\Crud\CrudManager;
+use Ecommit\CrudBundle\Crud\Crud;
 use Ecommit\CrudBundle\Form\Type\DisplayConfigType;
 use Ecommit\CrudBundle\Paginator\AbstractPaginator;
 use Ecommit\JavascriptBundle\Helper\JqueryHelper;
@@ -205,12 +205,12 @@ class CrudHelper
     /**
      * Returns CRUD links paginator
      * 
-     * @param CrudManager $crud
+     * @param Crud $crud
      * @param array $options   Options. See CrudHelper::paginatorLinks (ajax_options is ignored)
      * @param array $ajax_options   Ajax Options
      * @return string 
      */
-    public function crudPaginatorLinks(CrudManager $crud, $options, $ajax_options)
+    public function crudPaginatorLinks(Crud $crud, $options, $ajax_options)
     {
         if(!isset($ajax_options['update']))
         {
@@ -224,7 +224,7 @@ class CrudHelper
      * Returns one colunm, inside "header" CRUD
      * 
      * @param string $column_id   Column id
-     * @param CrudManager $crud
+     * @param Crud $crud
      * @param array $options   Options :
      *        * label: Label. If null, default label is displayed
      *        * image_up: Url image "^"
@@ -233,7 +233,7 @@ class CrudHelper
      * @param array $ajax_options   Ajax Options
      * @return string 
      */
-    public function th($column_id, CrudManager $crud, $options, $th_options, $ajax_options)
+    public function th($column_id, Crud $crud, $options, $th_options, $ajax_options)
     {
         $default_options = array('label' => null,
                                  'image_up' => '/ecr/images/i16/sort_incr.png',
@@ -280,9 +280,9 @@ class CrudHelper
         }
         
         //Case n°3: We can sort on this column, and the sorting is active on her at present
-        $image_src = ($session_values->sense == CrudManager::ASC)? $image_up : $image_down;
-        $image_alt = ($session_values->sense == CrudManager::ASC)? 'V' : '^';
-        $new_sense = ($session_values->sense == CrudManager::ASC)? CrudManager::DESC : CrudManager::ASC;
+        $image_src = ($session_values->sense == Crud::ASC)? $image_up : $image_down;
+        $image_alt = ($session_values->sense == Crud::ASC)? 'V' : '^';
+        $new_sense = ($session_values->sense == Crud::ASC)? Crud::DESC : Crud::ASC;
         $image = $this->util->tag('img', array('src' => $image_src, 'alt' => $image_alt));
         $link = $this->listePrivateLink($label, $crud->getUrl(array('sense' => $new_sense)), array(), $ajax_options);
         return $this->util->tag('th', $th_options, $link.$image);
@@ -292,13 +292,13 @@ class CrudHelper
      * Returns one colunm, inside "body" CRUD
      * 
      * @param string $column_id   Column id
-     * @param CrudManager $crud
+     * @param Crud $crud
      * @param string $value   Value
      * @param bool $escape   Escape (or not) the value
      * @param array $td_options   Html options
      * @return string 
      */
-    public function td($column_id, CrudManager $crud, $value, $escape, $td_options)
+    public function td($column_id, Crud $crud, $value, $escape, $td_options)
     {
         //If the column is not to be shown, returns empty
         $session_values =  $crud->getSessionValues();
@@ -318,10 +318,10 @@ class CrudHelper
     /**
      * Returns "Display Config" form
      * 
-     * @param CrudManager $crud
+     * @param Crud $crud
      * @return FormView 
      */
-    public function getFormDisplayConfig(CrudManager $crud)
+    public function getFormDisplayConfig(Crud $crud)
     {
         $form_name = sprintf('crud_display_config_%s', $crud->getSessionName());
         $form = $this->form_factory->createNamed($form_name, new DisplayConfigType($crud));
@@ -331,12 +331,12 @@ class CrudHelper
     /**
      * Returns search form tag
      * 
-     * @param CrudManager $crud
+     * @param Crud $crud
      * @param array $ajax_options   Ajax Options
      * @param type $html_options   Html options
      * @return string 
      */
-    public function searchFormTag(CrudManager $crud, $ajax_options, $html_options)
+    public function searchFormTag(Crud $crud, $ajax_options, $html_options)
     {
         if(!isset($ajax_options['update']))
         {
@@ -348,14 +348,14 @@ class CrudHelper
     /**
      * Returns search reset button
      * 
-     * @param CrudManager $crud
+     * @param Crud $crud
      * @param array $options   Options :
      *        * label: Label. Défault: Reset
      * @param array $ajax_options   Ajax options
      * @param array $html_options   Html options
      * @return string 
      */
-    public function searchResetButton(CrudManager $crud, $options, $ajax_options, $html_options)
+    public function searchResetButton(Crud $crud, $options, $ajax_options, $html_options)
     {
         $default_options = array('label' => 'Reset',
                                 );

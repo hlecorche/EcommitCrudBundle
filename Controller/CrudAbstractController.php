@@ -21,7 +21,7 @@ abstract class CrudAbstractController extends Controller
     /**
      * Configures and returns the CRUD
      * 
-     * @return CrudManager
+     * @return Crud
      */
     abstract protected function configCrud();
     

@@ -14,7 +14,7 @@ namespace Ecommit\CrudBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Ecommit\CrudBundle\Crud\CrudManager;
+use Ecommit\CrudBundle\Crud\Crud;
 
 class DisplayConfigType extends AbstractType
 {
@@ -23,9 +23,9 @@ class DisplayConfigType extends AbstractType
     /**
      * Constructor
      * 
-     * @param CrudManager $crud 
+     * @param Crud $crud
      */
-    public function __construct(CrudManager $crud)
+    public function __construct(Crud $crud)
     {
         $this->crud = $crud;
     }

@@ -11,7 +11,7 @@
 
 namespace Ecommit\CrudBundle\Helper\Twig;
 
-use Ecommit\CrudBundle\Crud\CrudManager;
+use Ecommit\CrudBundle\Crud\Crud;
 use Ecommit\CrudBundle\Helper\CrudHelper;
 use Ecommit\CrudBundle\Paginator\AbstractPaginator;
 use Twig_Environment;
@@ -82,7 +82,7 @@ class CrudExtension extends Twig_Extension
      *  
      * @see CrudHelper:crudPaginatorLinks
      */
-    public function crud_paginator_links(CrudManager $crud, $options = array(), $ajax_options = array())
+    public function crud_paginator_links(Crud $crud, $options = array(), $ajax_options = array())
     {
         return $this->crud_helper->crudPaginatorLinks($crud, $options, $ajax_options);
     }
@@ -92,7 +92,7 @@ class CrudExtension extends Twig_Extension
      *  
      * @see CrudHelper:th
      */
-    public function th($column_id, CrudManager $crud, $options = array(), $th_options = array(), $ajax_options = array())
+    public function th($column_id, Crud $crud, $options = array(), $th_options = array(), $ajax_options = array())
     {
         return $this->crud_helper->th($column_id, $crud, $options, $th_options, $ajax_options);
     }
@@ -102,7 +102,7 @@ class CrudExtension extends Twig_Extension
      *  
      * @see CrudHelper:td
      */
-    public function td($column_id, CrudManager $crud, $value, $escape = true, $td_options = array())
+    public function td($column_id, Crud $crud, $value, $escape = true, $td_options = array())
     {
         return $this->crud_helper->td($column_id, $crud, $value, $escape, $td_options);
     }
@@ -110,14 +110,14 @@ class CrudExtension extends Twig_Extension
     /**
      * Twig function: "crud_display_config"
      * 
-     * @param CrudManager $crud
+     * @param Crud $crud
      * @param array $options   Options :
      *        * modal:  Include (or not) inside a modal. Default: true
      *        * image_url: Url image (button)
      * @param array $ajax_options   Ajax options
      * @return string 
      */
-    public function display_config(CrudManager $crud, $options = array(), $ajax_options = array())
+    public function display_config(Crud $crud, $options = array(), $ajax_options = array())
     {
         $default_options = array('modal' => true,
                                  'image_url' => 'ecr/images/i16/list.png',
@@ -148,7 +148,7 @@ class CrudExtension extends Twig_Extension
      * 
      * @see CrudHelper:searchFormTag 
      */
-    public function search_form(CrudManager $crud, $ajax_options = array(), $html_options = array())
+    public function search_form(Crud $crud, $ajax_options = array(), $html_options = array())
     {
         return $this->crud_helper->searchFormTag($crud, $ajax_options, $html_options);
     }
@@ -158,7 +158,7 @@ class CrudExtension extends Twig_Extension
      * 
      * @see CrudHelper:searchResetButton 
      */
-    public function search_reset(CrudManager $crud, $options = array(), $ajax_options = array(), $html_options = array())
+    public function search_reset(Crud $crud, $options = array(), $ajax_options = array(), $html_options = array())
     {
         return $this->crud_helper->searchResetButton($crud, $options, $ajax_options, $html_options);
     }
