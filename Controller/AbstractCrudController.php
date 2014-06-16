@@ -57,7 +57,16 @@ abstract class AbstractCrudController extends Controller
      * @param string $name Template name
      * @return string
      */
-    abstract protected function getPathView($name);
+    protected function getPathView($name)
+    {
+        preg_match(
+            '/^(?P<vendor>\w+)\\\(?P<bundle>\w+)\\\Controller\\\(?P<controller>\w+)Controller$/',
+            get_class($this),
+            $matches
+        );
+
+        return sprintf('%s%s:%s:%s.html.twig', $matches['vendor'], $matches['bundle'], $matches['controller'], $name);
+    }
 
     public function autoAjaxListAction()
     {
