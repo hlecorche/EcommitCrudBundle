@@ -12,7 +12,7 @@
 namespace Ecommit\CrudBundle\Form\Filter;
 
 use Ecommit\CrudBundle\Crud\CrudColumn;
-use Ecommit\CrudBundle\Form\Searcher\FormSearcherAbstract;
+use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 use Symfony\Component\Form\FormBuilder;
 
 class FieldFilterAutoComplete extends FieldFilterAbstract
@@ -93,7 +93,7 @@ class FieldFilterAutoComplete extends FieldFilterAbstract
     /**
      * {@inheritDoc} 
      */
-    public function changeQuery($query_builder, FormSearcherAbstract $form_data, CrudColumn $column)
+    public function changeQuery($query_builder, AbstractFormSearcher $form_data, CrudColumn $column)
     {
         $value_list = $form_data->get($this->field_name);
         $parameter_name = 'value_autocomplete'.str_replace(' ', '', $this->field_name);

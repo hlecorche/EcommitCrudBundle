@@ -12,7 +12,7 @@
 namespace Ecommit\CrudBundle\Form\Filter;
 
 use Ecommit\CrudBundle\Crud\CrudColumn;
-use Ecommit\CrudBundle\Form\Searcher\FormSearcherAbstract;
+use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 use Symfony\Component\Form\FormBuilder;
 
 class FieldFilterInteger extends FieldFilterAbstract
@@ -55,7 +55,7 @@ class FieldFilterInteger extends FieldFilterAbstract
     /**
      * {@inheritDoc} 
      */
-    public function changeQuery($query_builder, FormSearcherAbstract $form_data, CrudColumn $column)
+    public function changeQuery($query_builder, AbstractFormSearcher $form_data, CrudColumn $column)
     {
         $value_integer = $form_data->get($this->field_name);
         if(!is_null($value_integer) && is_numeric($value_integer))  //Important: Is_null but not is_empty 

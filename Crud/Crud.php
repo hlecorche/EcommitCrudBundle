@@ -13,7 +13,7 @@ namespace Ecommit\CrudBundle\Crud;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Ecommit\CrudBundle\Entity\UserCrudSettings;
-use Ecommit\CrudBundle\Form\Searcher\FormSearcherAbstract;
+use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 use Ecommit\CrudBundle\Form\Type\FormSearchType;
 use Ecommit\CrudBundle\Paginator\DbalPaginator;
 use Ecommit\CrudBundle\Paginator\DoctrinePaginator;
@@ -36,7 +36,7 @@ class Crud
     protected $sessionValues;
 
     /**
-     * @var FormSearcherAbstract
+     * @var AbstractFormSearcher
      */
     protected $formSearcher = null;
 
@@ -352,10 +352,10 @@ class Crud
     /**
      * Adds search form
      *
-     * @param FormSearcherAbstract $defaultFormSearcherData
+     * @param AbstractFormSearcher $defaultFormSearcherData
      * @return Crud
      */
-    public function createSearcherForm(FormSearcherAbstract $defaultFormSearcherData)
+    public function createSearcherForm(AbstractFormSearcher $defaultFormSearcherData)
     {
         $this->defaultFormSearcherData = $defaultFormSearcherData;
 
@@ -364,7 +364,7 @@ class Crud
         foreach ($defaultFormSearcherData->getFieldsFilter($this->registry) as $field) {
             if (!($field instanceof \Ecommit\CrudBundle\Form\Filter\FieldFilterAbstract)) {
                 throw new \Exception(
-                    'Crud: FormSearcherAbstract: getFieldsFilter() must only returns FieldFilterAbstract implementations'
+                    'Crud: AbstractFormSearcher: getFieldsFilter() must only returns FieldFilterAbstract implementations'
                 );
             }
             $formBuilder = $field->addField($formBuilder);
@@ -790,7 +790,7 @@ class Crud
                     $column = $this->availableVirtualColumns[$field->getColumnId()];
                 } else {
                     throw new \Exception(
-                        'Crud: FormSearcherAbstract: getFieldsFilter(): Column id does not exit: ' . $field->getColumnId(
+                        'Crud: AbstractFormSearcher: getFieldsFilter(): Column id does not exit: ' . $field->getColumnId(
                         )
                     );
                 }

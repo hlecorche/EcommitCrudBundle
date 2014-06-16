@@ -13,75 +13,71 @@ namespace Ecommit\CrudBundle\Form\Searcher;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
-abstract class FormSearcherAbstract
+abstract class AbstractFormSearcher
 {
-    protected $fields_filter;
+    protected $fieldFilters;
 
     /**
      * Declares fields
-     * 
+     *
      * @return array
      */
     abstract public function configureFieldsFilter();
-    
+
     /**
      * Gets field value
-     * 
-     * @param string $field   Field Name
-     * @return mixed 
+     *
+     * @param string $field Field Name
+     * @return mixed
      */
     public function get($field)
     {
-        if(isset($this->$field))
-        {
+        if (isset($this->$field)) {
             return $this->$field;
         }
+
         return null;
     }
-    
+
     /**
      * Clears this objet
      * Used before storing this object in session
-     * If one propertie is not public and it doesn't bebin
+     * If one property is not public and it doesn't begin
      * by "field_", it will be deleted
      */
     public function clear()
     {
-        foreach($this as $key => $value)
-        {
+        foreach ($this as $key => $value) {
             $variable = new \ReflectionProperty($this, $key);
-            if(!$variable->isPublic() && !\preg_match('/^field_/', $key))
-            {
+            if (!$variable->isPublic() && !\preg_match('/^field_/', $key)) {
                 unset($this->$key);
             }
         }
     }
-    
+
     /**
      * Returns fields
-     * 
-     * @return array 
+     *
+     * @return array
      */
     public function getFieldsFilter($registry = null)
     {
-        if(!$this->fields_filter)
-        {
-            $this->fields_filter = array();
-            foreach($this->configureFieldsFilter() as $field)
-            {
-                $this->fields_filter[] = $field;
-                if(!empty($registry) && $field instanceof \Ecommit\CrudBundle\Form\Filter\FieldFilterDoctrineInterface)
-                {
+        if (!$this->fieldFilters) {
+            $this->fieldFilters = array();
+            foreach ($this->configureFieldsFilter() as $field) {
+                $this->fieldFilters[] = $field;
+                if (!empty($registry) && $field instanceof \Ecommit\CrudBundle\Form\Filter\FieldFilterDoctrineInterface) {
                     $field->setRegistry($registry);
                 }
             }
         }
-        return $this->fields_filter;
+
+        return $this->fieldFilters;
     }
-    
+
     /**
      * Changes the form (global change)
-     * 
+     *
      * @param \Symfony\Component\Form\FormBuilderInterface $form_builder
      * @return \Symfony\Component\Form\FormBuilderInterface
      */
@@ -89,10 +85,10 @@ abstract class FormSearcherAbstract
     {
         return $form_builder;
     }
-    
+
     /**
      * Changes the query (global change)
-     * 
+     *
      * @param QueryBuilder $query_builder
      * @return QueryBuilder
      */

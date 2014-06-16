@@ -12,7 +12,7 @@
 namespace Ecommit\CrudBundle\Form\Filter;
 
 use Ecommit\CrudBundle\Crud\CrudColumn;
-use Ecommit\CrudBundle\Form\Searcher\FormSearcherAbstract;
+use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 use Symfony\Component\Form\FormBuilder;
 
 abstract class FieldFilterAbstract
@@ -33,11 +33,11 @@ abstract class FieldFilterAbstract
      * Changes the query
      * 
      * @param QueryBuilder $query_builder
-     * @param FormSearcherAbstract $form_data
+     * @param AbstractFormSearcher $form_data
      * @param CrudColumn $column
      * @return QueryBuilder
      */
-    abstract public function changeQuery($query_builder, FormSearcherAbstract $form_data, CrudColumn $column);
+    abstract public function changeQuery($query_builder, AbstractFormSearcher $form_data, CrudColumn $column);
     
     /**
      * Constructor

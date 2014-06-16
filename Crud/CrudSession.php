@@ -11,7 +11,7 @@
 
 namespace Ecommit\CrudBundle\Crud;
 
-use Ecommit\CrudBundle\Form\Searcher\FormSearcherAbstract;
+use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 
 class CrudSession
 {
@@ -19,7 +19,7 @@ class CrudSession
      * Search's object (used by "setData" inside the form). Used to
      * save the data of the search form
      *
-     * @var FormSearcherAbstract
+     * @var AbstractFormSearcher
      */
     public $formSearcherData = null;
 
