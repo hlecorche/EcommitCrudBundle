@@ -77,10 +77,10 @@ abstract class FieldFilterAbstract
      */
     public function getAliasSearch(CrudColumn $column)
     {
-        if(empty($column->alias_search))
+        if(empty($column->aliasSearch))
         {
             return $column->alias;
         }
-        return $column->alias_search;
+        return $column->aliasSearch;
     }
 }

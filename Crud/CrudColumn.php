@@ -15,11 +15,11 @@ class CrudColumn
 {
     public $id;
     public $alias;
-    public $alias_search;
-    public $alias_sort;
+    public $aliasSearch;
+    public $aliasSort;
     public $label;
     public $sortable;
-    public $default_displayed;
+    public $defaultDisplayed;
     
     /**
      * Constructor
@@ -28,18 +28,18 @@ class CrudColumn
      * @param string $alias   Column SQL alias
      * @param string $label   Column label (used in the header table)
      * @param bool $sortable   If the column is sortable
-     * @param bool $default_displayed   If the column is displayed, by default
-     * @param string $alias_search    Column SQL alias, used during searchs
-     * @param string $alias_sort    Column(s) SQL alias (string or array of strings), used during sorting
+     * @param bool $defaultDisplayed   If the column is displayed, by default
+     * @param string $aliasSearch    Column SQL alias, used during searchs
+     * @param string $aliasSort    Column(s) SQL alias (string or array of strings), used during sorting
      */
-    public function __construct($id, $alias, $label, $sortable, $default_displayed, $alias_search, $alias_sort)
+    public function __construct($id, $alias, $label, $sortable, $defaultDisplayed, $aliasSearch, $aliasSort)
     {
         $this->id = $id;
         $this->alias = $alias;
         $this->label = $label;
         $this->sortable = $sortable;
-        $this->default_displayed = $default_displayed;
-        $this->alias_search = $alias_search;
-        $this->alias_sort = $alias_sort;
+        $this->defaultDisplayed = $defaultDisplayed;
+        $this->aliasSearch = $aliasSearch;
+        $this->aliasSort = $aliasSort;
     }
 }

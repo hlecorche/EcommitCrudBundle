@@ -11,48 +11,50 @@
 
 namespace Ecommit\CrudBundle\Crud;
 
-class CrudSessionManager
+use Ecommit\CrudBundle\Form\Searcher\FormSearcherAbstract;
+
+class CrudSession
 {
     /**
-     * Search's object (used by "setData" inside the form). Used to 
-     * save the data of the form of search 
-     * 
-     * @var Object
+     * Search's object (used by "setData" inside the form). Used to
+     * save the data of the search form
+     *
+     * @var FormSearcherAbstract
      */
-    public $form_searcher_values_object = null;
-    
+    public $formSearcherData = null;
+
     /**
      * Number of results, in one page
-     * 
-     * @var int   
+     *
+     * @var int
      */
-    public $number_results_displayed = null;
-    
+    public $resultsPerPage = null;
+
     /**
      * Displayed colums
-     * 
-     * @var type 
+     *
+     * @var type
      */
-    public $columns_diplayed = array();
-    
+    public $displayedColumns = array();
+
     /**
      * Sortable: Sort (Column id)
-     * 
-     * @var type 
+     *
+     * @var type
      */
     public $sort = null;
-    
+
     /**
      * Sortable: Sens (ASC / DESC)
-     * 
-     * @var type 
+     *
+     * @var type
      */
     public $sense = null;
-    
+
     /**
      * Page number
-     * 
-     * @var int 
+     *
+     * @var int
      */
     public $page = 1;
 }

@@ -12,7 +12,7 @@
 namespace Ecommit\CrudBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Ecommit\CrudBundle\Crud\CrudSessionManager;
+use Ecommit\CrudBundle\Crud\CrudSession;
 
 /**
  * @ORM\Entity()
@@ -39,9 +39,9 @@ class UserCrudSettings
     protected $results_displayed;
     
     /**
-     * @ORM\Column(type="array")
+     * @ORM\Column(type="array", name="displayed_columns")
      */
-    protected $columns_diplayed = array();
+    protected $displayedColumns = array();
     
     /**
      * @ORM\Column(type="string", length=30)
@@ -100,26 +100,26 @@ class UserCrudSettings
     }
 
     /**
-     * Set columns_diplayed
+     * Set displayedColumns
      *
-     * @param array $columnsDiplayed
+     * @param array $displayedColumns
      * @return UserCrudSettings
      */
-    public function setColumnsDiplayed($columnsDiplayed)
+    public function setDisplayedColumns($displayedColumns)
     {
-        $this->columns_diplayed = $columnsDiplayed;
+        $this->displayedColumns = $displayedColumns;
     
         return $this;
     }
 
     /**
-     * Get columns_diplayed
+     * Get displayedColumns
      *
      * @return array 
      */
-    public function getColumnsDiplayed()
+    public function getDisplayedColumns()
     {
-        return $this->columns_diplayed;
+        return $this->displayedColumns;
     }
 
     /**
@@ -192,15 +192,15 @@ class UserCrudSettings
     }
     
     /**
-     * Create CrudSessionManager from this object
+     * Create CrudSession from this object
      * 
-     * @param \Ecommit\CrudBundle\Crud\CrudSessionManager $crud_session_manager
-     * @return \Ecommit\CrudBundle\Crud\CrudSessionManager
+     * @param \Ecommit\CrudBundle\Crud\CrudSession $crud_session_manager
+     * @return \Ecommit\CrudBundle\Crud\CrudSession
      */
-    public function transformToCrudSessionManager(CrudSessionManager $crud_session_manager)
+    public function transformToCrudSession(CrudSession $crud_session_manager)
     {
-        $crud_session_manager->columns_diplayed = $this->columns_diplayed;
-        $crud_session_manager->number_results_displayed = $this->results_displayed;
+        $crud_session_manager->columns_diplayed = $this->displayedColumns;
+        $crud_session_manager->resultsPerPage = $this->results_displayed;
         $crud_session_manager->sense = $this->sense;
         $crud_session_manager->sort = $this->sort;
         
@@ -208,14 +208,14 @@ class UserCrudSettings
     }
     
     /**
-     * Update this object from CrudSessionManager
+     * Update this object from CrudSession
      * 
-     * @param \Ecommit\CrudBundle\Crud\CrudSessionManager $crud_session_manager
+     * @param \Ecommit\CrudBundle\Crud\CrudSession $crud_session_manager
      */
-    public function updateFromSessionManager(CrudSessionManager $crud_session_manager)
+    public function updateFromSessionManager(CrudSession $crud_session_manager)
     {
-        $this->columns_diplayed = $crud_session_manager->columns_diplayed;
-        $this->results_displayed = $crud_session_manager->number_results_displayed;
+        $this->displayedColumns = $crud_session_manager->columns_diplayed;
+        $this->results_displayed = $crud_session_manager->resultsPerPage;
         $this->sense = $crud_session_manager->sense;
         $this->sort = $crud_session_manager->sort;
     }

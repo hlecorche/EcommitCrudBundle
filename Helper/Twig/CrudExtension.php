@@ -137,7 +137,7 @@ class CrudExtension extends Twig_Extension
                     'ajax_options' => $ajax_options,
                     'image_url' => $options['image_url'],
                     'suffix' => $crud->getSessionName(),
-                    'default_npp' => $crud->getDefaultNumberResultsDisplayed(),
+                    'default_npp' => $crud->getDefaultResultsPerPage(),
                     'default_columns' => $crud->getDefaultDisplayedColumns(),
                     'use_bootstrap' => $this->crud_helper->useBootstrap(),
                  ));

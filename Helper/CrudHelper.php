@@ -249,7 +249,7 @@ class CrudHelper
 
         //If the column is not to be shown, returns empty
         $session_values =  $crud->getSessionValues();
-        if(!\in_array($column_id, $session_values->columns_diplayed))
+        if(!\in_array($column_id, $session_values->displayedColumns))
         {
             return '';
         }
@@ -302,7 +302,7 @@ class CrudHelper
     {
         //If the column is not to be shown, returns empty
         $session_values =  $crud->getSessionValues();
-        if(!\in_array($column_id, $session_values->columns_diplayed))
+        if(!\in_array($column_id, $session_values->displayedColumns))
         {
             return '';
         }

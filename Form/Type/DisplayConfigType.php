@@ -37,7 +37,7 @@ class DisplayConfigType extends AbstractType
     {
         //Field "npp"
         $choices_npp = array();
-        foreach($this->crud->getAvailableNumberResultsDisplayed() as $number)
+        foreach($this->crud->getAvailableResultsPerPage() as $number)
         {
             $choices_npp[$number] = $number;
         }
@@ -56,8 +56,8 @@ class DisplayConfigType extends AbstractType
                                                            'label' => 'Columns to be shown'));
         
         //Default values
-        $values['npp'] = $this->crud->getSessionValues()->number_results_displayed;
-        $values['displayed_columns'] = $this->crud->getSessionValues()->columns_diplayed;
+        $values['npp'] = $this->crud->getSessionValues()->resultsPerPage;
+        $values['displayed_columns'] = $this->crud->getSessionValues()->displayedColumns;
         $builder->setData($values);
     }
     
