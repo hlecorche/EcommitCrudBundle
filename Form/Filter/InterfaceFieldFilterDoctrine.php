@@ -12,9 +12,8 @@
 namespace Ecommit\CrudBundle\Form\Filter;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
 
-interface FieldFilterDoctrineInterface
+interface InterfaceFieldFilterDoctrine
 {
     public function getRegistry();
     public function setRegistry(ManagerRegistry $registry);

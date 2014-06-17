@@ -11,61 +11,60 @@
 
 namespace Ecommit\CrudBundle\Form\Filter;
 
-use Ecommit\CrudBundle\Crud\CrudColumn;
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class FieldFilterText extends FieldFilterAbstract
+class FieldFilterText extends AbstractFieldFilter
 {
-    protected $must_begin;
-    protected $must_end;
-    
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
-    public function __construct($column_id, $field_name, $options = array(), $field_options = array())
+    protected function configureOptions(OptionsResolverInterface $resolver)
     {
-       $this->must_begin = isset($options['must_begin'])? $options['must_begin'] : false;
-       $this->must_end = isset($options['must_end'])? $options['must_end'] : false;
-     
-       parent::__construct($column_id, $field_name, $options, $field_options);
-    }
-    
-    /**
-     * {@inheritDoc} 
-     */
-    public function addField(FormBuilder $form_builder)
-    {
-        $form_builder->add($this->field_name, 'text', $this->field_options);
-        return $form_builder;
+        $resolver->setDefaults(
+            array(
+                'must_begin' => false,
+                'must_end' => false,
+            )
+        );
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
-    public function changeQuery($query_builder, AbstractFormSearcher $form_data, CrudColumn $column)
+    public function addField(FormBuilder $formBuilder)
     {
-        $value_text = $form_data->get($this->field_name);
-        $parameter_name = 'value_integer_'.str_replace(' ', '', $this->field_name);
-        if(empty($value_text) || !is_scalar($value_text))
-        {
-            return $query_builder;
+        $formBuilder->add($this->property, 'text', $this->typeOptions);
+
+        return $formBuilder;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function changeQuery($queryBuilder, AbstractFormSearcher $formData, $aliasSearch)
+    {
+        $value = $formData->get($this->property);
+        $parameterName = 'value_text_' . str_replace(' ', '', $this->property);
+        if (empty($value) || !is_scalar($value)) {
+            return $queryBuilder;
         }
-        
-        if($this->must_begin && $this->must_end)
-        {
-            $query_builder->andWhere(sprintf('%s = :%s', $this->getAliasSearch($column), $parameter_name))
-            ->setParameter($parameter_name, $value_text);
+
+        if ($this->options['must_begin'] && $this->options['must_end']) {
+            $queryBuilder->andWhere(sprintf('%s = :%s', $aliasSearch, $parameterName))
+                ->setParameter($parameterName, $value);
+        } else {
+            $after = ($this->options['must_begin']) ? '' : '%';
+            $before = ($this->options['must_end']) ? '' : '%';
+            $value = addcslashes($value, '%_');
+            $like = $after . $value . $before;
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->like($aliasSearch, ':' . $parameterName)
+            )
+                ->setParameter($parameterName, $like);
         }
-        else
-        {
-            $after = ($this->must_begin)? '' : '%';
-            $before = ($this->must_end)? '' : '%';
-            $value_text = addcslashes($value_text, '%_');
-            $like = $after.$value_text.$before;
-            $query_builder->andWhere($query_builder->expr()->like($this->getAliasSearch($column), ':'.$parameter_name))
-            ->setParameter($parameter_name, $like);
-        }
-        return $query_builder;
+
+        return $queryBuilder;
     }
 }

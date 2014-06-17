@@ -12,10 +12,18 @@
 namespace Ecommit\CrudBundle\Form\Searcher;
 
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\PropertyAccess\Exception\AccessException;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 abstract class AbstractFormSearcher
 {
     protected $fieldFilters;
+
+    /**
+     * @var PropertyAccessor
+     */
+    protected $accessor;
 
     /**
      * Declares fields
@@ -32,24 +40,28 @@ abstract class AbstractFormSearcher
      */
     public function get($field)
     {
-        if (isset($this->$field)) {
-            return $this->$field;
+        try {
+            $value = $this->getAccessor()->getValue($this, $field);
+        } catch (AccessException $e) {
+            $value = null;
         }
 
-        return null;
+        return $value;
     }
 
     /**
      * Clears this objet
      * Used before storing this object in session
      * If one property is not public and it doesn't begin
-     * by "field_", it will be deleted
+     * by "field", it will be deleted
      */
     public function clear()
     {
+        unset($this->fieldFilters);
+        unset($this->accessor);
         foreach ($this as $key => $value) {
             $variable = new \ReflectionProperty($this, $key);
-            if (!$variable->isPublic() && !\preg_match('/^field_/', $key)) {
+            if (!$variable->isPublic() && !\preg_match('/^field/', $key)) {
                 unset($this->$key);
             }
         }
@@ -66,9 +78,10 @@ abstract class AbstractFormSearcher
             $this->fieldFilters = array();
             foreach ($this->configureFieldsFilter() as $field) {
                 $this->fieldFilters[] = $field;
-                if (!empty($registry) && $field instanceof \Ecommit\CrudBundle\Form\Filter\FieldFilterDoctrineInterface) {
+                if (!empty($registry) && $field instanceof \Ecommit\CrudBundle\Form\Filter\InterfaceFieldFilterDoctrine) {
                     $field->setRegistry($registry);
                 }
+                $field->init();
             }
         }
 
@@ -78,22 +91,33 @@ abstract class AbstractFormSearcher
     /**
      * Changes the form (global change)
      *
-     * @param \Symfony\Component\Form\FormBuilderInterface $form_builder
+     * @param \Symfony\Component\Form\FormBuilderInterface $formBuilder
      * @return \Symfony\Component\Form\FormBuilderInterface
      */
-    public function globalBuildForm(FormBuilderInterface $form_builder)
+    public function globalBuildForm(FormBuilderInterface $formBuilder)
     {
-        return $form_builder;
+        return $formBuilder;
     }
 
     /**
      * Changes the query (global change)
      *
-     * @param QueryBuilder $query_builder
+     * @param QueryBuilder $queryBuilder
      * @return QueryBuilder
      */
-    public function globalChangeQuery($query_builder)
+    public function globalChangeQuery($queryBuilder)
     {
-        return $query_builder;
+        return $queryBuilder;
+    }
+
+    /**
+     * @return PropertyAccessor
+     */
+    protected function getAccessor()
+    {
+        if (!isset($this->accessor) || !$this->accessor) {
+            $this->accessor = PropertyAccess::createPropertyAccessor();
+        }
+        return $this->accessor;
     }
 }

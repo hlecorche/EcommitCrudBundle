@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of the EcommitCrudBundle package.
  *
  * (c) E-commit <contact@e-commit.fr>
@@ -13,14 +12,14 @@ namespace Ecommit\CrudBundle\Form\Filter;
 
 use Symfony\Component\Form\FormBuilder;
 
-class FieldFilterNumber extends FieldFilterInteger
+class FieldFilterSelect2Entity extends FieldFilterEntity
 {
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public function addField(FormBuilder $formBuilder)
     {
-        $formBuilder->add($this->property, 'number', $this->typeOptions);
+        $formBuilder->add($this->property, 'ecommit_javascript_select2choice', $this->typeOptions);
 
         return $formBuilder;
     }

@@ -11,87 +11,90 @@
 
 namespace Ecommit\CrudBundle\Form\Filter;
 
-use Symfony\Component\Form\FormBuilder;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Ecommit\JavascriptBundle\Form\Type\EntityNormalizerTrait;
+use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class FieldFilterEntity extends FieldFilterList implements FieldFilterDoctrineInterface
+class FieldFilterEntity extends FieldFilterChoice implements InterfaceFieldFilterDoctrine
 {
-    protected $registry;
-    
-    protected $key_method;
-    protected $method;
-    protected $query_builder;
-    protected $class;
-    protected $em;
+    use EntityNormalizerTrait;
 
     /**
-     * {@inheritDoc} 
+     * @var ManagerRegistry
      */
-    public function __construct($column_id, $field_name, $options = array(), $field_options = array())
-    {
-        $this->key_method = isset($options['key_method'])? $options['key_method'] : 'getId';
-        $this->method = isset($options['render_method'])? $options['render_method'] : '__toString';
-        
-        if(empty($options['class']))
-        {
-            throw new \Exception(\get_class($this).': Options "class" is required');
-        }
-        $this->class = $options['class'];
-        
-        if(!empty($options['query_builder']))
-        {
-            $this->query_builder = $options['query_builder'];
-        }
-        if(!empty($options['em']))
-        {
-            $this->em = $options['em'];
-        }
-        
-        $options['choices'] = array();
-        
-        parent::__construct($column_id, $field_name, $options, $field_options);
-    }
-    
+    protected $registry;
+
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
-    public function addField(FormBuilder $form_builder)
+    protected function configureOptions(OptionsResolverInterface $resolver)
     {
-        if(empty($this->em))
-        {
-            $em = $this->registry->getManagerForClass($this->class);
-        }
-        else
-        {
-            $em = $this->registry->getManager($this->em);
-        }
-        
-        $query_builder = $this->query_builder;
-        if(empty($query_builder))
-        {
-            $query_builder= $em->createQueryBuilder()
-            ->from($this->class, 'c')
-            ->select('c');
-        }
-            
-        if($query_builder instanceof \Closure)
-        {
-            $query_builder = $query_builder($em->getRepository($this->class));
-        }        
-        if(!$query_builder instanceof \Doctrine\ORM\QueryBuilder)
-        {
-            throw new \Exception(\get_class($this).': "query_builder" must be an instance of Doctrine\ORM\QueryBuilder');
-        }
-        
+        parent::configureOptions($resolver);
+
+        $resolver->setDefaults(
+            array(
+                'property' => null,
+                'em' => null,
+                'query_builder' => null,
+                'identifier' => null,
+            )
+        );
+
+        $resolver->setRequired(
+            array(
+                'class',
+            )
+        );
+
+        $resolver->setNormalizers(
+            array(
+                'em' => $this->getEmNormalizer($this->registry),
+                'query_builder' => $this->getQueryBuilderNormalizer(),
+                'identifier' => $this->getIdentifierNormalizer(),
+            )
+        );
+    }
+
+    protected function configureTypeOptions($typeOptions)
+    {
+        $typeOptions = parent::configureTypeOptions($typeOptions);
+
+        $queryBuilderLoader = new ORMQueryBuilderLoader(
+            $this->options['query_builder'],
+            $this->options['em'],
+            $this->options['class']
+        );
+
+        $accessor = PropertyAccess::createPropertyAccessor();
         $choices = array();
-        $key_method = $this->key_method;
-        $method = $this->method;
-        foreach($query_builder->getQuery()->execute() as $choice)
-        {
-            $choices[$choice->$key_method()] = $choice->$method();
+        foreach ($queryBuilderLoader->getEntities() as $entity) {
+            $id = $accessor->getValue($entity, $this->options['identifier']);
+            $choices[$id] = $this->extractLabel($entity);
         }
-        
-        $this->field_options['choices'] = $choices;
-        return parent::addField($form_builder);
+
+        $typeOptions['choices'] = $choices;
+
+        return $typeOptions;
+    }
+
+    /**
+     * Extract property that should be used for displaying the entities as text in the HTML element
+     * @param object $object
+     * @throws \Exception
+     */
+    protected function extractLabel($object)
+    {
+        if ($this->options['property']) {
+            $accessor = PropertyAccess::createPropertyAccessor();
+
+            return $accessor->getValue($object, $this->options['property']);
+        } elseif (method_exists($object, '__toString')) {
+            return (string)$object;
+        } else {
+            throw new \Exception('"property" option or "__toString" method must be defined"');
+        }
     }
 
     public function getRegistry()
@@ -99,7 +102,7 @@ class FieldFilterEntity extends FieldFilterList implements FieldFilterDoctrineIn
         return $this->registry;
     }
 
-    public function setRegistry(\Doctrine\Common\Persistence\ManagerRegistry $registry)
+    public function setRegistry(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }

@@ -362,11 +362,24 @@ class Crud
         $formName = sprintf('crud_search_%s', $this->sessionName);
         $formBuilder = $this->formFactory->createNamedBuilder($formName, new FormSearchType());
         foreach ($defaultFormSearcherData->getFieldsFilter($this->registry) as $field) {
-            if (!($field instanceof \Ecommit\CrudBundle\Form\Filter\FieldFilterAbstract)) {
+            if (!($field instanceof \Ecommit\CrudBundle\Form\Filter\AbstractFieldFilter)) {
                 throw new \Exception(
-                    'Crud: AbstractFormSearcher: getFieldsFilter() must only returns FieldFilterAbstract implementations'
+                    'Crud: AbstractFormSearcher: getFieldsFilter() must only returns AbstractFieldFilter implementations'
                 );
             }
+
+            if (isset($this->availableColumns[$field->getColumnId()])) {
+                $column = $this->availableColumns[$field->getColumnId()];
+            } elseif (isset($this->availableVirtualColumns[$field->getColumnId()])) {
+                $column = $this->availableVirtualColumns[$field->getColumnId()];
+            } else {
+                throw new \Exception(
+                    'Crud: AbstractFormSearcher: getFieldsFilter(): Column id does not exit: ' . $field->getColumnId(
+                    )
+                );
+            }
+
+            $field->setLabel($column->label);
             $formBuilder = $field->addField($formBuilder);
         }
         //Global 
@@ -794,10 +807,18 @@ class Crud
                         )
                     );
                 }
+
+                //Get alias search
+                if (empty($column->aliasSearch)) {
+                    $aliasSearch = $column->alias;
+                } else {
+                    $aliasSearch = $column->aliasSearch;
+                }
+
                 $this->queryBuilder = $field->changeQuery(
                     $this->queryBuilder,
                     $this->sessionValues->formSearcherData,
-                    $column
+                    $aliasSearch
                 );
             }
 
