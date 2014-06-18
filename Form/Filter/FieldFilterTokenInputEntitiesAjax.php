@@ -13,8 +13,9 @@ namespace Ecommit\CrudBundle\Form\Filter;
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
-class FieldFilterTokenInputEntitiesAjax extends FieldFilterChoice
+class FieldFilterTokenInputEntitiesAjax extends AbstractFieldFilter
 {
     /**
      * {@inheritDoc}
@@ -30,6 +31,7 @@ class FieldFilterTokenInputEntitiesAjax extends FieldFilterChoice
                 'url' => null, //Required in FormType if route_name is empty
                 'route_name' => null,
                 'route_params' => null,
+                'min' => null,
                 'max' => 99,
             )
         );
@@ -47,7 +49,7 @@ class FieldFilterTokenInputEntitiesAjax extends FieldFilterChoice
     protected function configureTypeOptions($typeOptions)
     {
         foreach ($this->options as $optionName => $optionValue) {
-            if (!empty($optionValue)) {
+            if (!empty($optionValue) && !in_array($optionName, array('validate', 'min'))) {
                 $typeOptions[$optionName] = $optionValue;
             }
         }
@@ -69,11 +71,36 @@ class FieldFilterTokenInputEntitiesAjax extends FieldFilterChoice
     /**
      * {@inheritDoc}
      */
+    protected function getAutoConstraints()
+    {
+        return array(
+            new Assert\Count(
+                array(
+                    'min' => $this->options['min'],
+                    'max' => $this->options['max'],
+                )
+            ),
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function changeQuery($queryBuilder, AbstractFormSearcher $formData, $aliasSearch)
     {
-        //Force multiple values
-        $this->options['multiple'] = true;
+        $value = $formData->get($this->property);
+        $parameterName = 'value_choice' . str_replace(' ', '', $this->property);
+        if (empty($value) || !is_array($value)) {
+            return $queryBuilder;
+        }
 
-        return parent::changeQuery($queryBuilder, $formData, $aliasSearch);
+        if (count($value) > $this->options['max']) {
+            return $queryBuilder;
+        }
+        if ($this->options['min'] && count($value) < $this->options['min']) {
+            return $queryBuilder;
+        }
+        return $queryBuilder->andWhere($queryBuilder->expr()->in($aliasSearch, ':' . $parameterName))
+            ->setParameter($parameterName, $value);
     }
 }

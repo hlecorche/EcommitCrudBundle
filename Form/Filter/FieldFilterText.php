@@ -14,6 +14,7 @@ namespace Ecommit\CrudBundle\Form\Filter;
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class FieldFilterText extends AbstractFieldFilter
 {
@@ -26,6 +27,8 @@ class FieldFilterText extends AbstractFieldFilter
             array(
                 'must_begin' => false,
                 'must_end' => false,
+                'min_length' => null,
+                'max_length' => 255,
             )
         );
     }
@@ -38,6 +41,21 @@ class FieldFilterText extends AbstractFieldFilter
         $formBuilder->add($this->property, 'text', $this->typeOptions);
 
         return $formBuilder;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getAutoConstraints()
+    {
+        return array(
+            new Assert\Length(
+                array(
+                    'min' => $this->options['min_length'],
+                    'max' => $this->options['max_length'],
+                )
+            ),
+        );
     }
 
     /**

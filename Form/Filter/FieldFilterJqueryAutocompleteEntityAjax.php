@@ -13,8 +13,9 @@ namespace Ecommit\CrudBundle\Form\Filter;
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
-class FieldFilterJqueryAutocompleteEntityAjax extends FieldFilterChoice
+class FieldFilterJqueryAutocompleteEntityAjax extends AbstractFieldFilter
 {
     /**
      * {@inheritDoc}
@@ -30,6 +31,7 @@ class FieldFilterJqueryAutocompleteEntityAjax extends FieldFilterChoice
                 'url' => null, //Required in FormType if route_name is empty
                 'route_name' => null,
                 'route_params' => null,
+                'max_length' => 255,
             )
         );
 
@@ -46,7 +48,7 @@ class FieldFilterJqueryAutocompleteEntityAjax extends FieldFilterChoice
     protected function configureTypeOptions($typeOptions)
     {
         foreach ($this->options as $optionName => $optionValue) {
-            if (!empty($optionValue)) {
+            if (!empty($optionValue) && !in_array($optionName, array('validate', 'max_length'))) {
                 $typeOptions[$optionName] = $optionValue;
             }
         }
@@ -68,11 +70,29 @@ class FieldFilterJqueryAutocompleteEntityAjax extends FieldFilterChoice
     /**
      * {@inheritDoc}
      */
+    protected function getAutoConstraints()
+    {
+        return array(
+            new Assert\Length(
+                array(
+                    'max' => $this->options['max_length'],
+                )
+            ),
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function changeQuery($queryBuilder, AbstractFormSearcher $formData, $aliasSearch)
     {
-        //Force no multiple values
-        $this->options['multiple'] = false;
+        $value = $formData->get($this->property);
+        $parameterName = 'value_jquery_auto' . str_replace(' ', '', $this->property);
+        if (empty($value) || !is_scalar($value)) {
+            return $queryBuilder;
+        }
 
-        return parent::changeQuery($queryBuilder, $formData, $aliasSearch);
+        return $queryBuilder->andWhere(sprintf('%s = :%s', $aliasSearch, $parameterName))
+            ->setParameter($parameterName, $value);
     }
 }

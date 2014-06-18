@@ -29,8 +29,6 @@ class FieldFilterSelect2EntityAjax extends FieldFilterChoice
                 'url' => null, //Required in FormType if route_name is empty
                 'route_name' => null,
                 'route_params' => null,
-                'multiple' => false,
-                'max' => 99,
             )
         );
 
@@ -47,7 +45,7 @@ class FieldFilterSelect2EntityAjax extends FieldFilterChoice
     protected function configureTypeOptions($typeOptions)
     {
         foreach ($this->options as $optionName => $optionValue) {
-            if (!empty($optionValue)) {
+            if (!empty($optionValue) && !in_array($optionName, array('validate', 'min'))) {
                 $typeOptions[$optionName] = $optionValue;
             }
         }

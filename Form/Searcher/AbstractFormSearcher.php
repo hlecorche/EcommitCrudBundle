@@ -15,6 +15,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\PropertyAccess\Exception\AccessException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\Validator\Constraints\Callback;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 abstract class AbstractFormSearcher
 {
@@ -108,6 +111,28 @@ abstract class AbstractFormSearcher
     public function globalChangeQuery($queryBuilder)
     {
         return $queryBuilder;
+    }
+
+    /**
+     * Returns true if auto validation is enabled
+     * @return bool
+     */
+    public function automaticValidationIsEnabled()
+    {
+        return true;
+    }
+
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $callback = function (AbstractFormSearcher $value, ExecutionContextInterface $context) {
+            if ($value->automaticValidationIsEnabled()) {
+                foreach ($value->getFieldsFilter() as $field) {
+                    $field->autoValidate($value, $context);
+                }
+            }
+        };
+
+        $metadata->addConstraint(new Callback($callback));
     }
 
     /**

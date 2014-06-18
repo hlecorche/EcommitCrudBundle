@@ -18,6 +18,7 @@ use Ecommit\CrudBundle\Form\Type\FormSearchType;
 use Ecommit\CrudBundle\Paginator\DbalPaginator;
 use Ecommit\CrudBundle\Paginator\DoctrinePaginator;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -36,7 +37,7 @@ class Crud
     protected $sessionValues;
 
     /**
-     * @var AbstractFormSearcher
+     * @var Form
      */
     protected $formSearcher = null;
 
@@ -358,6 +359,7 @@ class Crud
     public function createSearcherForm(AbstractFormSearcher $defaultFormSearcherData)
     {
         $this->defaultFormSearcherData = $defaultFormSearcherData;
+        $this->initializeFieldsFilter($defaultFormSearcherData);
 
         $formName = sprintf('crud_search_%s', $this->sessionName);
         $formBuilder = $this->formFactory->createNamedBuilder($formName, new FormSearchType());
@@ -368,18 +370,6 @@ class Crud
                 );
             }
 
-            if (isset($this->availableColumns[$field->getColumnId()])) {
-                $column = $this->availableColumns[$field->getColumnId()];
-            } elseif (isset($this->availableVirtualColumns[$field->getColumnId()])) {
-                $column = $this->availableVirtualColumns[$field->getColumnId()];
-            } else {
-                throw new \Exception(
-                    'Crud: AbstractFormSearcher: getFieldsFilter(): Column id does not exit: ' . $field->getColumnId(
-                    )
-                );
-            }
-
-            $field->setLabel($column->label);
             $formBuilder = $field->addField($formBuilder);
         }
         //Global 
@@ -452,9 +442,11 @@ class Crud
         //Save in session
         $session = $this->request->getSession();
         if (is_object($this->sessionValues->formSearcherData)) {
-            $this->sessionValues->formSearcherData->clear();
+            $sessionValuesClean = clone $this->sessionValues;
+            $sessionValuesClean->formSearcherData = clone $this->sessionValues->formSearcherData;
+            $sessionValuesClean->formSearcherData->clear();
         }
-        $session->set($this->sessionName, $this->sessionValues);
+        $session->set($this->sessionName, $sessionValuesClean);
 
         //Save in database
         if ($this->persistentSettings && $this->updateDatabase) {
@@ -546,12 +538,43 @@ class Crud
             //because otherwise it will be linked to form, and will be updated when the "bind" function will
             //be called (If form is not valid, the session values will still be updated: Undesirable behavior)
             $values = clone $this->sessionValues->formSearcherData;
+            $this->initializeFieldsFilter($values);
             $this->formSearcher->setData($values);
         }
 
         //Saves
         $this->save();
     }
+
+    /**
+     * Init "fieldFilters" property in $formSearcherData object
+     * Inject the registry in $formSearcherData objet if implements InterfaceFieldFilterDoctrine
+     * @param AbstractFormSearcher $formSearcherData
+     */
+    protected function initializeFieldsFilter(AbstractFormSearcher $formSearcherData)
+    {
+        foreach ($formSearcherData->getFieldsFilter($this->registry) as $field) {
+            if (!($field instanceof \Ecommit\CrudBundle\Form\Filter\AbstractFieldFilter)) {
+                throw new \Exception(
+                    'Crud: AbstractFormSearcher: getFieldsFilter() must only returns AbstractFieldFilter implementations'
+                );
+            }
+
+            if (isset($this->availableColumns[$field->getColumnId()])) {
+                $column = $this->availableColumns[$field->getColumnId()];
+            } elseif (isset($this->availableVirtualColumns[$field->getColumnId()])) {
+                $column = $this->availableVirtualColumns[$field->getColumnId()];
+            } else {
+                throw new \Exception(
+                    'Crud: AbstractFormSearcher: getFieldsFilter(): Column id does not exit: ' . $field->getColumnId(
+                    )
+                );
+            }
+
+            $field->setLabel($column->label);
+        }
+    }
+
 
     /**
      * Load user values

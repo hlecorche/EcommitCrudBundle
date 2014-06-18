@@ -14,6 +14,7 @@ namespace Ecommit\CrudBundle\Form\Filter;
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class FieldFilterDate extends AbstractFieldFilter
 {
@@ -72,6 +73,16 @@ class FieldFilterDate extends AbstractFieldFilter
         $formBuilder->add($this->property, $this->options['type'], $this->typeOptions);
 
         return $formBuilder;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getAutoConstraints()
+    {
+        return array(
+            new Assert\Date(),
+        );
     }
 
     /**

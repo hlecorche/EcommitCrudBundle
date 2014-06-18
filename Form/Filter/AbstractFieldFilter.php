@@ -15,6 +15,7 @@ use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 abstract class AbstractFieldFilter
 {
@@ -22,7 +23,6 @@ abstract class AbstractFieldFilter
     protected $property;
     protected $options;
     protected $typeOptions;
-    protected $label;
     protected $isInitiated = false;
 
     /**
@@ -51,6 +51,7 @@ abstract class AbstractFieldFilter
 
         // Define options
         $resolver = new OptionsResolver();
+        $this->configureCommonOptions($resolver);
         $this->configureOptions($resolver);
         $this->options = $resolver->resolve($this->options);
 
@@ -58,6 +59,18 @@ abstract class AbstractFieldFilter
         $this->typeOptions = $this->configureTypeOptions($this->typeOptions);
 
         $this->isInitiated = true;
+    }
+
+    /**
+     * @param OptionsResolverInterface $resolver
+     */
+    protected function configureCommonOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(
+            array(
+                'validate' => true,
+            )
+        );
     }
 
     /**
@@ -93,6 +106,35 @@ abstract class AbstractFieldFilter
     abstract public function changeQuery($queryBuilder, AbstractFormSearcher $formData, $aliasSearch);
 
     /**
+     * Add auto validation
+     * @param $value
+     * @param ExecutionContextInterface $context
+     */
+    public function autoValidate(AbstractFormSearcher $value, ExecutionContextInterface $context)
+    {
+        if (!$this->options['validate']) {
+            return;
+        }
+        $autoConstraints = $this->getAutoConstraints();
+        if (count($autoConstraints) == 0) {
+            return;
+        }
+        $context->getValidator()
+            ->inContext($context)
+            ->atPath($this->getProperty())
+            ->validate($value->get($this->getProperty()), $autoConstraints);
+    }
+
+    /**
+     * Gets auto constraints list
+     * @return array
+     */
+    protected function getAutoConstraints()
+    {
+        return array();
+    }
+
+    /**
      * Returns the column id associated at this object
      *
      * @return string
@@ -103,12 +145,25 @@ abstract class AbstractFieldFilter
     }
 
     /**
+     * Returns the property associated at this object
+     *
+     * @return string
+     */
+    public function getProperty()
+    {
+        return $this->property;
+    }
+
+    /**
      * @param string $label
      */
     public function setLabel($label)
     {
         if (!empty($label) && !isset($this->typeOptions['label'])) {
             $this->typeOptions['label'] = $label;
+        }
+        if (!isset($this->typeOptions['label_attr']['data-display-in-errors'])) {
+            $this->typeOptions['label_attr']['data-display-in-errors'] = '1';
         }
     }
 }

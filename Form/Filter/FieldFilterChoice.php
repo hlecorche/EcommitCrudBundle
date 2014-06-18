@@ -14,9 +14,26 @@ namespace Ecommit\CrudBundle\Form\Filter;
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class FieldFilterChoice extends AbstractFieldFilter
 {
+    /**
+     * {@inheritDoc}
+     */
+    protected function configureCommonOptions(OptionsResolverInterface $resolver)
+    {
+        parent::configureCommonOptions($resolver);
+
+        $resolver->setDefaults(
+            array(
+                'multiple' => false,
+                'min' => null,
+                'max' => 99,
+            )
+        );
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -26,8 +43,6 @@ class FieldFilterChoice extends AbstractFieldFilter
             array(
                 'choices' => null,
                 'choice_list' => null,
-                'multiple' => false,
-                'max' => 99,
             )
         );
 
@@ -66,6 +81,25 @@ class FieldFilterChoice extends AbstractFieldFilter
     /**
      * {@inheritDoc}
      */
+    protected function getAutoConstraints()
+    {
+        if ($this->options['multiple']) {
+            return array(
+                new Assert\Count(
+                    array(
+                        'min' => $this->options['min'],
+                        'max' => $this->options['max'],
+                    )
+                ),
+            );
+        } else {
+            return array();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function changeQuery($queryBuilder, AbstractFormSearcher $formData, $aliasSearch)
     {
         $value = $formData->get($this->property);
@@ -79,6 +113,9 @@ class FieldFilterChoice extends AbstractFieldFilter
                 $value = array($value);
             }
             if (count($value) > $this->options['max']) {
+                return $queryBuilder;
+            }
+            if ($this->options['min'] && count($value) < $this->options['min']) {
                 return $queryBuilder;
             }
             $queryBuilder->andWhere($queryBuilder->expr()->in($aliasSearch, ':' . $parameterName))
