@@ -12,15 +12,7 @@
 namespace Ecommit\CrudBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Ecommit\CrudBundle\DependencyInjection\Compiler\TwigFormPass;
 
 class EcommitCrudBundle extends Bundle
 {
-    public function build(ContainerBuilder $container)
-    {
-        parent::build($container);
-
-        $container->addCompilerPass(new TwigFormPass());
-    }
 }
