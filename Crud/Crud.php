@@ -461,7 +461,7 @@ class Crud
             $objectDatabase = $this->registry->getRepository('EcommitCrudBundle:UserCrudSettings')->findOneBy(
                 array(
                     'user' => $this->user,
-                    'crud_name' => $this->sessionName
+                    'crudName' => $this->sessionName
                 )
             );
             $em = $this->registry->getManager();
@@ -575,7 +575,7 @@ class Crud
             $objectDatabase = $this->registry->getRepository('EcommitCrudBundle:UserCrudSettings')->findOneBy(
                 array(
                     'user' => $this->user,
-                    'crud_name' => $this->sessionName
+                    'crudName' => $this->sessionName
                 )
             );
             if ($objectDatabase) {
@@ -749,7 +749,7 @@ class Crud
             //Remove settings in database
             $qb = $this->registry->getManager()->createQueryBuilder();
             $qb->delete('EcommitCrudBundle:UserCrudSettings', 's')
-                ->andWhere('s.user = :user AND s.crud_name = :crud_name')
+                ->andWhere('s.user = :user AND s.crudName = :crud_name')
                 ->setParameters(array('user' => $this->user, 'crud_name' => $this->sessionName))
                 ->getQuery()
                 ->execute();
