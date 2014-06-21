@@ -27,6 +27,9 @@ class FieldFilterTokenInputEntitiesAjax extends FieldFilterChoice
                 'query_builder' => null,
                 'property' => null,
                 'identifier' => null,
+                'url' => null, //Required in FormType if route_name is empty
+                'route_name' => null,
+                'route_params' => null,
                 'max' => 99,
             )
         );
@@ -34,7 +37,6 @@ class FieldFilterTokenInputEntitiesAjax extends FieldFilterChoice
         $resolver->setRequired(
             array(
                 'class',
-                'url',
             )
         );
     }

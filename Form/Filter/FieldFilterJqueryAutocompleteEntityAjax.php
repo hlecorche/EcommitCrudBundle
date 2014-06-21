@@ -27,13 +27,15 @@ class FieldFilterJqueryAutocompleteEntityAjax extends FieldFilterChoice
                 'query_builder' => null,
                 'property' => null,
                 'identifier' => null,
+                'url' => null, //Required in FormType if route_name is empty
+                'route_name' => null,
+                'route_params' => null,
             )
         );
 
         $resolver->setRequired(
             array(
                 'class',
-                'url',
             )
         );
     }
