@@ -12,7 +12,7 @@
 namespace Ecommit\CrudBundle\Helper;
 
 use Ecommit\CrudBundle\Crud\Crud;
-use Ecommit\CrudBundle\Form\Type\DisplayConfigType;
+use Ecommit\CrudBundle\Form\Type\DisplaySettingsType;
 use Ecommit\CrudBundle\Paginator\AbstractPaginator;
 use Ecommit\JavascriptBundle\Helper\JqueryHelper;
 use Ecommit\UtilBundle\Helper\UtilHelper;
@@ -22,32 +22,58 @@ use Symfony\Component\Form\FormFactory;
 
 class CrudHelper
 {
-    const MESSAGE_CONFIRM = 'message_confirm';
-    const MESSAGE_ERROR = 'message_error';
-    
+    /**
+     * @var UtilHelper
+     */
     protected $util;
-    protected $javascript_manager;
-    protected $form_factory;
+
+    /**
+     * @var JqueryHelper
+     */
+    protected $javascriptManager;
+
+    /**
+     * @var FormFactory
+     */
+    protected $formFactory;
+
+    /**
+     * @var Router
+     */
     protected $router;
+
+    /**
+     * @var Translator
+     */
     protected $translator;
-    protected $use_bootstrap;
-    
+
+    /**
+     * @var bool
+     */
+    protected $useBoostrap;
+
     /**
      * Constructor
-     * 
+     *
      * @param UtilHelper $util
-     * @param Manager $javascript_manager
-     * @param FormFactory $form_factory
-     * @param bool $use_boostrap
+     * @param Manager $javascriptManager
+     * @param FormFactory $formFactory
+     * @param bool $useBoostrap
      */
-    public function __construct(UtilHelper $util, JqueryHelper $javascript_manager, FormFactory $form_factory, Router $router, Translator $translator, $use_boostrap)
-    {
+    public function __construct(
+        UtilHelper $util,
+        JqueryHelper $javascriptManager,
+        FormFactory $formFactory,
+        Router $router,
+        Translator $translator,
+        $useBoostrap
+    ) {
         $this->util = $util;
-        $this->javascript_manager = $javascript_manager;
-        $this->form_factory = $form_factory;
+        $this->javascriptManager = $javascriptManager;
+        $this->formFactory = $formFactory;
         $this->router = $router;
         $this->translator = $translator;
-        $this->use_bootstrap = $use_boostrap;
+        $this->useBoostrap = $useBoostrap;
     }
 
     /**
@@ -55,16 +81,16 @@ class CrudHelper
      */
     public function useBootstrap()
     {
-        return $this->use_bootstrap;
+        return $this->useBoostrap;
     }
-    
+
     /**
      * Returns links paginator
-     * 
+     *
      * @param AbstractPaginator $paginator
-     * @param string $route_name   Route name
-     * @param array $route_params   Route parameters
-     * @param array $options   Options:
+     * @param string $routeName Route name
+     * @param array $routeParams Route parameters
+     * @param array $options Options:
      *        * ajax_options: Ajax Options. If null, Ajax is not used. Default: null
      *        * attribute_page: Attribute inside url. Default: page
      *        * type: Type of links paginator: elastic (all links) or sliding. Default: sliding
@@ -81,391 +107,434 @@ class CrudHelper
      *        * text_last:  Text ">>" (only if text buttons is used)
      * @return string
      */
-    public function paginatorLinks(AbstractPaginator $paginator, $route_name, $route_params, $options)
+    public function paginatorLinks(AbstractPaginator $paginator, $routeName, $routeParams, $options)
     {
-        $default_options = array('ajax_options' => null,
-                                 'attribute_page' => 'page',
-                                 'type' => 'sliding',
-                                 'max_pages_before' => 3,
-                                 'max_pages_after' => 3,
-                                 'buttons' => 'text',
-                                 'image_first' => '/ecr/images/i16/resultset_first.png',
-                                 'image_previous' => '/ecr/images/i16/resultset_previous.png',
-                                 'image_next' => '/ecr/images/i16/resultset_next.png',
-                                 'image_last' => '/ecr/images/i16/resultset_last.png',
-                                 'text_first' => '<<',
-                                 'text_previous' => '<',
-                                 'text_next' => '>',
-                                 'text_last' => '>>',
-                                );
-        $options = \array_merge($default_options, $options);
-        if(!\in_array($options['type'], array('sliding', 'elastic')))
-        {
-            throw new \Exception('Option sliding is not valid');
+        $defaultOptions = array(
+            'ajax_options' => null,
+            'attribute_page' => 'page',
+            'type' => 'sliding',
+            'max_pages_before' => 3,
+            'max_pages_after' => 3,
+            'buttons' => 'text',
+            'image_first' => '/bundles/ecommitcrud/images/i16/resultset_first.png',
+            'image_previous' => '/bundles/ecommitcrud/images/i16/resultset_previous.png',
+            'image_next' => '/bundles/ecommitcrud/images/i16/resultset_next.png',
+            'image_last' => '/bundles/ecommitcrud/images/i16/resultset_last.png',
+            'text_first' => '<<',
+            'text_previous' => '<',
+            'text_next' => '>',
+            'text_last' => '>>',
+        );
+        $options = \array_merge($defaultOptions, $options);
+        if (!\in_array($options['type'], array('sliding', 'elastic'))) {
+            throw new \Exception('Option "type" is not valid');
         }
-        if(!\in_array($options['buttons'], array('text', 'image')))
-        {
-            throw new \Exception('Option sliding is not valid');
+        if (!\in_array($options['buttons'], array('text', 'image'))) {
+            throw new \Exception('Option "buttons" is not valid');
         }
-        
+
         $navigation = '';
-        if($paginator->haveToPaginate())
-        {
+        if ($paginator->haveToPaginate()) {
             $navigation .= '<div class="pagination">';
-            
+
             //First page / Previous page
-            if ($paginator->getPage() != 1)
-            {
-                $navigation .= $this->elementPaginatorLinks(1, $options, 'first', $route_name, $route_params);
-                $navigation .= $this->elementPaginatorLinks($paginator->getPreviousPage(), $options, 'previous', $route_name, $route_params);
+            if ($paginator->getPage() != 1) {
+                $navigation .= $this->elementPaginatorLinks(1, $options, 'first', $routeName, $routeParams);
+                $navigation .= $this->elementPaginatorLinks(
+                    $paginator->getPreviousPage(),
+                    $options,
+                    'previous',
+                    $routeName,
+                    $routeParams
+                );
             }
-            
+
             //Pages before the current page
-            $limit = ($options['type'] == 'sliding')? $paginator->getPage() - $options['max_pages_before'] : 1;
-            for($page = $limit; $page < $paginator->getPage(); $page++)
-            {
-                if($page <= $paginator->getLastPage() && $page >= $paginator->getFirstPage())
-                {
+            $limit = ($options['type'] == 'sliding') ? $paginator->getPage() - $options['max_pages_before'] : 1;
+            $currentPage = $paginator->getPage();
+            for ($page = $limit; $page < $currentPage; $page++) {
+                if ($page <= $paginator->getLastPage() && $page >= $paginator->getFirstPage()) {
                     //The page exists, displays it
-                    $navigation .= $this->elementPaginatorLinks($page, $options, 'page', $route_name, $route_params);
+                    $navigation .= $this->elementPaginatorLinks($page, $options, 'page', $routeName, $routeParams);
                 }
             }
-            
+
             //Current page
-            $navigation .= $this->elementPaginatorLinks($paginator->getPage(), $options, 'page', $route_name, $route_params, true);
-            
+            $navigation .= $this->elementPaginatorLinks(
+                $paginator->getPage(),
+                $options,
+                'page',
+                $routeName,
+                $routeParams,
+                true
+            );
+
             //Pages after the current page
-            $limit = ($options['type'] == 'sliding')? $paginator->getPage() + $options['max_pages_after'] : $paginator->getLastPage();
-            for($page = $paginator->getPage() + 1; $page <= $limit; $page++)
-            {
-                if($page <= $paginator->getLastPage() && $page >= $paginator->getFirstPage())
-                {
+            $limit = ($options['type'] == 'sliding') ? $paginator->getPage(
+                ) + $options['max_pages_after'] : $paginator->getLastPage();
+            for ($page = $paginator->getPage() + 1; $page <= $limit; $page++) {
+                if ($page <= $paginator->getLastPage() && $page >= $paginator->getFirstPage()) {
                     //The page exists, displays it
-                    $navigation .= $this->elementPaginatorLinks($page, $options, 'page', $route_name, $route_params);
+                    $navigation .= $this->elementPaginatorLinks($page, $options, 'page', $routeName, $routeParams);
                 }
             }
-            
+
             //Next page / Last page
-            if($paginator->getPage() != $paginator->getLastPage())
-            {
-                $navigation .= $this->elementPaginatorLinks($paginator->getNextPage(), $options, 'next', $route_name, $route_params);
-                $navigation .= $this->elementPaginatorLinks($paginator->getLastPage(), $options, 'last', $route_name, $route_params);
+            if ($paginator->getPage() != $paginator->getLastPage()) {
+                $navigation .= $this->elementPaginatorLinks(
+                    $paginator->getNextPage(),
+                    $options,
+                    'next',
+                    $routeName,
+                    $routeParams
+                );
+                $navigation .= $this->elementPaginatorLinks(
+                    $paginator->getLastPage(),
+                    $options,
+                    'last',
+                    $routeName,
+                    $routeParams
+                );
             }
-            
+
             $navigation .= '</div>';
         }
+
         return $navigation;
     }
-    
+
     /**
      * Paginator links: Display one element
-     * 
-     * @param int $page  Page number
-     * @param array $options   Options
-     * @param string $element_name   first, previous, page, next or last
-     * @param string $route_name
-     * @param array $route_params
-     * @param bool $actual   If element is the actual page
+     *
+     * @param int $page Page number
+     * @param array $options Options
+     * @param string $elementName first, previous, page, next or last
+     * @param string $routeName
+     * @param array $routeParams
+     * @param bool $current If element is the current page
      */
-    protected function elementPaginatorLinks($page, $options, $element_name, $route_name, $route_params, $actual = false)
-    {
-        $url = $this->router->generate($route_name, \array_merge($route_params, array($options['attribute_page'] => $page)));
-        if($element_name == 'page')
-        {
-            if($actual)
-            {
-                $class = 'pagination_actual';
+    protected function elementPaginatorLinks(
+        $page,
+        $options,
+        $elementName,
+        $routeName,
+        $routeParams,
+        $current = false
+    ) {
+        $url = $this->router->generate(
+            $routeName,
+            \array_merge($routeParams, array($options['attribute_page'] => $page))
+        );
+        if ($elementName == 'page') {
+            if ($current) {
+                $class = 'pagination_current';
                 $content = $page;
-            }
-            else
-            {
-                $class = 'pagination_no_actual';
+            } else {
+                $class = 'pagination_no_current';
                 $content = $this->listePrivateLink($page, $url, array(), $options['ajax_options']);
-            }            
-        }
-        else
-        {
-            $class = $options['buttons'].' '.$element_name;
-            $button_name = $options['buttons'].'_'.$element_name;
-            $button = $options[$button_name];
-            if($options['buttons'] == 'text')
-            {
-                $content = $this->listePrivateLink($button, $url, array(), $options['ajax_options']);
             }
-            else
-            {
-                $image = $this->util->tag('img', array('src' => $button, 'alt' => $element_name));
+        } else {
+            $class = $options['buttons'] . ' ' . $elementName;
+            $buttonName = $options['buttons'] . '_' . $elementName;
+            $button = $options[$buttonName];
+            if ($options['buttons'] == 'text') {
+                $content = $this->listePrivateLink($button, $url, array(), $options['ajax_options']);
+            } else {
+                $image = $this->util->tag('img', array('src' => $button, 'alt' => $elementName));
                 $content = $this->listePrivateLink($image, $url, array(), $options['ajax_options']);
             }
         }
-        
+
         return \sprintf('<span class="%s">%s</span>', $class, $content);
     }
-    
+
     /**
      * Returns CRUD links paginator
-     * 
+     *
      * @param Crud $crud
-     * @param array $options   Options. See CrudHelper::paginatorLinks (ajax_options is ignored)
-     * @param array $ajax_options   Ajax Options
-     * @return string 
+     * @param array $options Options. See CrudHelper::paginatorLinks (ajax_options is ignored)
+     * @param array $ajaxOptions Ajax Options
+     * @return string
      */
-    public function crudPaginatorLinks(Crud $crud, $options, $ajax_options)
+    public function crudPaginatorLinks(Crud $crud, $options, $ajaxOptions)
     {
-        if(!isset($ajax_options['update']))
-        {
-            $ajax_options['update'] = $crud->getDivIdList();
+        if (!isset($ajaxOptions['update'])) {
+            $ajaxOptions['update'] = $crud->getDivIdList();
         }
-        $options['ajax_options'] = $ajax_options;
+        $options['ajax_options'] = $ajaxOptions;
+
         return $this->paginatorLinks($crud->getPaginator(), $crud->getRouteName(), $crud->getRouteParams(), $options);
     }
-    
+
     /**
      * Returns one colunm, inside "header" CRUD
-     * 
-     * @param string $column_id   Column id
+     *
+     * @param string $column_id Column id
      * @param Crud $crud
-     * @param array $options   Options :
+     * @param array $options Options :
      *        * label: Label. If null, default label is displayed
      *        * image_up: Url image "^"
      *        * image_down: Url image "V"
-     * @param array $th_options   Html options
-     * @param array $ajax_options   Ajax Options
-     * @return string 
+     * @param array $thOptions Html options
+     * @param array $ajaxOptions Ajax Options
+     * @return string
      */
-    public function th($column_id, Crud $crud, $options, $th_options, $ajax_options)
+    public function th($column_id, Crud $crud, $options, $thOptions, $ajaxOptions)
     {
-        $default_options = array('label' => null,
-                                 'image_up' => '/ecr/images/i16/sort_incr.png',
-                                 'image_down' => '/ecr/images/i16/sort_decrease.png',
-                                );
-        $options = \array_merge($default_options, $options);
-        if(!isset($ajax_options['update']))
-        {
-            $ajax_options['update'] = $crud->getDivIdList();
+        $defaultOptions = array(
+            'label' => null,
+            'image_up' => '/bundles/ecommitcrud/images/i16/sort_incr.png',
+            'image_down' => '/bundles/ecommitcrud/images/i16/sort_decrease.png',
+        );
+        $options = \array_merge($defaultOptions, $options);
+        if (!isset($ajaxOptions['update'])) {
+            $ajaxOptions['update'] = $crud->getDivIdList();
         }
         $image_up = $options['image_up'];
         $image_down = $options['image_down'];
 
         //If the column is not to be shown, returns empty
-        $session_values =  $crud->getSessionValues();
-        if(!\in_array($column_id, $session_values->displayedColumns))
-        {
+        $session_values = $crud->getSessionValues();
+        if (!\in_array($column_id, $session_values->displayedColumns)) {
             return '';
         }
-        
+
         //If the label was not defined, we take default label
         $column = $crud->getColumn($column_id);
         $label = $options['label'];
-        if(\is_null($label))
-        {
+        if (\is_null($label)) {
             $label = $column->label;
         }
         //I18N label
         $label = $this->translator->trans($label);
         //XSS protection
         $label = \htmlentities($label, ENT_QUOTES, 'UTF-8');
-        
+
         //Case n°1: We cannot sort this column, we just show the label
-        if(!$column->sortable)
-        {
-            return $this->util->tag('th', $th_options, $label);
+        if (!$column->sortable) {
+            return $this->util->tag('th', $thOptions, $label);
         }
-        
+
         //Case n°2: We can sort on this column, but the sorting is not active on her at present
-        if($session_values->sort != $column_id)
-        {
-            $content = $this->listePrivateLink($label, $crud->getUrl(array('sort' => $column_id)), array(), $ajax_options);
-            return $this->util->tag('th', $th_options, $content);
+        if ($session_values->sort != $column_id) {
+            $content = $this->listePrivateLink(
+                $label,
+                $crud->getUrl(array('sort' => $column_id)),
+                array(),
+                $ajaxOptions
+            );
+
+            return $this->util->tag('th', $thOptions, $content);
         }
-        
+
         //Case n°3: We can sort on this column, and the sorting is active on her at present
-        $image_src = ($session_values->sense == Crud::ASC)? $image_up : $image_down;
-        $image_alt = ($session_values->sense == Crud::ASC)? 'V' : '^';
-        $new_sense = ($session_values->sense == Crud::ASC)? Crud::DESC : Crud::ASC;
+        $image_src = ($session_values->sense == Crud::ASC) ? $image_up : $image_down;
+        $image_alt = ($session_values->sense == Crud::ASC) ? 'V' : '^';
+        $new_sense = ($session_values->sense == Crud::ASC) ? Crud::DESC : Crud::ASC;
         $image = $this->util->tag('img', array('src' => $image_src, 'alt' => $image_alt));
-        $link = $this->listePrivateLink($label, $crud->getUrl(array('sense' => $new_sense)), array(), $ajax_options);
-        return $this->util->tag('th', $th_options, $link.$image);
+        $link = $this->listePrivateLink($label, $crud->getUrl(array('sense' => $new_sense)), array(), $ajaxOptions);
+
+        return $this->util->tag('th', $thOptions, $link . $image);
     }
-    
+
     /**
      * Returns one colunm, inside "body" CRUD
-     * 
-     * @param string $column_id   Column id
+     *
+     * @param string $column_id Column id
      * @param Crud $crud
-     * @param string $value   Value
-     * @param bool $escape   Escape (or not) the value
-     * @param array $td_options   Html options
-     * @return string 
+     * @param string $value Value
+     * @param bool $escape Escape (or not) the value
+     * @param array $tdOptions Html options
+     * @return string
      */
-    public function td($column_id, Crud $crud, $value, $escape, $td_options)
+    public function td($column_id, Crud $crud, $value, $escape, $tdOptions)
     {
         //If the column is not to be shown, returns empty
-        $session_values =  $crud->getSessionValues();
-        if(!\in_array($column_id, $session_values->displayedColumns))
-        {
+        $session_values = $crud->getSessionValues();
+        if (!\in_array($column_id, $session_values->displayedColumns)) {
             return '';
         }
-        
+
         //XSS protection
-        if($escape)
-        {
+        if ($escape) {
             $value = \htmlentities($value, ENT_QUOTES, 'UTF-8');
         }
-        return $this->util->tag('td', $td_options, $value);
+
+        return $this->util->tag('td', $tdOptions, $value);
     }
-    
+
     /**
-     * Returns "Display Config" form
-     * 
+     * Returns "Display Settings" form
+     *
      * @param Crud $crud
-     * @return FormView 
+     * @return FormView
      */
-    public function getFormDisplayConfig(Crud $crud)
+    public function getFormDisplaySettings(Crud $crud)
     {
-        $form_name = sprintf('crud_display_config_%s', $crud->getSessionName());
-        $form = $this->form_factory->createNamed($form_name, new DisplayConfigType($crud));
+        $form_name = sprintf('crud_display_settings_%s', $crud->getSessionName());
+        $resultsPerPageChoices = array();
+        foreach ($crud->getAvailableResultsPerPage() as $number) {
+            $resultsPerPageChoices[$number] = $number;
+        }
+        $columnsChoices = array();
+        foreach ($crud->getColumns() as $column) {
+            $columnsChoices[$column->id] = $column->label;
+        }
+        $data = array(
+            'resultsPerPage' => $crud->getSessionValues()->resultsPerPage,
+            'displayedColumns' => $crud->getSessionValues()->displayedColumns,
+        );
+
+        $form = $this->formFactory->createNamed(
+            $form_name,
+            new DisplaySettingsType(),
+            $data,
+            array(
+                'resultsPerPageChoices' => $resultsPerPageChoices,
+                'columnsChoices' => $columnsChoices,
+            )
+        );
+
         return $form->createView();
     }
-    
+
     /**
      * Returns search form tag
-     * 
+     *
      * @param Crud $crud
-     * @param array $ajax_options   Ajax Options
-     * @param type $html_options   Html options
-     * @return string 
+     * @param array $ajaxOptions Ajax Options
+     * @param type $htmlOptions Html options
+     * @return string
      */
-    public function searchFormTag(Crud $crud, $ajax_options, $html_options)
+    public function searchFormTag(Crud $crud, $ajaxOptions, $htmlOptions)
     {
-        if(!isset($ajax_options['update']))
-        {
-            $ajax_options['update'] = 'js_holder_for_multi_update_'.$crud->getSessionName();
+        if (!isset($ajaxOptions['update'])) {
+            $ajaxOptions['update'] = 'js_holder_for_multi_update_' . $crud->getSessionName();
         }
-        return $this->javascript_manager->jQueryFormToRemote($crud->getSearchUrl(), $ajax_options, $html_options);
+
+        return $this->javascriptManager->jQueryFormToRemote($crud->getSearchUrl(), $ajaxOptions, $htmlOptions);
     }
-    
+
     /**
      * Returns search reset button
-     * 
+     *
      * @param Crud $crud
-     * @param array $options   Options :
+     * @param array $options Options :
      *        * label: Label. Défault: Reset
-     * @param array $ajax_options   Ajax options
-     * @param array $html_options   Html options
-     * @return string 
+     * @param array $ajaxOptions Ajax options
+     * @param array $htmlOptions Html options
+     * @return string
      */
-    public function searchResetButton(Crud $crud, $options, $ajax_options, $html_options)
+    public function searchResetButton(Crud $crud, $options, $ajaxOptions, $htmlOptions)
     {
-        $default_options = array('label' => 'Reset',
-                                );
-        $options = \array_merge($default_options, $options);
-        if(!isset($ajax_options['update']))
-        {
-            $ajax_options['update'] = 'js_holder_for_multi_update_'.$crud->getSessionName();
+        $defaultOptions = array(
+            'label' => 'Reset',
+        );
+        $options = \array_merge($defaultOptions, $options);
+        if (!isset($ajaxOptions['update'])) {
+            $ajaxOptions['update'] = 'js_holder_for_multi_update_' . $crud->getSessionName();
         }
-        if(!isset($html_options['class']))
-        {
-            $html_options['class'] = ($this->use_bootstrap)? 'raz-bootstrap btn btn-default btn-sm' : 'raz';
+        if (!isset($htmlOptions['class'])) {
+            $htmlOptions['class'] = ($this->useBoostrap) ? 'raz-bootstrap btn btn-default btn-sm' : 'raz';
         }
         $label = $this->translator->trans($options['label']);
-        if($this->use_bootstrap)
-        {
-            $label = '<span class="glyphicon glyphicon-fire"></span> '.$label;
+        if ($this->useBoostrap) {
+            $label = '<span class="glyphicon glyphicon-fire"></span> ' . $label;
         }
-        return $this->javascript_manager->jQueryButtonToRemote($label, $crud->getSearchUrl(array('raz' => 1)), $ajax_options, $html_options);
+
+        return $this->javascriptManager->jQueryButtonToRemote(
+            $label,
+            $crud->getSearchUrl(array('raz' => 1)),
+            $ajaxOptions,
+            $htmlOptions
+        );
     }
-    
+
     /**
      * Returns declaration of modal
-     * 
-     * @param string $modal_id   Modal id
-     * @return string 
+     *
+     * @param string $modalId Modal id
+     * @return string
      */
-    public function declareModal($modal_id)
+    public function declareModal($modalId)
     {
-        $modal_id = str_replace(' ', '', $modal_id);
-        return '<div id="'.$modal_id.'" class="crud_modal"><div class="contentWrap"></div></div>';
+        $modalId = str_replace(' ', '', $modalId);
+
+        return '<div id="' . $modalId . '" class="crud_modal"><div class="contentWrap"></div></div>';
     }
-    
+
     /**
      * Returns JS code to open modal window
-     * 
-     * @param string $modal_id   Modal id
-     * @param string $url   Url
-     * @param string $js_on_close   JS code excuted, during the closure of the modal 
-     * @param array $ajax_options   Ajax options
-     * @return string 
+     *
+     * @param string $modalId Modal id
+     * @param string $url Url
+     * @param string $jsOnClose JS code excuted, during the closure of the modal
+     * @param array $ajaxOptions Ajax options
+     * @return string
      */
-    public function remoteModal($modal_id, $url, $js_on_close, $ajax_options)
+    public function remoteModal($modalId, $url, $jsOnClose, $ajaxOptions)
     {
-        $modal_id = str_replace(' ', '', $modal_id);
+        $modalId = str_replace(' ', '', $modalId);
         //Create Callback (Opening window)
-        $js_modal = "$('#$modal_id .contentWrap').html(data); ";
-        $js_modal .= "var api_crud_modal = $('#$modal_id').overlay({oneInstance: false, api: true, fixed: false";
-        $js_modal .= is_null($js_on_close)? '': " ,onClose: function() { $js_on_close }";
-        $js_modal .= '}); ';
-        $js_modal .= 'api_crud_modal.load();';
+        $jsModal = "$('#$modalId .contentWrap').html(data); ";
+        $jsModal .= "var api_crud_modal = $('#$modalId').overlay({oneInstance: false, api: true, fixed: false";
+        $jsModal .= is_null($jsOnClose) ? '' : " ,onClose: function() { $jsOnClose }";
+        $jsModal .= '}); ';
+        $jsModal .= 'api_crud_modal.load();';
 
         //Add callback
-        if(isset($ajax_options['success']))
-        {
-            $ajax_options['success'] = $js_modal.' '.$ajax_options['success'];
+        if (isset($ajaxOptions['success'])) {
+            $ajaxOptions['success'] = $jsModal . ' ' . $ajaxOptions['success'];
+        } else {
+            $ajaxOptions['success'] = $jsModal;
         }
-        else
-        {
-            $ajax_options['success'] = $js_modal;
-        }
-        
+
         //Method
-        if(!isset($ajax_options['method']))
-        {
-            $ajax_options['method'] = 'GET';
+        if (!isset($ajaxOptions['method'])) {
+            $ajaxOptions['method'] = 'GET';
         }
-        
-        return $this->javascript_manager->jQueryRemoteFunction($url, $ajax_options);
+
+        return $this->javascriptManager->jQueryRemoteFunction($url, $ajaxOptions);
     }
-    
+
     /**
      * Returns modal form tag
-     * 
-     * @param string $modal_id   Modal id
-     * @param string $url   Url
-     * @param array $ajax_options   Ajax options
-     * @param array $html_options   Html options
-     * @return string 
+     *
+     * @param string $modalId Modal id
+     * @param string $url Url
+     * @param array $ajaxOptions Ajax options
+     * @param array $htmlOptions Html options
+     * @return string
      */
-    public function formModal($modal_id, $url, $ajax_options, $html_options)
+    public function formModal($modalId, $url, $ajaxOptions, $htmlOptions)
     {
-        $modal_id = str_replace(' ', '', $modal_id);
-        if(!isset($ajax_options['update']))
-        {
-            $ajax_options['update'] = $modal_id.' .contentWrap';
+        $modalId = str_replace(' ', '', $modalId);
+        if (!isset($ajaxOptions['update'])) {
+            $ajaxOptions['update'] = $modalId . ' .contentWrap';
         }
-        return $this->javascript_manager->jQueryFormToRemote($url, $ajax_options, $html_options);
+
+        return $this->javascriptManager->jQueryFormToRemote($url, $ajaxOptions, $htmlOptions);
     }
-    
+
     /**
      * Creates a link
-     * 
-     * @param string $name   Name link
-     * @param string $url   Url link
-     * @param array $options_link_to   Html options
-     * @param array $ajax_options   Ajax options (if null, Ajax is dissabled)
-     * @return string 
+     *
+     * @param string $name Name link
+     * @param string $url Url link
+     * @param array $linkToOptions Html options
+     * @param array $ajaxOptions Ajax options (if null, Ajax is disabled)
+     * @return string
      */
-    protected function listePrivateLink($name, $url, $options_link_to = array(), $ajax_options = null)
+    protected function listePrivateLink($name, $url, $linkToOptions = array(), $ajaxOptions = null)
     {
-        if(is_null($ajax_options))
-        {
-                //No Ajax, Simple link
-                $options_link_to['href'] = $url;
-                return $this->util->tag('a', $options_link_to, $name);
-        }
-        else
-        {
-                //Ajax Request
-                return $this->javascript_manager->jQueryLinkToRemote($name, $url, $ajax_options, $options_link_to);
+        if (is_null($ajaxOptions)) {
+            //No Ajax, Simple link
+            $linkToOptions['href'] = $url;
+
+            return $this->util->tag('a', $linkToOptions, $name);
+        } else {
+            //Ajax Request
+            return $this->javascriptManager->jQueryLinkToRemote($name, $url, $ajaxOptions, $linkToOptions);
         }
     }
 }

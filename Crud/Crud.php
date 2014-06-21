@@ -536,7 +536,7 @@ class Crud
         //Loads user values inside this object
         $this->load();
 
-        //Process request (npp, sort, sense, change_columns)
+        //Process request (resultsPerPage, sort, sense, change_columns)
         $this->processRequest();
 
         //Searcher form: Allocates object (Defaults values and validators)
@@ -713,14 +713,14 @@ class Crud
 
             return;
         }
-        $displayConfigFormName = sprintf('crud_display_config_%s', $this->sessionName);
-        if ($this->request->request->has($displayConfigFormName)) {
-            $displayConfig = $this->request->request->get($displayConfigFormName);
-            if (isset($displayConfig['displayed_columns'])) {
-                $this->changeColumnsDisplayed($displayConfig['displayed_columns']);
+        $displaySettingsFormName = sprintf('crud_display_settings_%s', $this->sessionName);
+        if ($this->request->request->has($displaySettingsFormName)) {
+            $displaySettings = $this->request->request->get($displaySettingsFormName);
+            if (isset($displaySettings['displayedColumns'])) {
+                $this->changeColumnsDisplayed($displaySettings['displayedColumns']);
             }
-            if (isset($displayConfig['npp'])) {
-                $this->changeNumberResultsDisplayed($displayConfig['npp']);
+            if (isset($displaySettings['resultsPerPage'])) {
+                $this->changeNumberResultsDisplayed($displaySettings['resultsPerPage']);
             }
         }
         if ($this->request->query->has('sort')) {
