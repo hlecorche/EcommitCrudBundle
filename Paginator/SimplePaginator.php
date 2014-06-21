@@ -14,98 +14,81 @@ namespace Ecommit\CrudBundle\Paginator;
 class SimplePaginator extends AbstractPaginator
 {
 
-    protected $totalResults = null; //Manual total results
-    
+    protected $manualCountResults = null;
+
     /**
-     * Initializes the pager.
-     * 
-     * Function to be called after parameters have been set.
+     * {@inheritDoc}
      */
     public function init()
     {
-        if (is_null($this->objects) || !is_array($this->objects))
-        {
+        if (is_null($this->objects) || !is_array($this->objects)) {
             throw new \Exception('Objects are required (array)');
         }
-        
-        if(is_null($this->totalResults))
-        {
-            $this->setNbResults(\count($this->objects));
-            
+
+        if (is_null($this->manualCountResults)) {
+            $this->setCountResults(\count($this->objects));
+
             $offset = 0;
             $limit = 0;
-            if ($this->getPage() == 0 || $this->getMaxPerPage() == 0 || $this->getNbResults() == 0)
-            {
+            if ($this->getPage() == 0 || $this->getMaxPerPage() == 0 || $this->getCountResults() == 0) {
                 $this->setLastPage(0);
-            }
-            else
-            {
-                $this->setLastPage(\ceil($this->getNbResults() / $this->getMaxPerPage()));
+            } else {
+                $this->setLastPage(\ceil($this->getCountResults() / $this->getMaxPerPage()));
                 $offset = ($this->getPage() - 1) * $this->getMaxPerPage();
 
                 $limit = $this->getMaxPerPage();
             }
             $this->objects = \array_slice($this->objects, $offset, $limit);
-        }
-        else
-        {
-            $this->setNbResults($this->totalResults);
-            
-            if ($this->getPage() == 0 || $this->getMaxPerPage() == 0 || $this->getNbResults() == 0)
-            {
+        } else {
+            $this->setCountResults($this->manualCountResults);
+
+            if ($this->getPage() == 0 || $this->getMaxPerPage() == 0 || $this->getCountResults() == 0) {
                 $this->setLastPage(0);
-            }
-            else
-            {
-                $this->setLastPage(\ceil($this->getNbResults() / $this->getMaxPerPage()));
+            } else {
+                $this->setLastPage(\ceil($this->getCountResults() / $this->getMaxPerPage()));
             }
         }
     }
-    
+
     /**
      * Set an array of results
-     * 
-     * @param array $results 
+     *
+     * @param array $results
      */
     public function setResults($results)
     {
         $this->resetIterator();
         $this->objects = $results;
     }
-    
+
     /**
      * Set an array of results without slice
-     * 
+     *
      * @param array $results
-     * @param Int $totalResults 
+     * @param Int $manualCountResults
      */
-    public function setResultsWithoutSlice($results, $totalResults)
+    public function setResultsWithoutSlice($results, $manualCountResults)
     {
         $this->resetIterator();
         $this->objects = $results;
-        $this->totalResults = $totalResults;
+        $this->manualCountResults = $manualCountResults;
     }
 
     /**
-     * Returns an array of results on the given page.
-     * 
-     * @param const $hydrationMode  Doctrine Hydration Mode
-     * @return array 
+     * {@inheritDoc}
      */
     public function getResults()
     {
         return $this->objects;
     }
-    
+
     /**
-     * Returns an object at a certain offset.
-     * 
-     * @param int $offset
-     * @return mixed 
+     * {@inheritDoc}
      */
     protected function retrieveObject($offset)
     {
         $results = $this->objects;
+
         return $results[$offset];
     }
 }

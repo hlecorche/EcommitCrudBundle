@@ -18,47 +18,43 @@ use Ecommit\CrudBundle\DoctrineExtension\Paginate;
 class DoctrinePaginator extends AbstractPaginator
 {
     protected $query = null;
-    protected $totalResults = null; //Manual total results
-    
+    protected $manualCountResults = null;
+
     /**
-     * Initializes the pager.
-     * 
-     * Function to be called after parameters have been set.
+     * {@inheritDoc}
      */
     public function init()
     {
-        //Si le nombre de resultats n'est pas defini, on le calcule, sinon on le passe au pager
-        if(is_null($this->totalResults))
-        {
+        //Calculation of the number of lines
+        if (is_null($this->manualCountResults)) {
             $count = Paginate::count($this->query->getQuery());
-            $this->setNbResults($count);
+            $this->setCountResults($count);
+        } else {
+            $this->setCountResults($this->manualCountResults);
         }
-        else
-        {
-            $this->setNbResults($this->totalResults);
-        }
-        
+        $this->initQuery();
+    }
+
+    protected function initQuery()
+    {
         $this->query->setFirstResult(0);
         $this->query->setMaxResults(0);
-        if ($this->getPage() == 0 || $this->getMaxPerPage() == 0 || $this->getNbResults() == 0)
-        {
+        if ($this->getPage() == 0 || $this->getMaxPerPage() == 0 || $this->getCountResults() == 0) {
             $this->setLastPage(0);
-        }
-        else
-        {
-            $this->setLastPage(\ceil($this->getNbResults() / $this->getMaxPerPage()));
+        } else {
+            $this->setLastPage(\ceil($this->getCountResults() / $this->getMaxPerPage()));
             $offset = ($this->getPage() - 1) * $this->getMaxPerPage();
-                
+
             $this->query->setFirstResult($offset);
             $this->query->setMaxResults($this->getMaxPerPage());
         }
     }
-    
-    
+
+
     /**
      * Returns QueryBuilder
-     * 
-     * @return QueryBuilder 
+     *
+     * @return QueryBuilder
      */
     public function getQueryBuilder()
     {
@@ -67,8 +63,8 @@ class DoctrinePaginator extends AbstractPaginator
 
     /**
      * Sets the QueryBuilder
-     * 
-     * @param QueryBuilder $query 
+     *
+     * @param QueryBuilder $query
      */
     public function setQueryBuilder(QueryBuilder $query)
     {
@@ -77,49 +73,44 @@ class DoctrinePaginator extends AbstractPaginator
 
     /**
      * Returns manual total results
-     * 
-     * @return Int 
+     *
+     * @return Int
      */
-    public function getTotalResults()
+    public function getManualCountResults()
     {
-        return $this->totalResults;
+        return $this->manualCountResults;
     }
 
     /**
      * Sets manual total results
-     * 
-     * @param Int $totalResults 
+     *
+     * @param Int $manualCountResults
      */
-    public function setTotalResults($totalResults)
+    public function setManualCountResults($manualCountResults)
     {
-        $this->totalResults = $totalResults;
+        $this->manualCountResults = $manualCountResults;
     }
-    
+
     /**
-     * Returns an array of results on the given page.
-     * 
-     * @param const $hydrationMode  Doctrine Hydration Mode
-     * @return array 
+     * {@inheritDoc}
      */
     public function getResults($hydrationMode = Query::HYDRATE_OBJECT)
     {
         $query = $this->query->getQuery();
-    return $query->execute(array(), $hydrationMode);
+
+        return $query->execute(array(), $hydrationMode);
     }
-    
+
     /**
-     * Returns an object at a certain offset.
-     * 
-     * @param int $offset
-     * @return mixed 
+     * {@inheritDoc}
      */
     protected function retrieveObject($offset)
     {
-        $query_retrieve = clone $this->query;
-        $query_retrieve->setFirstResult($offset - 1);
-        $query_retrieve->setMaxResults(1);
-        $results = $query_retrieve->getQuery()->execute();
-        
-    return $results[0];
+        $queryRetrieve = clone $this->query;
+        $queryRetrieve->setFirstResult($offset - 1);
+        $queryRetrieve->setMaxResults(1);
+        $results = $queryRetrieve->getQuery()->execute();
+
+        return $results[0];
     }
 }

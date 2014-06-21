@@ -14,25 +14,22 @@ namespace Ecommit\CrudBundle\Paginator;
 abstract class AbstractPaginator implements \Iterator, \Countable
 {
 
-    protected
-    $page = 1,
-    $maxPerPage = 0,
-    $lastPage = 1,
-    $nbResults = 0,
-    $tableName = '',
-    $objects = null,
-    $cursor = 1,
-    $parameters = array(),
-    $currentMaxLink = 1,
-    $maxRecordLimit = false,
-    // used by iterator interface
-    $results = null,
-    $resultsCounter = 0;
+    protected $page = 1;
+    protected $maxPerPage = 0;
+    protected $lastPage = 1;
+    protected $countResults = 0;
+    protected $tableName = '';
+    protected $objects = null;
+    protected $cursor = 1;
+    protected $currentMaxLink = 1;
+    protected $maxRecordLimit = false;
+    protected $results = null;
+    protected $resultsCounter = 0;
 
     /**
      * Constructor.
      *
-     * @param string  $class      The model class
+     * @param string $class The model class
      * @param integer $maxPerPage Number of records to display per page
      */
     public function __construct($maxPerPage = 10)
@@ -42,8 +39,6 @@ abstract class AbstractPaginator implements \Iterator, \Countable
 
     /**
      * Initializes the pager.
-     *
-     * Function to be called after parameters have been set.
      */
     abstract public function init();
 
@@ -108,9 +103,8 @@ abstract class AbstractPaginator implements \Iterator, \Countable
         $limit = $check > 0 ? $check : 1;
         $begin = $tmp > 0 ? ($tmp > $limit ? $limit : $tmp) : 1;
 
-        $i = (int) $begin;
-        while ($i < $begin + $nb_links && $i <= $this->lastPage)
-        {
+        $i = (int)$begin;
+        while ($i < $begin + $nb_links && $i <= $this->lastPage) {
             $links[] = $i++;
         }
 
@@ -126,7 +120,7 @@ abstract class AbstractPaginator implements \Iterator, \Countable
      */
     public function haveToPaginate()
     {
-        return $this->getMaxPerPage() && $this->getNbResults() > $this->getMaxPerPage();
+        return $this->getMaxPerPage() && $this->getCountResults() > $this->getMaxPerPage();
     }
 
     /**
@@ -146,15 +140,14 @@ abstract class AbstractPaginator implements \Iterator, \Countable
      */
     public function setCursor($pos)
     {
-        if ($pos < 1)
-        {
+        if ($pos < 1) {
             $this->cursor = 1;
-        } else if ($pos > $this->nbResults)
-        {
-            $this->cursor = $this->nbResults;
-        } else
-        {
-            $this->cursor = $pos;
+        } else {
+            if ($pos > $this->countResults) {
+                $this->cursor = $this->countResults;
+            } else {
+                $this->cursor = $pos;
+            }
         }
     }
 
@@ -189,11 +182,9 @@ abstract class AbstractPaginator implements \Iterator, \Countable
      */
     public function getNext()
     {
-        if ($this->cursor + 1 > $this->nbResults)
-        {
+        if ($this->cursor + 1 > $this->countResults) {
             return null;
-        } else
-        {
+        } else {
             return $this->retrieveObject($this->cursor + 1);
         }
     }
@@ -205,11 +196,9 @@ abstract class AbstractPaginator implements \Iterator, \Countable
      */
     public function getPrevious()
     {
-        if ($this->cursor - 1 < 1)
-        {
+        if ($this->cursor - 1 < 1) {
             return null;
-        } else
-        {
+        } else {
             return $this->retrieveObject($this->cursor - 1);
         }
     }
@@ -221,11 +210,9 @@ abstract class AbstractPaginator implements \Iterator, \Countable
      */
     public function getFirstIndice()
     {
-        if ($this->page == 0)
-        {
+        if ($this->page == 0) {
             return 1;
-        } else
-        {
+        } else {
             return ($this->page - 1) * $this->maxPerPage + 1;
         }
     }
@@ -237,16 +224,12 @@ abstract class AbstractPaginator implements \Iterator, \Countable
      */
     public function getLastIndice()
     {
-        if ($this->page == 0)
-        {
-            return $this->nbResults;
-        } else
-        {
-            if ($this->page * $this->maxPerPage >= $this->nbResults)
-            {
-                return $this->nbResults;
-            } else
-            {
+        if ($this->page == 0) {
+            return $this->countResults;
+        } else {
+            if ($this->page * $this->maxPerPage >= $this->countResults) {
+                return $this->countResults;
+            } else {
                 return $this->page * $this->maxPerPage;
             }
         }
@@ -257,9 +240,9 @@ abstract class AbstractPaginator implements \Iterator, \Countable
      *
      * @return integer
      */
-    public function getNbResults()
+    public function getCountResults()
     {
-        return $this->nbResults;
+        return $this->countResults;
     }
 
     /**
@@ -267,9 +250,9 @@ abstract class AbstractPaginator implements \Iterator, \Countable
      *
      * @param integer $nb
      */
-    protected function setNbResults($nb)
+    protected function setCountResults($nb)
     {
-        $this->nbResults = $nb;
+        $this->countResults = $nb;
     }
 
     /**
@@ -301,8 +284,7 @@ abstract class AbstractPaginator implements \Iterator, \Countable
     {
         $this->lastPage = $page;
 
-        if ($this->getPage() > $page)
-        {
+        if ($this->getPage() > $page) {
             $this->setPage($page);
         }
     }
@@ -346,8 +328,7 @@ abstract class AbstractPaginator implements \Iterator, \Countable
     {
         $this->page = intval($page);
 
-        if ($this->page <= 0)
-        {
+        if ($this->page <= 0) {
             // set first page, which depends on a maximum set
             $this->page = $this->getMaxPerPage() ? 1 : 0;
         }
@@ -370,23 +351,20 @@ abstract class AbstractPaginator implements \Iterator, \Countable
      */
     public function setMaxPerPage($max)
     {
-        if ($max > 0)
-        {
+        if ($max > 0) {
             $this->maxPerPage = $max;
-            if ($this->page == 0)
-            {
+            if ($this->page == 0) {
                 $this->page = 1;
             }
-        } else if ($max == 0)
-        {
-            $this->maxPerPage = 0;
-            $this->page = 0;
-        } else
-        {
-            $this->maxPerPage = 1;
-            if ($this->page == 0)
-            {
-                $this->page = 1;
+        } else {
+            if ($max == 0) {
+                $this->maxPerPage = 0;
+                $this->page = 0;
+            } else {
+                $this->maxPerPage = 1;
+                if ($this->page == 0) {
+                    $this->page = 1;
+                }
             }
         }
     }
@@ -446,8 +424,7 @@ abstract class AbstractPaginator implements \Iterator, \Countable
      */
     public function current()
     {
-        if (!$this->isIteratorInitialized())
-        {
+        if (!$this->isIteratorInitialized()) {
             $this->initializeIterator();
         }
 
@@ -461,8 +438,7 @@ abstract class AbstractPaginator implements \Iterator, \Countable
      */
     public function key()
     {
-        if (!$this->isIteratorInitialized())
-        {
+        if (!$this->isIteratorInitialized()) {
             $this->initializeIterator();
         }
 
@@ -476,8 +452,7 @@ abstract class AbstractPaginator implements \Iterator, \Countable
      */
     public function next()
     {
-        if (!$this->isIteratorInitialized())
-        {
+        if (!$this->isIteratorInitialized()) {
             $this->initializeIterator();
         }
         --$this->resultsCounter;
@@ -492,8 +467,7 @@ abstract class AbstractPaginator implements \Iterator, \Countable
      */
     public function rewind()
     {
-        if (!$this->isIteratorInitialized())
-        {
+        if (!$this->isIteratorInitialized()) {
             $this->initializeIterator();
         }
 
@@ -509,8 +483,7 @@ abstract class AbstractPaginator implements \Iterator, \Countable
      */
     public function valid()
     {
-        if (!$this->isIteratorInitialized())
-        {
+        if (!$this->isIteratorInitialized()) {
             $this->initializeIterator();
         }
 
@@ -524,7 +497,7 @@ abstract class AbstractPaginator implements \Iterator, \Countable
      */
     public function count()
     {
-        return $this->getNbResults();
+        return $this->getCountResults();
     }
 
 }
