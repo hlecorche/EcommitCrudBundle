@@ -456,11 +456,15 @@ class CrudHelper
      * @param string $modalId Modal id
      * @return string
      */
-    public function declareModal($modalId)
+    public function declareModal($modalId, $closeDivClass = 'overlay-close')
     {
         $modalId = str_replace(' ', '', $modalId);
+        $closeDiv = '';
+        if ($closeDivClass) {
+            $closeDiv = sprintf('<div class="%s"></div>', $closeDivClass);
+        }
 
-        return '<div id="' . $modalId . '" class="crud_modal"><div class="contentWrap"></div></div>';
+        return sprintf('<div id="%s" class="crud_modal">%s<div class="contentWrap"></div></div>', $modalId, $closeDiv);
     }
 
     /**
@@ -472,13 +476,14 @@ class CrudHelper
      * @param array $ajaxOptions Ajax options
      * @return string
      */
-    public function remoteModal($modalId, $url, $jsOnClose, $ajaxOptions)
+    public function remoteModal($modalId, $url, $jsOnClose, $ajaxOptions, $closeDivClass = 'overlay-close')
     {
         $modalId = str_replace(' ', '', $modalId);
         //Create Callback (Opening window)
         $jsModal = "$('#$modalId .contentWrap').html(data); ";
         $jsModal .= "var api_crud_modal = $('#$modalId').overlay({oneInstance: false, api: true, fixed: false";
         $jsModal .= is_null($jsOnClose) ? '' : " ,onClose: function() { $jsOnClose }";
+        $jsModal .= empty($closeDivClass) ? '' : " ,close: '.$closeDivClass'";
         $jsModal .= '}); ';
         $jsModal .= 'api_crud_modal.load();';
 

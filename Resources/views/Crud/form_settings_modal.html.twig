@@ -2,6 +2,9 @@
 {% set reset_ajax_options = ajax_options|merge({ 'before': 'resetDisplaySettings'~suffix~'();' }) %}
 
 <div id="display_settings_{{ suffix }}" class="crud_modal" style="width: 500px; text-align: left;">
+{% if  close_div_class %}
+    <div class="{{ close_div_class }}"></div>
+{% endif %}
 <div class="contentWrap">
     <h1 class="titre">{% trans %}Display Settings{% endtrans %}</h1>
     {{ ecommit_javascript_jquery_ajax_form(url, ajax_options)  }}
@@ -30,7 +33,8 @@
 </div>
 
 <script type="text/javascript">
-    var dialogDisplaySettings{{ suffix }} = $('#display_settings_{{ suffix }}').overlay({oneInstance: false, api: true, fixed: false});
+    {% set close_overlay = (close_div_class)? ',close: \'.'|raw ~ close_div_class ~ '\''|raw : '' %}
+    var dialogDisplaySettings{{ suffix }} = $('#display_settings_{{ suffix }}').overlay({oneInstance: false, api: true, fixed: false {{ close_overlay|raw }} });
     function processCrudDisplaySettings_{{ suffix }}()
     {
        if($('#display_settings_{{ suffix }} input:checkbox:checked').length < 1)

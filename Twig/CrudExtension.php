@@ -167,7 +167,7 @@ class CrudExtension extends Twig_Extension
      * @param array $ajaxOptions Ajax options
      * @return string
      */
-    public function displaySettings(Crud $crud, $options = array(), $ajaxOptions = array())
+    public function displaySettings(Crud $crud, $options = array(), $ajaxOptions = array(), $closeDivClass = 'overlay-close')
     {
         $defaultOptions = array(
             'modal' => true,
@@ -191,6 +191,7 @@ class CrudExtension extends Twig_Extension
                 'image_url' => $options['image_url'],
                 'suffix' => $crud->getSessionName(),
                 'use_bootstrap' => $this->crudHelper->useBootstrap(),
+                'close_div_class' => $closeDivClass,
             )
         );
     }
@@ -218,11 +219,11 @@ class CrudExtension extends Twig_Extension
     /**
      * Twig function: "crud_declare_modal"
      *
-     * @see CrudHelper:reclareModal
+     * @see CrudHelper:declareModal
      */
-    public function declareModal($modalId)
+    public function declareModal($modalId, $closeDivClass = 'overlay-close')
     {
-        return $this->crudHelper->declareModal($modalId);
+        return $this->crudHelper->declareModal($modalId, $closeDivClass);
     }
 
     /**
@@ -230,9 +231,9 @@ class CrudExtension extends Twig_Extension
      *
      * @see CrudHelper:remoteModal
      */
-    public function remoteModal($modalId, $url, $jsOnClose = null, $ajaxOptions = array())
+    public function remoteModal($modalId, $url, $jsOnClose = null, $ajaxOptions = array(), $closeDivClass = 'overlay-close')
     {
-        return $this->crudHelper->remoteModal($modalId, $url, $jsOnClose, $ajaxOptions);
+        return $this->crudHelper->remoteModal($modalId, $url, $jsOnClose, $ajaxOptions, $closeDivClass);
     }
 
     /**
