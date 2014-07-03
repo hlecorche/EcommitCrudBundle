@@ -58,13 +58,13 @@ class CrudFactory
     }
 
     /**
-     * @param $session_name
+     * @param $sessionName
      * @return Crud
      */
-    public function create($session_name)
+    public function create($sessionName)
     {
         return new Crud(
-            $session_name,
+            $sessionName,
             $this->router,
             $this->formFactory,
             $this->requestStack->getCurrentRequest(),
