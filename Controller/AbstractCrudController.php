@@ -11,22 +11,12 @@
 
 namespace Ecommit\CrudBundle\Controller;
 
-use Ecommit\CrudBundle\Crud\Crud;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class AbstractCrudController extends Controller
 {
     protected $cm;
-
-    /**
-     * @param $sessionName
-     * @return Crud
-     */
-    public function createCrud($sessionName)
-    {
-        return $this->get('ecommit_crud.factory')->create($sessionName);
-    }
 
     public function autoListAction()
     {
