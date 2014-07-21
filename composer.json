@@ -10,8 +10,10 @@
         }
     ],
     "require": {
-        "symfony/framework-bundle": "~2.5.0",
+        "symfony/framework-bundle": ">=2.5.2, <2.6",
+        "twig/extensions": "*",
         "doctrine/orm": "*",
+        "doctrine/doctrine-bundle": "*",
         "ecommit/util-bundle": "2.0.*@dev",
         "ecommit/javascript-bundle": "2.0.*@dev"
     },
