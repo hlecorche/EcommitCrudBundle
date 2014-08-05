@@ -548,7 +548,7 @@ class Crud
 
     /**
      * Init "fieldFilters" property in $formSearcherData object
-     * Inject the registry in $formSearcherData objet if implements InterfaceFieldFilterDoctrine
+     * Inject the registry in $formSearcherData objet if implements FieldFilterDoctrineInterface
      * @param AbstractFormSearcher $formSearcherData
      */
     protected function initializeFieldsFilter(AbstractFormSearcher $formSearcherData)

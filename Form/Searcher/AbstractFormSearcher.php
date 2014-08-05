@@ -81,7 +81,7 @@ abstract class AbstractFormSearcher
             $this->fieldFilters = array();
             foreach ($this->configureFieldsFilter() as $field) {
                 $this->fieldFilters[] = $field;
-                if (!empty($registry) && $field instanceof \Ecommit\CrudBundle\Form\Filter\InterfaceFieldFilterDoctrine) {
+                if (!empty($registry) && $field instanceof \Ecommit\CrudBundle\Form\Filter\FieldFilterDoctrineInterface) {
                     $field->setRegistry($registry);
                 }
                 $field->init();

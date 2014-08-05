@@ -13,7 +13,7 @@ namespace Ecommit\CrudBundle\Form\Filter;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-interface InterfaceFieldFilterDoctrine
+interface FieldFilterDoctrineInterface
 {
     public function getRegistry();
     public function setRegistry(ManagerRegistry $registry);

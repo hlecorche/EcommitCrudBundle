@@ -17,7 +17,7 @@ use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class FieldFilterEntity extends FieldFilterChoice implements InterfaceFieldFilterDoctrine
+class FieldFilterEntity extends FieldFilterChoice implements FieldFilterDoctrineInterface
 {
     use EntityNormalizerTrait;
 
