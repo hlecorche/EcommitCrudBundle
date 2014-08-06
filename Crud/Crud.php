@@ -441,8 +441,8 @@ class Crud
     {
         //Save in session
         $session = $this->request->getSession();
+        $sessionValuesClean = clone $this->sessionValues;
         if (is_object($this->sessionValues->formSearcherData)) {
-            $sessionValuesClean = clone $this->sessionValues;
             $sessionValuesClean->formSearcherData = clone $this->sessionValues->formSearcherData;
             $sessionValuesClean->formSearcherData->clear();
         }
