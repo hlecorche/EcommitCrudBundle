@@ -29,7 +29,6 @@ class DisplaySettingsType extends AbstractType
             array(
                 'choices' => $options['resultsPerPageChoices'],
                 'label' => 'Number of results per page',
-                'required' => false
             )
         );
 
