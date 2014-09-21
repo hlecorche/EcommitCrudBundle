@@ -72,4 +72,4 @@ class CrudFactory
             $this->securityContext->getToken()->getUser()
         );
     }
-} 
+}
