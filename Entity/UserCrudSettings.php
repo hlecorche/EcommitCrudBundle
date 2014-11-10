@@ -23,31 +23,31 @@ class UserCrudSettings
     /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Ecommit\CrudBundle\Entity\UserCrudInterface")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="user_id", onDelete="CASCADE")
      */
     protected $user;
-    
+
     /**
      * @ORM\Id
      * @ORM\Column(type="string", length=30, name="crud_name")
      */
     protected $crudName;
-    
+
     /**
      * @ORM\Column(type="integer", name="results_displayed")
      */
     protected $resultsDisplayed;
-    
+
     /**
      * @ORM\Column(type="array", name="displayed_columns")
      */
     protected $displayedColumns = array();
-    
+
     /**
      * @ORM\Column(type="string", length=30)
      */
     protected $sort;
-    
+
     /**
      * @ORM\Column(type="string", length=4)
      */
