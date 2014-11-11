@@ -1,34 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
-  
-  <parameters>
-      <parameter key="ecommit_crud.factory.class">Ecommit\CrudBundle\Crud\CrudFactory</parameter>
-      <parameter key="ecommit_crud.helper.class">Ecommit\CrudBundle\Helper\CrudHelper</parameter>
-      <parameter key="ecommit_crud.twig.crud_extension.class">Ecommit\CrudBundle\Twig\CrudExtension</parameter>
-      <parameter key="ecommit_crud.form.type.entity_picker.class">Ecommit\CrudBundle\Form\Type\EntityPickerType</parameter>
-  </parameters>
-  
-  <services>
-      <service id="ecommit_crud.factory" class="%ecommit_crud.factory.class%">
-          <argument type="service" id="router" />
-          <argument type="service" id="form.factory" />
-          <argument type="service" id="request_stack" />
-          <argument type="service" id="doctrine" />
-          <argument type="service" id="security.context" />
-      </service>
+<container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-      <service id="ecommit_crud.helper" class="%ecommit_crud.helper.class%">
-          <argument type="service" id="ecommit_util.helper" />
-          <argument type="service" id="ecommit_javascript.helper.jquery_helper" />
-          <argument type="service" id="form.factory" />
-          <argument type="service" id="router" />
-          <argument type="service" id="translator" />
-          <argument>%ecommit_javascript.use_bootstrap%</argument>
-      </service>
-    <service id="ecommit_crud.twig.crud_extension" class="%ecommit_crud.twig.crud_extension.class%">
-        <argument type="service" id="ecommit_crud.helper" />
-        <argument type="service" id="twig" />
-        <tag name="twig.extension" />
-    </service>
-  </services>
+    <parameters>
+        <parameter key="ecommit_crud.factory.class">Ecommit\CrudBundle\Crud\CrudFactory</parameter>
+        <parameter key="ecommit_crud.helper.class">Ecommit\CrudBundle\Helper\CrudHelper</parameter>
+        <parameter key="ecommit_crud.twig.crud_extension.class">Ecommit\CrudBundle\Twig\CrudExtension</parameter>
+        <parameter key="ecommit_crud.form.type.entity_picker.class">Ecommit\CrudBundle\Form\Type\EntityPickerType</parameter>
+        <parameter key="ecommit_crud.event_listener.mapping_entities.class">Ecommit\CrudBundle\EventListener\MappingEntities</parameter>
+    </parameters>
+
+    <services>
+        <service id="ecommit_crud.factory" class="%ecommit_crud.factory.class%">
+            <argument type="service" id="router"/>
+            <argument type="service" id="form.factory"/>
+            <argument type="service" id="request_stack"/>
+            <argument type="service" id="doctrine"/>
+            <argument type="service" id="security.context"/>
+        </service>
+
+        <service id="ecommit_crud.helper" class="%ecommit_crud.helper.class%">
+            <argument type="service" id="ecommit_util.helper"/>
+            <argument type="service" id="ecommit_javascript.helper.jquery_helper"/>
+            <argument type="service" id="form.factory"/>
+            <argument type="service" id="router"/>
+            <argument type="service" id="translator"/>
+            <argument>%ecommit_javascript.use_bootstrap%</argument>
+        </service>
+
+        <service id="ecommit_crud.twig.crud_extension" class="%ecommit_crud.twig.crud_extension.class%">
+            <argument type="service" id="ecommit_crud.helper"/>
+            <argument type="service" id="twig"/>
+            <tag name="twig.extension"/>
+        </service>
+
+        <service id="ecommit_crud.event_listener.mapping_entities" class="%ecommit_crud.event_listener.mapping_entities.class%">
+            <tag name="doctrine.event_listener" event="loadClassMetadata" />
+        </service>
+    </services>
 </container>

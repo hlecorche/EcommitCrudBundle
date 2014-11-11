@@ -23,7 +23,6 @@ class UserCrudSettings
     /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Ecommit\CrudBundle\Entity\UserCrudInterface")
-     * @ORM\JoinColumn(name="user_id", onDelete="CASCADE")
      */
     protected $user;
 
