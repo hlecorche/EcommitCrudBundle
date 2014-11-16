@@ -69,13 +69,13 @@ abstract class AbstractCrudController extends Controller
      */
     protected function getPathView($name)
     {
-        preg_match(
-            '/^(?P<vendor>\w+)\\\(?P<bundle>\w+)\\\Controller\\\(?P<controller>\w+)Controller$/',
-            get_class($this),
-            $matches
-        );
+        if (preg_match('/^(?P<vendor>\w+)\\\(?P<bundle>\w+)\\\Controller\\\(?P<controller>\w+)Controller$/', get_class($this), $matches)) {
+            return sprintf('%s%s:%s:%s.html.twig', $matches['vendor'], $matches['bundle'], $matches['controller'], $name);
+        } elseif (preg_match('/^(?P<vendor>\w+)\\\(?P<bundle>\w+)\\\Controller\\\(?P<dir>\w+)\\\(?P<controller>\w+)Controller$/', get_class($this), $matches)) {
+            return sprintf('%s%s:%s/%s:%s.html.twig', $matches['vendor'], $matches['bundle'], $matches['dir'], $matches['controller'], $name);
+        }
 
-        return sprintf('%s%s:%s:%s.html.twig', $matches['vendor'], $matches['bundle'], $matches['controller'], $name);
+        new \Exception('getPathView: Bad structure');
     }
 
     public function autoAjaxListAction()
