@@ -17,8 +17,8 @@ use Ecommit\CrudBundle\Paginator\AbstractPaginator;
 use Ecommit\JavascriptBundle\Helper\JqueryHelper;
 use Ecommit\UtilBundle\Helper\UtilHelper;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
-use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class CrudHelper
 {
@@ -43,7 +43,7 @@ class CrudHelper
     protected $router;
 
     /**
-     * @var Translator
+     * @var TranslatorInterface
      */
     protected $translator;
 
@@ -65,7 +65,7 @@ class CrudHelper
         JqueryHelper $javascriptManager,
         FormFactory $formFactory,
         Router $router,
-        Translator $translator,
+        TranslatorInterface $translator,
         $useBoostrap
     ) {
         $this->util = $util;
