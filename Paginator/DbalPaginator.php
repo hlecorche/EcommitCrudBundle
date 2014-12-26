@@ -22,7 +22,7 @@ class DbalPaginator extends DoctrinePaginator
     public function init()
     {
         //Calculation of the number of lines
-        if (is_null($this->totalResults)) {
+        if (is_null($this->manualCountResults)) {
             $queryBuilderCount = clone $this->query;
             $queryBuilderClone = clone $this->query;
 
@@ -35,7 +35,7 @@ class DbalPaginator extends DoctrinePaginator
             $count = $queryBuilderCount->execute()->fetchColumn(0);
             $this->setCountResults($count);
         } else {
-            $this->setCountResults($this->totalResults);
+            $this->setCountResults($this->manualCountResults);
         }
 
         $this->initQuery();
