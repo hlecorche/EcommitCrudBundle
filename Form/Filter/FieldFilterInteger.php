@@ -35,14 +35,13 @@ class FieldFilterInteger extends AbstractFieldFilter
         );
 
         $resolver->setAllowedValues(
+            'comparator',
             array(
-                'comparator' => array(
-                    self::EQUAL,
-                    self::GREATER_EQUAL,
-                    self::GREATER_THAN,
-                    self::SMALLER_EQUAL,
-                    self::SMALLER_THAN,
-                )
+                self::EQUAL,
+                self::GREATER_EQUAL,
+                self::GREATER_THAN,
+                self::SMALLER_EQUAL,
+                self::SMALLER_THAN,
             )
         );
     }

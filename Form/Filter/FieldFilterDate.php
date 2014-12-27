@@ -42,18 +42,21 @@ class FieldFilterDate extends AbstractFieldFilter
         );
 
         $resolver->setAllowedValues(
+            'comparator',
             array(
-                'comparator' => array(
-                    self::EQUAL,
-                    self::GREATER_EQUAL,
-                    self::GREATER_THAN,
-                    self::SMALLER_EQUAL,
-                    self::SMALLER_THAN,
-                ),
-                'type' => array(
-                    'date',
-                    'ecommit_javascript_jquerydatepicker',
-                )
+                self::EQUAL,
+                self::GREATER_EQUAL,
+                self::GREATER_THAN,
+                self::SMALLER_EQUAL,
+                self::SMALLER_THAN,
+            )
+        );
+
+        $resolver->setAllowedValues(
+            'type',
+            array(
+                'date',
+                'ecommit_javascript_jquerydatepicker',
             )
         );
     }
