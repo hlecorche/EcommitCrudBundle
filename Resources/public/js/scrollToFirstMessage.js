@@ -30,7 +30,7 @@ function scrollToFirstMessage(scrollToError, scrollToFlashMessage, openTableIfMe
         }
 
         if (scrollToError) {
-            var cible = $('ul.form_error:first');
+            var cible = $('li.form_error_message:first');
             if(cible.length > 0) {
                 if (openTableIfMessage) {
                     openTable(cible);

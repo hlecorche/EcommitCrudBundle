@@ -4,7 +4,7 @@
     {% if errors|length > 0 %}
     <ul class="form_error">
         {% for error in errors %}
-            <li>
+            <li class="form_error_message">
                 {% if 'data-display-in-errors' in form.vars.label_attr|keys %}
                     {% if 'label-in-errors' in form.vars.label_attr|keys %}
                         {% set labelDisplayed = form.vars.label_attr['label-in-errors'] %}
