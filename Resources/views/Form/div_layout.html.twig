@@ -22,11 +22,9 @@
 {% endspaceless %}
 {% endblock form_errors %}
 
-{% block form_label %}
-{% spaceless %}
-    {{ parent() }}
+{% block form_label -%}
     {% if required %}
-        <span class="field_required" title="This field is required">*</span>
+        {% set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' required')|trim}) %}
     {% endif %}
-{% endspaceless %}
-{% endblock form_label %}
+    {{- parent() -}}
+{%- endblock form_label %}
