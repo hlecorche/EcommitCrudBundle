@@ -19,6 +19,7 @@ use Ecommit\JavascriptBundle\Overlay\OverlayInterface;
 use Ecommit\UtilBundle\Helper\UtilHelper;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Form\FormFactory;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class CrudHelper
@@ -125,29 +126,31 @@ class CrudHelper
      */
     public function paginatorLinks(AbstractPaginator $paginator, $routeName, $routeParams, $options)
     {
-        $defaultOptions = array(
-            'ajax_options' => null,
-            'attribute_page' => 'page',
-            'type' => 'sliding',
-            'max_pages_before' => 3,
-            'max_pages_after' => 3,
-            'buttons' => 'text',
-            'image_first' => '/bundles/ecommitcrud/images/i16/resultset_first.png',
-            'image_previous' => '/bundles/ecommitcrud/images/i16/resultset_previous.png',
-            'image_next' => '/bundles/ecommitcrud/images/i16/resultset_next.png',
-            'image_last' => '/bundles/ecommitcrud/images/i16/resultset_last.png',
-            'text_first' => '<<',
-            'text_previous' => '<',
-            'text_next' => '>',
-            'text_last' => '>>',
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults(
+            array(
+                'ajax_options' => null,
+                'attribute_page' => 'page',
+                'type' => 'sliding',
+                'max_pages_before' => 3,
+                'max_pages_after' => 3,
+                'buttons' => 'text',
+                'image_first' => '/bundles/ecommitcrud/images/i16/resultset_first.png',
+                'image_previous' => '/bundles/ecommitcrud/images/i16/resultset_previous.png',
+                'image_next' => '/bundles/ecommitcrud/images/i16/resultset_next.png',
+                'image_last' => '/bundles/ecommitcrud/images/i16/resultset_last.png',
+                'text_first' => '<<',
+                'text_previous' => '<',
+                'text_next' => '>',
+                'text_last' => '>>',
+            )
         );
-        $options = \array_merge($defaultOptions, $options);
-        if (!\in_array($options['type'], array('sliding', 'elastic'))) {
-            throw new \Exception('Option "type" is not valid');
-        }
-        if (!\in_array($options['buttons'], array('text', 'image'))) {
-            throw new \Exception('Option "buttons" is not valid');
-        }
+        $resolver->setAllowedTypes('ajax_options', array('null', 'array'));
+        $resolver->setAllowedTypes('max_pages_before', 'int');
+        $resolver->setAllowedTypes('max_pages_after', 'int');
+        $resolver->setAllowedValues('type', array('sliding', 'elastic'));
+        $resolver->setAllowedValues('buttons', array('text', 'image'));
+        $options = $resolver->resolve($options);
 
         $navigation = '';
         if ($paginator->haveToPaginate()) {
@@ -297,12 +300,16 @@ class CrudHelper
      */
     public function th($column_id, Crud $crud, $options, $thOptions, $ajaxOptions)
     {
-        $defaultOptions = array(
-            'label' => null,
-            'image_up' => '/bundles/ecommitcrud/images/i16/sort_incr.png',
-            'image_down' => '/bundles/ecommitcrud/images/i16/sort_decrease.png',
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults(
+            array(
+                'label' => null,
+                'image_up' => '/bundles/ecommitcrud/images/i16/sort_incr.png',
+                'image_down' => '/bundles/ecommitcrud/images/i16/sort_decrease.png',
+            )
         );
-        $options = \array_merge($defaultOptions, $options);
+        $options = $resolver->resolve($options);
+
         if (!isset($ajaxOptions['update'])) {
             $ajaxOptions['update'] = $crud->getDivIdList();
         }
@@ -443,10 +450,14 @@ class CrudHelper
      */
     public function searchResetButton(Crud $crud, $options, $ajaxOptions, $htmlOptions)
     {
-        $defaultOptions = array(
-            'label' => 'Reset',
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults(
+            array(
+                'label' => 'Reset',
+            )
         );
-        $options = \array_merge($defaultOptions, $options);
+        $options = $resolver->resolve($options);
+
         if (!isset($ajaxOptions['update'])) {
             $ajaxOptions['update'] = 'js_holder_for_multi_update_' . $crud->getSessionName();
         }

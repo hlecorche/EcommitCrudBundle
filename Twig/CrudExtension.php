@@ -14,6 +14,7 @@ namespace Ecommit\CrudBundle\Twig;
 use Ecommit\CrudBundle\Crud\Crud;
 use Ecommit\CrudBundle\Helper\CrudHelper;
 use Ecommit\CrudBundle\Paginator\AbstractPaginator;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Twig_Environment;
 use Twig_Extension;
 use Twig_SimpleFunction;
@@ -169,12 +170,18 @@ class CrudExtension extends Twig_Extension
      */
     public function displaySettings(Crud $crud, $options = array(), $ajaxOptions = array(), $closeDivClass = 'overlay-close')
     {
-        $defaultOptions = array(
-            'modal' => true,
-            'image_url' => '/bundles/ecommitcrud/images/i16/list.png',
-            'use_bootstrap' => $this->crudHelper->useBootstrap(),
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults(
+            array(
+                'modal' => true,
+                'image_url' => '/bundles/ecommitcrud/images/i16/list.png',
+                'use_bootstrap' => $this->crudHelper->useBootstrap(),
+            )
         );
-        $options = \array_merge($defaultOptions, $options);
+        $resolver->setAllowedTypes('modal', 'bool');
+        $resolver->setAllowedTypes('use_bootstrap', 'bool');
+        $options = $resolver->resolve($options);
+
         if (!isset($ajaxOptions['update'])) {
             $ajaxOptions['update'] = $crud->getDivIdList();
         }

@@ -22,6 +22,7 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class Crud
@@ -139,13 +140,19 @@ class Crud
             throw new \Exception('Column id is too long');
         }
 
-        $defaultOptions = array(
-            'sortable' => true,
-            'default_displayed' => true,
-            'alias_search' => null,
-            'alias_sort' => null,
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults(
+            array(
+                'sortable' => true,
+                'default_displayed' => true,
+                'alias_search' => null,
+                'alias_sort' => null,
+            )
         );
-        $options = \array_merge($defaultOptions, $options);
+        $resolver->setAllowedTypes('sortable', 'bool');
+        $resolver->setAllowedTypes('default_displayed', 'bool');
+        $options = $resolver->resolve($options);
+
         $column = new CrudColumn(
             $id,
             $alias,
