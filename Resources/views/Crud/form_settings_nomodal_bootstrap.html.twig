@@ -1,21 +1,22 @@
 {% set reset_ajax_options = ajax_options %}
 {% set ajax_options = ajax_options|merge({ 'before': 'if(processCrudDisplaySettings'~suffix~'() == false) { return false;}' }) %}
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
 
-<div id="display_settings_{{ suffix }}" class="display_settings_nomodal" style="display: none;">
-    <div class="title">{% trans %}Display Settings{% endtrans %}</div>
+<div id="display_settings_{{ suffix }}" class="display_settings_nomodal_bootstrap" style="display: none;">
+    <h4>{% trans %}Display Settings{% endtrans %}</h4>
+
+
     {{ ecommit_javascript_jquery_ajax_form(url, ajax_options)  }}
-        <b>{{ form_label(form.resultsPerPage) }} :</b><br />
-        {{ form_widget(form.resultsPerPage) }}<br /><br />
-        
-        <b>{{ form_label(form.displayedColumns) }} :</b><br />
-         {% for choice, child in form.displayedColumns %}
-                {{ form_widget(child) }}  {{ form_label(child) }}<br />
-         {% endfor %}
+        {{ form_row(form.resultsPerPage) }}
+        {{ form_row(form.displayedColumns) }}
+
         {{ form_rest(form) }}
 
         <div style="text-align: center;">
-            <button type="submit" class="save">{% trans %}Save{% endtrans %}</button>
-            {{ ecommit_javascript_jquery_ajax_button('reset_display_settings'|trans, reset_settings_url, reset_ajax_options, {'class': 'raz'}) }}
+            <button type="submit" class="save-boostrap btn btn-success btn-sm">
+                <span class="glyphicon glyphicon-floppy-disk"></span> {% trans %}Save{% endtrans %}
+            </button>
+            {{ ecommit_javascript_jquery_ajax_button('<span class="glyphicon glyphicon-fire"></span>' ~ 'reset_display_settings'|trans, reset_settings_url, reset_ajax_options, {'class': 'raz-bootstrap btn btn-default btn-sm'}) }}
         </div>
     </form>
 </div>
@@ -44,6 +45,8 @@
 </script>
 
 
-<a href="#" onclick="clickChangeSettings{{ suffix }}(); return false;"><img src="{{ asset(image_url) }}" alt="{% trans %}Display Settings{% endtrans %}" title="{% trans %}Display Settings{% endtrans %}" /></a>
+<button type="button" class="display_settings-bootstrap btn btn-default btn-sm" onclick="clickChangeSettings{{ suffix }}(); return false;">
+    <span class="glyphicon glyphicon-cog"></span> {% trans %}Display Settings{% endtrans %}
+</button>
 
 <div id="js_holder_for_multi_update_{{ suffix }}" style="display: none;"></div>

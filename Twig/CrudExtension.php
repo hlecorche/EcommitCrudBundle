@@ -172,6 +172,7 @@ class CrudExtension extends Twig_Extension
         $defaultOptions = array(
             'modal' => true,
             'image_url' => '/bundles/ecommitcrud/images/i16/list.png',
+            'use_bootstrap' => $this->crudHelper->useBootstrap(),
         );
         $options = \array_merge($defaultOptions, $options);
         if (!isset($ajaxOptions['update'])) {
@@ -179,7 +180,20 @@ class CrudExtension extends Twig_Extension
         }
 
         $form = $this->crudHelper->getFormDisplaySettings($crud);
-        $templateName = $options['modal'] ? 'EcommitCrudBundle:Crud:form_settings_modal.html.twig' : 'EcommitCrudBundle:Crud:form_settings_nomodal.html.twig';
+
+        if ($options['modal']) {
+            if ($options['use_bootstrap']) {
+                $templateName = 'EcommitCrudBundle:Crud:form_settings_modal_bootstrap.html.twig';
+            } else {
+                $templateName = 'EcommitCrudBundle:Crud:form_settings_modal.html.twig';
+            }
+        } else {
+            if ($options['use_bootstrap']) {
+                $templateName = 'EcommitCrudBundle:Crud:form_settings_nomodal_bootstrap.html.twig';
+            } else {
+                $templateName = 'EcommitCrudBundle:Crud:form_settings_nomodal.html.twig';
+            }
+        }
 
         return $this->templating->render(
             $templateName,
@@ -190,7 +204,7 @@ class CrudExtension extends Twig_Extension
                 'ajax_options' => $ajaxOptions,
                 'image_url' => $options['image_url'],
                 'suffix' => $crud->getSessionName(),
-                'use_bootstrap' => $this->crudHelper->useBootstrap(),
+                'use_bootstrap' => $options['use_bootstrap'],
                 'close_div_class' => $closeDivClass,
                 'overlay_service' => $this->crudHelper->getOverlayService(),
             )
