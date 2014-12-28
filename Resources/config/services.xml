@@ -25,6 +25,7 @@
             <argument type="service" id="form.factory"/>
             <argument type="service" id="router"/>
             <argument type="service" id="translator"/>
+            <argument type="service" id="ecommit_javascript.overlay"/>
             <argument>%ecommit_javascript.use_bootstrap%</argument>
         </service>
 

@@ -15,6 +15,7 @@ use Ecommit\CrudBundle\Crud\Crud;
 use Ecommit\CrudBundle\Form\Type\DisplaySettingsType;
 use Ecommit\CrudBundle\Paginator\AbstractPaginator;
 use Ecommit\JavascriptBundle\Helper\JqueryHelper;
+use Ecommit\JavascriptBundle\Overlay\OverlayInterface;
 use Ecommit\UtilBundle\Helper\UtilHelper;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Form\FormFactory;
@@ -48,6 +49,11 @@ class CrudHelper
     protected $translator;
 
     /**
+     * @var OverlayInterface
+     */
+    protected $overlay;
+
+    /**
      * @var bool
      */
     protected $useBoostrap;
@@ -66,6 +72,7 @@ class CrudHelper
         FormFactory $formFactory,
         Router $router,
         TranslatorInterface $translator,
+        OverlayInterface $overlay,
         $useBoostrap
     ) {
         $this->util = $util;
@@ -73,6 +80,7 @@ class CrudHelper
         $this->formFactory = $formFactory;
         $this->router = $router;
         $this->translator = $translator;
+        $this->overlay = $overlay;
         $this->useBoostrap = $useBoostrap;
     }
 
@@ -82,6 +90,14 @@ class CrudHelper
     public function useBootstrap()
     {
         return $this->useBoostrap;
+    }
+
+    /**
+     * @return OverlayInterface
+     */
+    public function getOverlayService()
+    {
+        return $this->overlay;
     }
 
     /**
@@ -454,17 +470,13 @@ class CrudHelper
      * Returns declaration of modal
      *
      * @param string $modalId Modal id
+     * @param string $closeDivClass Class Div
+     * @param bool $useBootstrap  Use bootstrap or not. If null, default option is used
      * @return string
      */
-    public function declareModal($modalId, $closeDivClass = 'overlay-close')
+    public function declareModal($modalId, $closeDivClass = 'overlay-close', $useBootstrap = null)
     {
-        $modalId = str_replace(' ', '', $modalId);
-        $closeDiv = '';
-        if ($closeDivClass) {
-            $closeDiv = sprintf('<div class="%s"></div>', $closeDivClass);
-        }
-
-        return sprintf('<div id="%s" class="crud_modal">%s<div class="contentWrap"></div></div>', $modalId, $closeDiv);
+        return $this->overlay->declareHtmlModal($modalId, null, $closeDivClass, $useBootstrap);
     }
 
     /**
@@ -481,11 +493,8 @@ class CrudHelper
         $modalId = str_replace(' ', '', $modalId);
         //Create Callback (Opening window)
         $jsModal = "$('#$modalId .contentWrap').html(data); ";
-        $jsModal .= "var api_crud_modal = $('#$modalId').overlay({oneInstance: false, api: true, fixed: false";
-        $jsModal .= is_null($jsOnClose) ? '' : " ,onClose: function() { $jsOnClose }";
-        $jsModal .= empty($closeDivClass) ? '' : " ,close: '.$closeDivClass'";
-        $jsModal .= '}); ';
-        $jsModal .= 'api_crud_modal.load();';
+        $jsModal .= $this->overlay->declareJavascriptModal($modalId, null, $jsOnClose, $closeDivClass);
+        $jsModal .= $this->overlay->openModal($modalId);
 
         //Add callback
         if (isset($ajaxOptions['success'])) {

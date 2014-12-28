@@ -192,6 +192,7 @@ class CrudExtension extends Twig_Extension
                 'suffix' => $crud->getSessionName(),
                 'use_bootstrap' => $this->crudHelper->useBootstrap(),
                 'close_div_class' => $closeDivClass,
+                'overlay_service' => $this->crudHelper->getOverlayService(),
             )
         );
     }
@@ -221,9 +222,9 @@ class CrudExtension extends Twig_Extension
      *
      * @see CrudHelper:declareModal
      */
-    public function declareModal($modalId, $closeDivClass = 'overlay-close')
+    public function declareModal($modalId, $closeDivClass = 'overlay-close', $useBootstrap = null)
     {
-        return $this->crudHelper->declareModal($modalId, $closeDivClass);
+        return $this->crudHelper->declareModal($modalId, $closeDivClass, $useBootstrap);
     }
 
     /**

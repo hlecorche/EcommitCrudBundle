@@ -17,8 +17,14 @@ function scrollToFirstMessage(scrollToError, scrollToFlashMessage, openTableIfMe
                 if (openTableIfMessage) {
                     openTable(cible);
                 }
-                height = cible.offset().top;
-                $('html,body').animate({scrollTop:height});
+                var popupWrapper = $(cible).parents('.popup_wrapper_visible:first');
+                if (popupWrapper.length > 0) {
+                    height = cible.position().top;
+                    $(popupWrapper).animate({scrollTop:height});
+                } else {
+                    height = cible.offset().top;
+                    $('html,body').animate({scrollTop:height});
+                }
                 return;
             }
         }
@@ -29,8 +35,15 @@ function scrollToFirstMessage(scrollToError, scrollToFlashMessage, openTableIfMe
                 if (openTableIfMessage) {
                     openTable(cible);
                 }
-                height = cible.offset().top;
-                $('html,body').animate({scrollTop:height});
+
+                var popupWrapper = $(cible).parents('.popup_wrapper_visible:first');
+                if (popupWrapper.length > 0) {
+                    height = cible.position().top;
+                    $(popupWrapper).animate({scrollTop:height});
+                } else {
+                    height = cible.offset().top;
+                    $('html,body').animate({scrollTop:height});
+                }
                 return;
             }
         }
