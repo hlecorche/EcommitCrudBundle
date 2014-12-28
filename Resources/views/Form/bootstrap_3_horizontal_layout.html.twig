@@ -1,0 +1,54 @@
+{% extends 'bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block form_row -%}
+    {% spaceless %}
+        <div class="form-group{% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}">
+            {{ form_label(form) }}
+            <div class="{{ block('form_group_class') }}">
+                {{ form_errors(form) }}
+                {{ form_widget(form) }}
+            </div>
+        </div>
+    {% endspaceless %}
+{%- endblock form_row %}
+
+{% block form_label -%}
+    {% if required %}
+        {% set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' required')|trim}) %}
+    {% endif %}
+    {{- parent() -}}
+{%- endblock form_label %}
+
+{% block form_errors %}
+    {% spaceless %}
+        {% if errors|length > 0 %}
+            {% if form.parent %}
+                <span class="help-block">
+                    <ul class="form_error_boostrap list-unstyled">
+                        {% for error in errors %}
+                            <li class="form_error_message">
+                                {% if 'data-display-in-errors' in form.vars.label_attr|keys %}
+                                    {% if 'label-in-errors' in form.vars.label_attr|keys %}
+                                        {% set labelDisplayed = form.vars.label_attr['label-in-errors'] %}
+                                    {% else %}
+                                        {% set labelDisplayed = form.vars.label %}
+                                    {% endif %}
+                                    <span class="glyphicon glyphicon-exclamation-sign"></span> {{ labelDisplayed|trans }} : {{ error.message }}
+                                {% else %}
+                                    <span class="glyphicon glyphicon-exclamation-sign"></span> {{ error.message }}
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </span>
+            {% else %}
+                {% for error in errors %}
+                    <div class="alert flash-message alert-success alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        {{ error.message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+    {% endspaceless %}
+{% endblock form_errors %}
