@@ -57,7 +57,7 @@ class CrudHelper
     /**
      * @var bool
      */
-    protected $useBoostrap;
+    protected $useBootstrap;
 
     /**
      * Constructor
@@ -65,7 +65,7 @@ class CrudHelper
      * @param UtilHelper $util
      * @param Manager $javascriptManager
      * @param FormFactory $formFactory
-     * @param bool $useBoostrap
+     * @param bool $useBootstrap
      */
     public function __construct(
         UtilHelper $util,
@@ -74,7 +74,7 @@ class CrudHelper
         Router $router,
         TranslatorInterface $translator,
         AbstractOverlay $overlay,
-        $useBoostrap
+        $useBootstrap
     ) {
         $this->util = $util;
         $this->javascriptManager = $javascriptManager;
@@ -82,7 +82,7 @@ class CrudHelper
         $this->router = $router;
         $this->translator = $translator;
         $this->overlay = $overlay;
-        $this->useBoostrap = $useBoostrap;
+        $this->useBootstrap = $useBootstrap;
     }
 
     /**
@@ -90,7 +90,7 @@ class CrudHelper
      */
     public function useBootstrap()
     {
-        return $this->useBoostrap;
+        return $this->useBootstrap;
     }
 
     /**
@@ -123,7 +123,7 @@ class CrudHelper
      *        * text_next:  Text ">" (only if text buttons is used)
      *        * text_last:  Text ">>" (only if text buttons is used)
      *        * use_bootstrap: Use or not bootstap
-     *        * bootstrap_size: Boostrap nav size (lg sm or null)
+     *        * bootstrap_size: Bootstrap nav size (lg sm or null)
      * @return string
      */
     public function paginatorLinks(AbstractPaginator $paginator, $routeName, $routeParams, $options)
@@ -145,7 +145,7 @@ class CrudHelper
                 'text_previous' => '&lsaquo;',
                 'text_next' => '&rsaquo;',
                 'text_last' => '&raquo;',
-                'use_bootstrap' => $this->useBoostrap,
+                'use_bootstrap' => $this->useBootstrap,
                 'bootstrap_size' => null,
             )
         );
@@ -476,10 +476,10 @@ class CrudHelper
             $ajaxOptions['update'] = 'js_holder_for_multi_update_' . $crud->getSessionName();
         }
         if (!isset($htmlOptions['class'])) {
-            $htmlOptions['class'] = ($this->useBoostrap) ? 'raz-bootstrap btn btn-default btn-sm' : 'raz';
+            $htmlOptions['class'] = ($this->useBootstrap) ? 'raz-bootstrap btn btn-default btn-sm' : 'raz';
         }
         $label = $this->translator->trans($options['label']);
-        if ($this->useBoostrap) {
+        if ($this->useBootstrap) {
             $label = '<span class="glyphicon glyphicon-fire"></span> ' . $label;
         }
 
