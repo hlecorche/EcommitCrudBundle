@@ -15,7 +15,7 @@ use Ecommit\CrudBundle\Crud\Crud;
 use Ecommit\CrudBundle\Form\Type\DisplaySettingsType;
 use Ecommit\CrudBundle\Paginator\AbstractPaginator;
 use Ecommit\JavascriptBundle\Helper\JqueryHelper;
-use Ecommit\JavascriptBundle\Overlay\OverlayInterface;
+use Ecommit\JavascriptBundle\Overlay\AbstractOverlay;
 use Ecommit\UtilBundle\Helper\UtilHelper;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Form\FormFactory;
@@ -50,7 +50,7 @@ class CrudHelper
     protected $translator;
 
     /**
-     * @var OverlayInterface
+     * @var AbstractOverlay
      */
     protected $overlay;
 
@@ -73,7 +73,7 @@ class CrudHelper
         FormFactory $formFactory,
         Router $router,
         TranslatorInterface $translator,
-        OverlayInterface $overlay,
+        AbstractOverlay $overlay,
         $useBoostrap
     ) {
         $this->util = $util;
@@ -94,7 +94,7 @@ class CrudHelper
     }
 
     /**
-     * @return OverlayInterface
+     * @return AbstractOverlay
      */
     public function getOverlayService()
     {
