@@ -122,6 +122,8 @@ class CrudHelper
      *        * text_previous:  Text "<" (only if text buttons is used)
      *        * text_next:  Text ">" (only if text buttons is used)
      *        * text_last:  Text ">>" (only if text buttons is used)
+     *        * use_bootstrap: Use or not bootstap
+     *        * bootstrap_size: Boostrap nav size (lg sm or null)
      * @return string
      */
     public function paginatorLinks(AbstractPaginator $paginator, $routeName, $routeParams, $options)
@@ -139,10 +141,12 @@ class CrudHelper
                 'image_previous' => '/bundles/ecommitcrud/images/i16/resultset_previous.png',
                 'image_next' => '/bundles/ecommitcrud/images/i16/resultset_next.png',
                 'image_last' => '/bundles/ecommitcrud/images/i16/resultset_last.png',
-                'text_first' => '<<',
-                'text_previous' => '<',
-                'text_next' => '>',
-                'text_last' => '>>',
+                'text_first' => '&laquo;',
+                'text_previous' => '&lsaquo;',
+                'text_next' => '&rsaquo;',
+                'text_last' => '&raquo;',
+                'use_bootstrap' => $this->useBoostrap,
+                'bootstrap_size' => null,
             )
         );
         $resolver->setAllowedTypes('ajax_options', array('null', 'array'));
@@ -150,11 +154,17 @@ class CrudHelper
         $resolver->setAllowedTypes('max_pages_after', 'int');
         $resolver->setAllowedValues('type', array('sliding', 'elastic'));
         $resolver->setAllowedValues('buttons', array('text', 'image'));
+        $resolver->setAllowedTypes('use_bootstrap', 'bool');
+        $resolver->setAllowedValues('bootstrap_size', array('lg', 'sm', null));
         $options = $resolver->resolve($options);
 
         $navigation = '';
         if ($paginator->haveToPaginate()) {
-            $navigation .= '<div class="pagination">';
+            $navigationClass = $options['use_bootstrap']? 'pagination': 'pagination_nobootstrap';
+            if ($options['use_bootstrap'] && $options['bootstrap_size']) {
+                $navigationClass .= ' pagination-'.$options['bootstrap_size'];
+            }
+            $navigation .= \sprintf('<nav><ul class="%s">', $navigationClass);
 
             //First page / Previous page
             if ($paginator->getPage() != 1) {
@@ -216,7 +226,7 @@ class CrudHelper
                 );
             }
 
-            $navigation .= '</div>';
+            $navigation .= '</ul></nav>';
         }
 
         return $navigation;
@@ -246,17 +256,21 @@ class CrudHelper
         );
         if ($elementName == 'page') {
             if ($current) {
-                $class = 'pagination_current';
-                $content = $page;
+                $class = ($options['use_bootstrap'])? 'active': 'pagination_current';
+                if ($options['use_bootstrap']) {
+                    $content = $this->listePrivateLink($page, '', array('onclick' => 'return false;')); //bootstrap expects link
+                } else {
+                    $content = $page;
+                }
             } else {
-                $class = 'pagination_no_current';
+                $class = ($options['use_bootstrap'])? '': 'pagination_no_current';
                 $content = $this->listePrivateLink($page, $url, array(), $options['ajax_options']);
             }
         } else {
             $class = $options['buttons'] . ' ' . $elementName;
             $buttonName = $options['buttons'] . '_' . $elementName;
             $button = $options[$buttonName];
-            if ($options['buttons'] == 'text') {
+            if ($options['buttons'] == 'text' || $options['use_bootstrap']) {
                 $content = $this->listePrivateLink($button, $url, array(), $options['ajax_options']);
             } else {
                 $image = $this->util->tag('img', array('src' => $button, 'alt' => $elementName));
@@ -264,7 +278,7 @@ class CrudHelper
             }
         }
 
-        return \sprintf('<span class="%s">%s</span>', $class, $content);
+        return \sprintf('<li class="%s">%s</li>', $class, $content);
     }
 
     /**
