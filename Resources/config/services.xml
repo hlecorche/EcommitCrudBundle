@@ -2,16 +2,8 @@
 <container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-    <parameters>
-        <parameter key="ecommit_crud.factory.class">Ecommit\CrudBundle\Crud\CrudFactory</parameter>
-        <parameter key="ecommit_crud.helper.class">Ecommit\CrudBundle\Helper\CrudHelper</parameter>
-        <parameter key="ecommit_crud.twig.crud_extension.class">Ecommit\CrudBundle\Twig\CrudExtension</parameter>
-        <parameter key="ecommit_crud.form.type.entity_picker.class">Ecommit\CrudBundle\Form\Type\EntityPickerType</parameter>
-        <parameter key="ecommit_crud.event_listener.mapping_entities.class">Ecommit\CrudBundle\EventListener\MappingEntities</parameter>
-    </parameters>
-
     <services>
-        <service id="ecommit_crud.factory" class="%ecommit_crud.factory.class%">
+        <service id="ecommit_crud.factory" class="Ecommit\CrudBundle\Crud\CrudFactory">
             <argument type="service" id="router"/>
             <argument type="service" id="form.factory"/>
             <argument type="service" id="request_stack"/>
@@ -19,7 +11,7 @@
             <argument type="service" id="security.token_storage"/>
         </service>
 
-        <service id="ecommit_crud.helper" class="%ecommit_crud.helper.class%">
+        <service id="ecommit_crud.helper" class="Ecommit\CrudBundle\Helper\CrudHelper">
             <argument type="service" id="ecommit_util.helper"/>
             <argument type="service" id="ecommit_javascript.helper.jquery_helper"/>
             <argument type="service" id="form.factory"/>
@@ -32,13 +24,13 @@
             </argument>
         </service>
 
-        <service id="ecommit_crud.twig.crud_extension" class="%ecommit_crud.twig.crud_extension.class%">
+        <service id="ecommit_crud.twig.crud_extension" class="Ecommit\CrudBundle\Twig\CrudExtension">
             <argument type="service" id="ecommit_crud.helper"/>
             <argument type="service" id="twig"/>
             <tag name="twig.extension"/>
         </service>
 
-        <service id="ecommit_crud.event_listener.mapping_entities" class="%ecommit_crud.event_listener.mapping_entities.class%">
+        <service id="ecommit_crud.event_listener.mapping_entities" class="Ecommit\CrudBundle\EventListener\MappingEntities">
             <tag name="doctrine.event_listener" event="loadClassMetadata" />
         </service>
     </services>
