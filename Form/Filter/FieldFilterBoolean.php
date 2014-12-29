@@ -39,6 +39,9 @@ class FieldFilterBoolean extends AbstractFieldFilter
     {
         $typeOptions['multiple'] = false;
         $typeOptions['choices'] = self::getChoices();
+        if (!isset($typeOptions['placeholder']) && !$typeOptions['required']) {
+            $typeOptions['placeholder'] = 'filter.choices.placeholder';
+        }
 
         return $typeOptions;
     }

@@ -59,6 +59,9 @@ class FieldFilterChoice extends AbstractFieldFilter
             $typeOptions['choice_list'] = $this->options['choice_list'];
         }
         $typeOptions['multiple'] = $this->options['multiple'];
+        if (!isset($typeOptions['placeholder']) && !$typeOptions['required']) {
+            $typeOptions['placeholder'] = 'filter.choices.placeholder';
+        }
 
         return $typeOptions;
     }

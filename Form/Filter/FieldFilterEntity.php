@@ -75,6 +75,9 @@ class FieldFilterEntity extends FieldFilterChoice implements FieldFilterDoctrine
         }
 
         $typeOptions['choices'] = $choices;
+        if (!isset($typeOptions['placeholder']) && !$typeOptions['required']) {
+            $typeOptions['placeholder'] = 'filter.choices.placeholder';
+        }
 
         return $typeOptions;
     }

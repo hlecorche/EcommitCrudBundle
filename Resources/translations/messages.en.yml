@@ -1,5 +1,6 @@
 filter.true: Yes
 filter.false: No
+filter.choices.placeholder: All
 picker.add: Add
 picker.list: Select
 reset_display_settings: Reset display settings
