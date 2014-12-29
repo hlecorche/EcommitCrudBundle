@@ -481,13 +481,12 @@ class CrudHelper
      * Returns declaration of modal
      *
      * @param string $modalId Modal id
-     * @param string $closeDivClass Class Div
-     * @param bool $useBootstrap  Use bootstrap or not. If null, default option is used
+     * @param array $options
      * @return string
      */
-    public function declareModal($modalId, $closeDivClass = 'overlay-close', $useBootstrap = null)
+    public function declareModal($modalId, $options = array())
     {
-        return $this->overlay->declareHtmlModal($modalId, null, $closeDivClass, $useBootstrap);
+        return $this->overlay->declareHtmlModal($modalId, $options);
     }
 
     /**
@@ -495,16 +494,26 @@ class CrudHelper
      *
      * @param string $modalId Modal id
      * @param string $url Url
-     * @param string $jsOnClose JS code excuted, during the closure of the modal
+     * @param array $options Array options
      * @param array $ajaxOptions Ajax options
      * @return string
      */
-    public function remoteModal($modalId, $url, $jsOnClose, $ajaxOptions, $closeDivClass = 'overlay-close')
+    public function remoteModal($modalId, $url, $options, $ajaxOptions)
     {
         $modalId = str_replace(' ', '', $modalId);
+
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults(
+            array(
+                'js_on_close' => null,
+                'close_div_class' => 'overlay-close',
+            )
+        );
+        $options = $resolver->resolve($options);
+
         //Create Callback (Opening window)
         $jsModal = "$('#$modalId .contentWrap').html(data); ";
-        $jsModal .= $this->overlay->declareJavascriptModal($modalId, null, $jsOnClose, $closeDivClass);
+        $jsModal .= $this->overlay->declareJavascriptModal($modalId, array('js_on_close' => $options['js_on_close'], 'close_div_class' => $options['close_div_class']));
         $jsModal .= $this->overlay->openModal($modalId);
 
         //Add callback

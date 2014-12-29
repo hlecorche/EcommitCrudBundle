@@ -168,7 +168,7 @@ class CrudExtension extends Twig_Extension
      * @param array $ajaxOptions Ajax options
      * @return string
      */
-    public function displaySettings(Crud $crud, $options = array(), $ajaxOptions = array(), $closeDivClass = 'overlay-close')
+    public function displaySettings(Crud $crud, $options = array(), $ajaxOptions = array())
     {
         $resolver = new OptionsResolver();
         $resolver->setDefaults(
@@ -176,6 +176,7 @@ class CrudExtension extends Twig_Extension
                 'modal' => true,
                 'image_url' => '/bundles/ecommitcrud/images/i16/list.png',
                 'use_bootstrap' => $this->crudHelper->useBootstrap(),
+                'modal_close_div_class' => 'overlay-close',
             )
         );
         $resolver->setAllowedTypes('modal', 'bool');
@@ -212,7 +213,7 @@ class CrudExtension extends Twig_Extension
                 'image_url' => $options['image_url'],
                 'suffix' => $crud->getSessionName(),
                 'use_bootstrap' => $options['use_bootstrap'],
-                'close_div_class' => $closeDivClass,
+                'close_div_class' => $options['modal_close_div_class'],
                 'overlay_service' => $this->crudHelper->getOverlayService(),
             )
         );
@@ -243,9 +244,9 @@ class CrudExtension extends Twig_Extension
      *
      * @see CrudHelper:declareModal
      */
-    public function declareModal($modalId, $closeDivClass = 'overlay-close', $useBootstrap = null)
+    public function declareModal($modalId, $options = array())
     {
-        return $this->crudHelper->declareModal($modalId, $closeDivClass, $useBootstrap);
+        return $this->crudHelper->declareModal($modalId, $options);
     }
 
     /**
@@ -253,9 +254,9 @@ class CrudExtension extends Twig_Extension
      *
      * @see CrudHelper:remoteModal
      */
-    public function remoteModal($modalId, $url, $jsOnClose = null, $ajaxOptions = array(), $closeDivClass = 'overlay-close')
+    public function remoteModal($modalId, $url, $options = array(), $ajaxOptions = array())
     {
-        return $this->crudHelper->remoteModal($modalId, $url, $jsOnClose, $ajaxOptions, $closeDivClass);
+        return $this->crudHelper->remoteModal($modalId, $url, $options, $ajaxOptions);
     }
 
     /**

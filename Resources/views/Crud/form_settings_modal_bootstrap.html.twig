@@ -25,10 +25,10 @@
     </form>
 {% endmacro %}
 
-{{ overlay_service.declareHtmlModal(modalId, _self.contentDisplaySettings(_context), close_div_class)|raw }}
+{{ overlay_service.declareHtmlModal(modalId, {content: _self.contentDisplaySettings(_context), close_div_class: close_div_class})|raw }}
 
 <script type="text/javascript">
-    {{ overlay_service.declareJavascriptModal(modalId, null, null, close_div_class)|raw }}
+    {{ overlay_service.declareJavascriptModal(modalId, {close_div_class: close_div_class})|raw }}
 
     function processCrudDisplaySettings_{{ suffix }}()
     {
