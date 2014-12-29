@@ -14,7 +14,6 @@ namespace Ecommit\CrudBundle\Form\Filter;
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 abstract class AbstractFieldFilter
@@ -62,9 +61,9 @@ abstract class AbstractFieldFilter
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param OptionsResolver $resolver
      */
-    protected function configureCommonOptions(OptionsResolverInterface $resolver)
+    protected function configureCommonOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             array(
@@ -74,9 +73,9 @@ abstract class AbstractFieldFilter
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param OptionsResolver $resolver
      */
-    protected function configureOptions(OptionsResolverInterface $resolver)
+    protected function configureOptions(OptionsResolver $resolver)
     {
     }
 

@@ -14,7 +14,7 @@ namespace Ecommit\CrudBundle\Form\Filter;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Ecommit\JavascriptBundle\Form\Type\EntityNormalizerTrait;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class FieldFilterEntity extends FieldFilterChoice implements FieldFilterDoctrineInterface
@@ -29,7 +29,7 @@ class FieldFilterEntity extends FieldFilterChoice implements FieldFilterDoctrine
     /**
      * {@inheritDoc}
      */
-    protected function configureOptions(OptionsResolverInterface $resolver)
+    protected function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
 
