@@ -26,7 +26,10 @@
             <argument type="service" id="router"/>
             <argument type="service" id="translator"/>
             <argument type="service" id="ecommit_javascript.overlay"/>
-            <argument>%ecommit_javascript.use_bootstrap%</argument>
+            <argument type="collection">
+                <argument key="use_bootstrap">%ecommit_javascript.use_bootstrap%</argument>
+                <argument key="images">%ecommit_crud.images%</argument>
+            </argument>
         </service>
 
         <service id="ecommit_crud.twig.crud_extension" class="%ecommit_crud.twig.crud_extension.class%">

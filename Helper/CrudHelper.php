@@ -60,6 +60,11 @@ class CrudHelper
     protected $useBootstrap;
 
     /**
+     * @var array
+     */
+    protected $parameters;
+
+    /**
      * Constructor
      *
      * @param UtilHelper $util
@@ -74,7 +79,7 @@ class CrudHelper
         Router $router,
         TranslatorInterface $translator,
         AbstractOverlay $overlay,
-        $useBootstrap
+        $parameters
     ) {
         $this->util = $util;
         $this->javascriptManager = $javascriptManager;
@@ -82,7 +87,8 @@ class CrudHelper
         $this->router = $router;
         $this->translator = $translator;
         $this->overlay = $overlay;
-        $this->useBootstrap = $useBootstrap;
+        $this->parameters = $parameters;
+        $this->useBootstrap = $parameters['use_bootstrap'];
     }
 
     /**
@@ -318,8 +324,8 @@ class CrudHelper
         $resolver->setDefaults(
             array(
                 'label' => null,
-                'image_up' => '/bundles/ecommitcrud/images/i16/sort_incr.png',
-                'image_down' => '/bundles/ecommitcrud/images/i16/sort_decrease.png',
+                'image_up' => $this->parameters['images']['th_image_up'],
+                'image_down' => $this->parameters['images']['th_image_down'],
             )
         );
         $options = $resolver->resolve($options);

@@ -29,7 +29,12 @@ class EcommitCrudExtension extends Extension
      */
     public function load(array $config, ContainerBuilder $container) 
     {
+        $configuration = new Configuration();
+        $config = $this->processConfiguration($configuration, $config);
+
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.xml');
+
+        $container->setParameter('ecommit_crud.images', array('th_image_up' => $config['images']['th_image_up'], 'th_image_down' => $config['images']['th_image_down']));
     }
 }
