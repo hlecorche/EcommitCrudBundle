@@ -165,6 +165,9 @@ class CrudExtension extends Twig_Extension
      * @param array $options Options :
      *        * modal:  Include (or not) inside a modal. Default: true
      *        * image_url: Url image (button)
+     *        * use_bootstrap: Use Bootstrap or not
+     *        * modal_close_div_class: Close Div CSS Class
+     *        * template: Template used. If null, default template is used
      * @param array $ajaxOptions Ajax options
      * @return string
      */
@@ -177,6 +180,7 @@ class CrudExtension extends Twig_Extension
                 'image_url' => '/bundles/ecommitcrud/images/i16/list.png',
                 'use_bootstrap' => $this->crudHelper->useBootstrap(),
                 'modal_close_div_class' => 'overlay-close',
+                'template' => null,
             )
         );
         $resolver->setAllowedTypes('modal', 'bool');
@@ -189,7 +193,9 @@ class CrudExtension extends Twig_Extension
 
         $form = $this->crudHelper->getFormDisplaySettings($crud);
 
-        if ($options['modal']) {
+        if (!empty($options['template'])) {
+            $templateName = $options['template'];
+        } elseif ($options['modal']) {
             if ($options['use_bootstrap']) {
                 $templateName = 'EcommitCrudBundle:Crud:form_settings_modal_bootstrap.html.twig';
             } else {
