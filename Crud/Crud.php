@@ -46,6 +46,7 @@ class Crud
     protected $availableVirtualColumns = array();
     protected $availableResultsPerPage = array();
     protected $defaultSort = null;
+    protected $defaultPersonalizedSort = array();
     protected $defaultSense = null;
     protected $defaultResultsPerPage = null;
     protected $defaultFormSearcherData = null;
@@ -241,6 +242,24 @@ class Crud
     {
         $this->defaultSort = $sort;
         $this->defaultSense = $sense;
+
+        return $this;
+    }
+
+    /**
+     * Set the default personalized sort
+     *
+     * @param array $criterias Criterias :
+     *   If key is defined: Key = Sort  Value = Sense
+     *   If key is not defined: Value = Sort
+     * @return Crud
+     */
+    public function setDefaultPersonalizedSort(array $criterias)
+    {
+        $this->defaultPersonalizedSort = $criterias;
+
+        $this->defaultSort = 'defaultPersonalizedSort';
+        $this->defaultSense = self::ASC; //Used if not defined in criterias
 
         return $this;
     }
@@ -700,7 +719,8 @@ class Crud
     {
         $oldValue = $this->sessionValues->sort;
         $availableColumns = $this->availableColumns;
-        if (array_key_exists($value, $availableColumns) && $availableColumns[$value]->sortable) {
+        if ((array_key_exists($value, $availableColumns) && $availableColumns[$value]->sortable)
+            || ($value == 'defaultPersonalizedSort' && $this->defaultPersonalizedSort)) {
             $this->sessionValues->sort = $value;
             $this->testIfDatabaseMustMeUpdated($oldValue, $value);
         } else {
@@ -809,19 +829,33 @@ class Crud
     {
         //Builds query
         $columnSortId = $this->sessionValues->sort;
-        $columnSortAlias = $this->availableColumns[$columnSortId]->aliasSort;
-        if (empty($columnSortAlias)) {
-            //Sort alias is not defined. Alias is used
-            $columnSortAlias = $this->availableColumns[$columnSortId]->alias;
-            $this->queryBuilder->orderBy($columnSortAlias, $this->sessionValues->sense);
-        } elseif (is_array($columnSortAlias)) {
-            //Sort alias is defined in many columns
-            foreach ($columnSortAlias as $oneColumnSortAlias) {
-                $this->queryBuilder->addOrderBy($oneColumnSortAlias, $this->sessionValues->sense);
+        if ($columnSortId == 'defaultPersonalizedSort') {
+            //Default personalised sort is used
+            foreach ($this->defaultPersonalizedSort as $key => $value) {
+                if (is_int($key)) {
+                    $sort = $value;
+                    $sense = $this->defaultSense;
+                } else {
+                    $sort = $key;
+                    $sense = $value;
+                }
+                $this->queryBuilder->addOrderBy($sort, $sense);
             }
         } else {
-            //Sort alias is defined in one column
-            $this->queryBuilder->orderBy($columnSortAlias, $this->sessionValues->sense);
+            $columnSortAlias = $this->availableColumns[$columnSortId]->aliasSort;
+            if (empty($columnSortAlias)) {
+                //Sort alias is not defined. Alias is used
+                $columnSortAlias = $this->availableColumns[$columnSortId]->alias;
+                $this->queryBuilder->orderBy($columnSortAlias, $this->sessionValues->sense);
+            } elseif (is_array($columnSortAlias)) {
+                //Sort alias is defined in many columns
+                foreach ($columnSortAlias as $oneColumnSortAlias) {
+                    $this->queryBuilder->addOrderBy($oneColumnSortAlias, $this->sessionValues->sense);
+                }
+            } else {
+                //Sort alias is defined in one column
+                $this->queryBuilder->orderBy($columnSortAlias, $this->sessionValues->sense);
+            }
         }
 
         //Adds form searcher filters
