@@ -12,13 +12,6 @@
     {% endspaceless %}
 {%- endblock form_row %}
 
-{% block form_label -%}
-    {% if required %}
-        {% set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' required')|trim}) %}
-    {% endif %}
-    {{- parent() -}}
-{%- endblock form_label %}
-
 {% block form_errors %}
     {% spaceless %}
         {% if errors|length > 0 %}
