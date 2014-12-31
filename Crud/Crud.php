@@ -597,7 +597,7 @@ class Crud
                 );
             }
 
-            $field->setLabel($column->label);
+            $field->setLabel($column->label, $formSearcherData->displayLabelInErrors());
         }
     }
 

@@ -122,6 +122,15 @@ abstract class AbstractFormSearcher
         return true;
     }
 
+    /**
+     * Returns true if labels are displayed in errors messages
+     * @return bool
+     */
+    public function displayLabelInErrors()
+    {
+        return false;
+    }
+
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
         $callback = function (AbstractFormSearcher $value, ExecutionContextInterface $context) {

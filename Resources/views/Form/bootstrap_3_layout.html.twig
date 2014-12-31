@@ -18,7 +18,7 @@
                     <ul class="form_error_bootstrap list-unstyled">
                         {% for error in errors %}
                             <li class="form_error_message">
-                                {% if 'data-display-in-errors' in form.vars.label_attr|keys %}
+                                {% if 'data-display-in-errors' in form.vars.label_attr|keys and form.vars.label_attr['data-display-in-errors'] == '1' %}
                                     {% if 'label-in-errors' in form.vars.label_attr|keys %}
                                         {% set labelDisplayed = form.vars.label_attr['label-in-errors'] %}
                                     {% else %}

@@ -155,13 +155,14 @@ abstract class AbstractFieldFilter
 
     /**
      * @param string $label
+     * @param bool $displayLabelInErrors
      */
-    public function setLabel($label)
+    public function setLabel($label, $displayLabelInErrors = false)
     {
         if (!empty($label) && !isset($this->typeOptions['label'])) {
             $this->typeOptions['label'] = $label;
         }
-        if (!isset($this->typeOptions['label_attr']['data-display-in-errors'])) {
+        if (!isset($this->typeOptions['label_attr']['data-display-in-errors']) && $displayLabelInErrors) {
             $this->typeOptions['label_attr']['data-display-in-errors'] = '1';
         }
     }
