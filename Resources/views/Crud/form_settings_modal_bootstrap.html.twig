@@ -18,6 +18,7 @@
     </div>
 
     <div class="modal-footer">
+        {{ ecommit_javascript_jquery_ajax_button('<span class="glyphicon glyphicon-fire"></span>' ~ 'reset_display_settings'|trans, vars.reset_settings_url, vars.reset_ajax_options, {'class': 'raz-bootstrap btn btn-default btn-sm'}) }}
         <button type="submit" class="save-bootstrap btn btn-success btn-sm">
             <span class="glyphicon glyphicon-floppy-disk"></span> {% trans %}Save{% endtrans %}
         </button>
