@@ -11,15 +11,20 @@
 
 namespace Ecommit\CrudBundle\Paginator;
 
-use Doctrine\DBAL\Query\QueryBuilder;
-use Ecommit\CrudBundle\Paginator\DoctrinePaginator;
-
-class DbalPaginator extends DoctrinePaginator
+class DoctrineDBALPaginator extends AbstractDoctrinePaginator
 {
     /**
      * {@inheritDoc}
      */
-    public function init()
+    protected function getQueryBuilderClass()
+    {
+        return 'Doctrine\DBAL\Query\QueryBuilder';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function initPaginator()
     {
         //Calculation of the number of lines
         if (is_null($this->manualCountResults)) {
@@ -37,18 +42,20 @@ class DbalPaginator extends DoctrinePaginator
         } else {
             $this->setCountResults($this->manualCountResults);
         }
-
-        $this->initQuery();
     }
 
     /**
      * Sets the QueryBuilder
      *
-     * @param QueryBuilder $query
+     * @param mixed $query
+     * @return DoctrineDBALPaginator
+     * @deprecated Deprecated since version 2.2. Use setQueryBuilder method instead.
      */
-    public function setDbalQueryBuilder(QueryBuilder $query)
+    public function setDbalQueryBuilder($query)
     {
-        $this->query = $query;
+        trigger_error('setDbalQueryBuilder is deprecated since 2.2 version. Use setQueryBuilder instead', E_USER_DEPRECATED);
+
+        return $this->setQueryBuilder($query);
     }
 
     /**
@@ -56,19 +63,11 @@ class DbalPaginator extends DoctrinePaginator
      */
     public function getResults()
     {
-        return $this->query->execute()->fetchAll();
-    }
+        if (is_null($this->results)) {
+            $results = $this->query->execute()->fetchAll();
+            $this->results = new \ArrayIterator($results);
+        }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function retrieveObject($offset)
-    {
-        $query_retrieve = clone $this->query;
-        $query_retrieve->setFirstResult($offset - 1);
-        $query_retrieve->setMaxResults(1);
-        $results = $query_retrieve->execute()->fetchAll();
-
-        return $results[0];
+        return $this->results;
     }
 }
