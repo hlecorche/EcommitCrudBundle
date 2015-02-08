@@ -12,7 +12,6 @@
 namespace Ecommit\CrudBundle\Paginator;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use Ecommit\CrudBundle\Paginator\DoctrinePaginator;
 
 class DbalPaginator extends DoctrinePaginator
 {
@@ -45,10 +44,13 @@ class DbalPaginator extends DoctrinePaginator
      * Sets the QueryBuilder
      *
      * @param QueryBuilder $query
+     * @return DbalPaginator
      */
     public function setDbalQueryBuilder(QueryBuilder $query)
     {
         $this->query = $query;
+
+        return $this;
     }
 
     /**
@@ -56,19 +58,11 @@ class DbalPaginator extends DoctrinePaginator
      */
     public function getResults()
     {
-        return $this->query->execute()->fetchAll();
-    }
+        if (is_null($this->results)) {
+            $results = $this->query->execute()->fetchAll();
+            $this->results = new \ArrayIterator($results);
+        }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function retrieveObject($offset)
-    {
-        $query_retrieve = clone $this->query;
-        $query_retrieve->setFirstResult($offset - 1);
-        $query_retrieve->setMaxResults(1);
-        $results = $query_retrieve->execute()->fetchAll();
-
-        return $results[0];
+        return $this->results;
     }
 }

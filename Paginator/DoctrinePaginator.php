@@ -13,12 +13,15 @@ namespace Ecommit\CrudBundle\Paginator;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Ecommit\CrudBundle\DoctrineExtension\Paginate;
 
 class DoctrinePaginator extends AbstractPaginator
 {
     protected $query = null;
     protected $manualCountResults = null;
+    protected $simplifiedRequest = true;
+    protected $fetchJoinCollection = false;
 
     /**
      * {@inheritDoc}
@@ -27,7 +30,7 @@ class DoctrinePaginator extends AbstractPaginator
     {
         //Calculation of the number of lines
         if (is_null($this->manualCountResults)) {
-            $count = Paginate::count($this->query->getQuery());
+            $count = Paginate::count($this->query->getQuery(), $this->simplifiedRequest);
             $this->setCountResults($count);
         } else {
             $this->setCountResults($this->manualCountResults);
@@ -37,14 +40,12 @@ class DoctrinePaginator extends AbstractPaginator
 
     protected function initQuery()
     {
+        $this->initLastPage();
         $this->query->setFirstResult(0);
         $this->query->setMaxResults(0);
-        if ($this->getPage() == 0 || $this->getMaxPerPage() == 0 || $this->getCountResults() == 0) {
-            $this->setLastPage(0);
-        } else {
-            $this->setLastPage(\ceil($this->getCountResults() / $this->getMaxPerPage()));
-            $offset = ($this->getPage() - 1) * $this->getMaxPerPage();
 
+        if ($this->getCountResults() > 0) {
+            $offset = ($this->getPage() - 1) * $this->getMaxPerPage();
             $this->query->setFirstResult($offset);
             $this->query->setMaxResults($this->getMaxPerPage());
         }
@@ -65,10 +66,13 @@ class DoctrinePaginator extends AbstractPaginator
      * Sets the QueryBuilder
      *
      * @param QueryBuilder $query
+     * @return DoctrinePaginator
      */
     public function setQueryBuilder(QueryBuilder $query)
     {
         $this->query = $query;
+
+        return $this;
     }
 
     /**
@@ -85,32 +89,68 @@ class DoctrinePaginator extends AbstractPaginator
      * Sets manual total results
      *
      * @param Int $manualCountResults
+     * @return DoctrinePaginator
      */
     public function setManualCountResults($manualCountResults)
     {
         $this->manualCountResults = $manualCountResults;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSimplifiedRequest()
+    {
+        return $this->simplifiedRequest;
+    }
+
+    /**
+     * Use simplified request (not subrequest and not order by) or not when count results
+     * @param boolean $simplifiedRequest
+     * @return DoctrinePaginator
+     */
+    public function setSimplifiedRequest($simplifiedRequest)
+    {
+        $this->simplifiedRequest = $simplifiedRequest;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isFetchJoinCollection()
+    {
+        return $this->fetchJoinCollection;
+    }
+
+    /**
+     * Set to true when fetch join a to-many collection
+     * In that case 3 instead of the 2 queries described are executed
+     * @param boolean $fetchJoinCollection
+     * @return DoctrinePaginator
+     */
+    public function setFetchJoinCollection($fetchJoinCollection)
+    {
+        $this->fetchJoinCollection = $fetchJoinCollection;
+
+        return $this;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getResults($hydrationMode = Query::HYDRATE_OBJECT)
+    public function getResults()
     {
-        $query = $this->query->getQuery();
+        if (is_null($this->results)) {
+            $query = $this->query->getQuery();
+            $paginator = new Paginator($query, $this->fetchJoinCollection);
+            $paginator->setUseOutputWalkers(!$this->simplifiedRequest);
+            $this->results = $paginator->getIterator();
+        }
 
-        return $query->execute(array(), $hydrationMode);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function retrieveObject($offset)
-    {
-        $queryRetrieve = clone $this->query;
-        $queryRetrieve->setFirstResult($offset - 1);
-        $queryRetrieve->setMaxResults(1);
-        $results = $queryRetrieve->getQuery()->execute();
-
-        return $results[0];
+        return $this->results;
     }
 }

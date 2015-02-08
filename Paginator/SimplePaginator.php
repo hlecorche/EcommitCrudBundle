@@ -14,6 +14,7 @@ namespace Ecommit\CrudBundle\Paginator;
 class SimplePaginator extends AbstractPaginator
 {
 
+    protected $initialObjects = null;
     protected $manualCountResults = null;
 
     /**
@@ -21,57 +22,62 @@ class SimplePaginator extends AbstractPaginator
      */
     public function init()
     {
-        if (is_null($this->objects) || !is_array($this->objects)) {
-            throw new \Exception('Objects are required (array)');
+        if ($this->initialObjects === null) {
+            throw new \Exception('Results are required');
         }
 
         if (is_null($this->manualCountResults)) {
-            $this->setCountResults(\count($this->objects));
+            $this->setCountResults(\count($this->initialObjects));
+            $this->initLastPage();
 
             $offset = 0;
             $limit = 0;
-            if ($this->getPage() == 0 || $this->getMaxPerPage() == 0 || $this->getCountResults() == 0) {
-                $this->setLastPage(0);
-            } else {
-                $this->setLastPage(\ceil($this->getCountResults() / $this->getMaxPerPage()));
-                $offset = ($this->getPage() - 1) * $this->getMaxPerPage();
 
+            if ($this->getCountResults() > 0) {
+                $offset = ($this->getPage() - 1) * $this->getMaxPerPage();
                 $limit = $this->getMaxPerPage();
             }
-            $this->objects = \array_slice($this->objects, $offset, $limit);
+
+            $this->results = \array_slice($this->initialObjects, $offset, $limit);
         } else {
             $this->setCountResults($this->manualCountResults);
+            $this->initLastPage();
 
-            if ($this->getPage() == 0 || $this->getMaxPerPage() == 0 || $this->getCountResults() == 0) {
-                $this->setLastPage(0);
-            } else {
-                $this->setLastPage(\ceil($this->getCountResults() / $this->getMaxPerPage()));
-            }
+            $this->results = $this->initialObjects;
         }
     }
 
     /**
      * Set an array of results
      *
-     * @param array $results
+     * @param array|ArrayIterator $results
+     * @return SimplePaginator
      */
     public function setResults($results)
     {
-        $this->resetIterator();
-        $this->objects = $results;
+        if ($results instanceof \ArrayIterator) {
+            $this->initialObjects = $results->getArrayCopy();
+        } elseif (is_array($results)) {
+            $this->initialObjects = $results;
+        } else {
+            throw new \Exception('Results must be an array');
+        }
+
+        return $this;
     }
 
     /**
      * Set an array of results without slice
      *
-     * @param array $results
+     * @param array|ArrayIterator $results
      * @param Int $manualCountResults
      */
     public function setResultsWithoutSlice($results, $manualCountResults)
     {
-        $this->resetIterator();
-        $this->objects = $results;
+        $this->setResults($results);
         $this->manualCountResults = $manualCountResults;
+
+        return $this;
     }
 
     /**
@@ -79,16 +85,6 @@ class SimplePaginator extends AbstractPaginator
      */
     public function getResults()
     {
-        return $this->objects;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function retrieveObject($offset)
-    {
-        $results = $this->objects;
-
-        return $results[$offset];
+        return new \ArrayIterator($this->results);
     }
 }
