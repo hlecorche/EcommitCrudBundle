@@ -11,14 +11,20 @@
 
 namespace Ecommit\CrudBundle\Paginator;
 
-use Doctrine\DBAL\Query\QueryBuilder;
-
-class DbalPaginator extends DoctrinePaginator
+class DoctrineDBALPaginator extends AbstractDoctrinePaginator
 {
     /**
      * {@inheritDoc}
      */
-    public function init()
+    protected function getQueryBuilderClass()
+    {
+        return 'Doctrine\DBAL\Query\QueryBuilder';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function initPaginator()
     {
         //Calculation of the number of lines
         if (is_null($this->manualCountResults)) {
@@ -36,21 +42,20 @@ class DbalPaginator extends DoctrinePaginator
         } else {
             $this->setCountResults($this->manualCountResults);
         }
-
-        $this->initQuery();
     }
 
     /**
      * Sets the QueryBuilder
      *
-     * @param QueryBuilder $query
-     * @return DbalPaginator
+     * @param mixed $query
+     * @return DoctrineDBALPaginator
+     * @deprecated Deprecated since version 2.2. Use setQueryBuilder method instead.
      */
-    public function setDbalQueryBuilder(QueryBuilder $query)
+    public function setDbalQueryBuilder($query)
     {
-        $this->query = $query;
+        trigger_error('setDbalQueryBuilder is deprecated since 2.2 version. Use setQueryBuilder instead', E_USER_DEPRECATED);
 
-        return $this;
+        return $this->setQueryBuilder($query);
     }
 
     /**

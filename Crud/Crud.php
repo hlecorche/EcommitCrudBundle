@@ -15,8 +15,8 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Ecommit\CrudBundle\Entity\UserCrudSettings;
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 use Ecommit\CrudBundle\Form\Type\FormSearchType;
-use Ecommit\CrudBundle\Paginator\DbalPaginator;
-use Ecommit\CrudBundle\Paginator\DoctrinePaginator;
+use Ecommit\CrudBundle\Paginator\DoctrineDBALPaginator;
+use Ecommit\CrudBundle\Paginator\DoctrineORMPaginator;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactory;
@@ -904,12 +904,11 @@ class Crud
             $page = $this->sessionValues->page;
 
             if ($this->useDbal) {
-                $this->paginator = new DbalPaginator($this->sessionValues->resultsPerPage);
-                $this->paginator->setDbalQueryBuilder($this->queryBuilder);
+                $this->paginator = new DoctrineDBALPaginator($this->sessionValues->resultsPerPage);
             } else {
-                $this->paginator = new DoctrinePaginator($this->sessionValues->resultsPerPage);
-                $this->paginator->setQueryBuilder($this->queryBuilder);
+                $this->paginator = new DoctrineORMPaginator($this->sessionValues->resultsPerPage);
             }
+            $this->paginator->setQueryBuilder($this->queryBuilder);
             $this->paginator->setPage($page);
             $this->paginator->init();
         }

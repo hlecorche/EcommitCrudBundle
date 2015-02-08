@@ -11,22 +11,26 @@
 
 namespace Ecommit\CrudBundle\Paginator;
 
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Ecommit\CrudBundle\DoctrineExtension\Paginate;
 
-class DoctrinePaginator extends AbstractPaginator
+class DoctrineORMPaginator extends AbstractDoctrinePaginator
 {
-    protected $query = null;
-    protected $manualCountResults = null;
     protected $simplifiedRequest = true;
     protected $fetchJoinCollection = false;
 
     /**
      * {@inheritDoc}
      */
-    public function init()
+    protected function getQueryBuilderClass()
+    {
+        return 'Doctrine\ORM\QueryBuilder';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function initPaginator()
     {
         //Calculation of the number of lines
         if (is_null($this->manualCountResults)) {
@@ -35,67 +39,6 @@ class DoctrinePaginator extends AbstractPaginator
         } else {
             $this->setCountResults($this->manualCountResults);
         }
-        $this->initQuery();
-    }
-
-    protected function initQuery()
-    {
-        $this->initLastPage();
-        $this->query->setFirstResult(0);
-        $this->query->setMaxResults(0);
-
-        if ($this->getCountResults() > 0) {
-            $offset = ($this->getPage() - 1) * $this->getMaxPerPage();
-            $this->query->setFirstResult($offset);
-            $this->query->setMaxResults($this->getMaxPerPage());
-        }
-    }
-
-
-    /**
-     * Returns QueryBuilder
-     *
-     * @return QueryBuilder
-     */
-    public function getQueryBuilder()
-    {
-        return $this->query;
-    }
-
-    /**
-     * Sets the QueryBuilder
-     *
-     * @param QueryBuilder $query
-     * @return DoctrinePaginator
-     */
-    public function setQueryBuilder(QueryBuilder $query)
-    {
-        $this->query = $query;
-
-        return $this;
-    }
-
-    /**
-     * Returns manual total results
-     *
-     * @return Int
-     */
-    public function getManualCountResults()
-    {
-        return $this->manualCountResults;
-    }
-
-    /**
-     * Sets manual total results
-     *
-     * @param Int $manualCountResults
-     * @return DoctrinePaginator
-     */
-    public function setManualCountResults($manualCountResults)
-    {
-        $this->manualCountResults = $manualCountResults;
-
-        return $this;
     }
 
     /**
@@ -109,7 +52,7 @@ class DoctrinePaginator extends AbstractPaginator
     /**
      * Use simplified request (not subrequest and not order by) or not when count results
      * @param boolean $simplifiedRequest
-     * @return DoctrinePaginator
+     * @return DoctrineORMPaginator
      */
     public function setSimplifiedRequest($simplifiedRequest)
     {
@@ -130,7 +73,7 @@ class DoctrinePaginator extends AbstractPaginator
      * Set to true when fetch join a to-many collection
      * In that case 3 instead of the 2 queries described are executed
      * @param boolean $fetchJoinCollection
-     * @return DoctrinePaginator
+     * @return DoctrineORMPaginator
      */
     public function setFetchJoinCollection($fetchJoinCollection)
     {
