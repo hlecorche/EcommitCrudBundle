@@ -11,7 +11,7 @@
 
 namespace Ecommit\CrudBundle\Paginator;
 
-class SimplePaginator extends AbstractPaginator
+class ArrayPaginator extends AbstractPaginator
 {
 
     protected $initialObjects = null;
@@ -51,9 +51,37 @@ class SimplePaginator extends AbstractPaginator
      * Set an array of results
      *
      * @param array|ArrayIterator $results
-     * @return SimplePaginator
+     * @return ArrayPaginator
+     * @deprecated Deprecated since version 2.2. Use setData method instead.
      */
     public function setResults($results)
+    {
+        trigger_error('setResults is deprecated since 2.2 version. Use setData instead', E_USER_DEPRECATED);
+
+        return $this->setData($results);
+    }
+
+    /**
+     * Set an array of results without slice
+     *
+     * @param array|ArrayIterator $results
+     * @param Int $manualCountResults
+     * @deprecated Deprecated since version 2.2. Use setDataWithoutSlice method instead.
+     */
+    public function setResultsWithoutSlice($results, $manualCountResults)
+    {
+        trigger_error('setResultsWithoutSlice is deprecated since 2.2 version. Use setDataWithoutSlice instead', E_USER_DEPRECATED);
+
+        return $this->setDataWithoutSlice($results, $manualCountResults);
+    }
+
+    /**
+     * Set an array of results
+     *
+     * @param array|ArrayIterator $results
+     * @return ArrayPaginator
+     */
+    public function setData($results)
     {
         if ($results instanceof \ArrayIterator) {
             $this->initialObjects = $results->getArrayCopy();
@@ -72,9 +100,9 @@ class SimplePaginator extends AbstractPaginator
      * @param array|ArrayIterator $results
      * @param Int $manualCountResults
      */
-    public function setResultsWithoutSlice($results, $manualCountResults)
+    public function setDataWithoutSlice($results, $manualCountResults)
     {
-        $this->setResults($results);
+        $this->setData($results);
         $this->manualCountResults = $manualCountResults;
 
         return $this;
