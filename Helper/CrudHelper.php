@@ -435,6 +435,7 @@ class CrudHelper
             array(
                 'resultsPerPageChoices' => $resultsPerPageChoices,
                 'columnsChoices' => $columnsChoices,
+                'action' => $crud->getUrl(),
             )
         );
 
@@ -455,7 +456,7 @@ class CrudHelper
             $ajaxOptions['update'] = 'js_holder_for_multi_update_' . $crud->getSessionName();
         }
 
-        return $this->javascriptManager->jQueryFormToRemote($crud->getSearchUrl(), $ajaxOptions, $htmlOptions);
+        return $this->javascriptManager->jQueryFormToRemote($crud->getSearcherForm(), $ajaxOptions, $htmlOptions);
     }
 
     /**
@@ -555,19 +556,19 @@ class CrudHelper
      * Returns modal form tag
      *
      * @param string $modalId Modal id
-     * @param string $url Url
+     * @param FormView|string $form The form or the url. Url is deprecated since 2.2 version
      * @param array $ajaxOptions Ajax options
      * @param array $htmlOptions Html options
      * @return string
      */
-    public function formModal($modalId, $url, $ajaxOptions, $htmlOptions)
+    public function formModal($modalId, $form, $ajaxOptions, $htmlOptions)
     {
         $modalId = str_replace(' ', '', $modalId);
         if (!isset($ajaxOptions['update'])) {
             $ajaxOptions['update'] = $modalId . ' .contentWrap';
         }
 
-        return $this->javascriptManager->jQueryFormToRemote($url, $ajaxOptions, $htmlOptions);
+        return $this->javascriptManager->jQueryFormToRemote($form, $ajaxOptions, $htmlOptions);
     }
 
     /**

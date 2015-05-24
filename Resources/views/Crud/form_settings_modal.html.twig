@@ -4,7 +4,7 @@
 
 {% macro contentDisplaySettings(vars) %}
     <h4 class="titre">{% trans %}Display Settings{% endtrans %}</h4>
-    {{ ecommit_javascript_jquery_ajax_form(vars.url, vars.ajax_options)  }}
+    {{ ecommit_javascript_jquery_ajax_form(vars.form, vars.ajax_options)  }}
         <b>{{ form_label(vars.form.resultsPerPage) }} :</b><br />
         {{ form_widget(vars.form.resultsPerPage) }}<br /><br />
 

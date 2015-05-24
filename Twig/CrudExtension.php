@@ -270,8 +270,8 @@ class CrudExtension extends Twig_Extension
      *
      * @see CrudHelper:formModal
      */
-    public function formModal($modalId, $url, $ajaxOptions = array(), $htmlOptions = array())
+    public function formModal($modalId, $form, $ajaxOptions = array(), $htmlOptions = array())
     {
-        return $this->crudHelper->formModal($modalId, $url, $ajaxOptions, $htmlOptions);
+        return $this->crudHelper->formModal($modalId, $form, $ajaxOptions, $htmlOptions);
     }
 }

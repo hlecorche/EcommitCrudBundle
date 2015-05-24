@@ -400,7 +400,7 @@ class Crud
         }
         //Global 
         $formBuilder = $defaultFormSearcherData->globalBuildForm($formBuilder);
-        $this->formSearcher = $formBuilder->getForm();
+        $this->formSearcher = $formBuilder;
 
         return $this;
     }
@@ -549,6 +549,13 @@ class Crud
             if (empty($this->$value)) {
                 throw new \Exception('Config Crud: Option ' . $value . ' is required');
             }
+        }
+
+        if (!empty($this->defaultFormSearcherData)) {
+            //Set url
+            $this->formSearcher->setAction($this->getSearchUrl());
+            //Transform FormBuilder to Form
+            $this->formSearcher = $this->formSearcher->getForm();
         }
 
         //Loads user values inside this object
@@ -996,7 +1003,7 @@ class Crud
     /**
      * Returns the search form
      *
-     * @return Form (before clearTemplate) or FormView (after clearTemplate)
+     * @return FormBuilder (before init) or Form (before clearTemplate) or FormView (after clearTemplate)
      */
     public function getSearcherForm()
     {
