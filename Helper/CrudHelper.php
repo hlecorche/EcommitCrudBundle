@@ -21,6 +21,7 @@ use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
+use Twig_Environment;
 
 class CrudHelper
 {
@@ -48,6 +49,11 @@ class CrudHelper
      * @var TranslatorInterface
      */
     protected $translator;
+
+    /**
+     * @var Twig_Environment
+     */
+    protected $templating;
 
     /**
      * @var AbstractOverlay
@@ -78,6 +84,7 @@ class CrudHelper
         FormFactory $formFactory,
         Router $router,
         TranslatorInterface $translator,
+        Twig_Environment $templating,
         AbstractOverlay $overlay,
         $parameters
     ) {
@@ -86,6 +93,7 @@ class CrudHelper
         $this->formFactory = $formFactory;
         $this->router = $router;
         $this->translator = $translator;
+        $this->templating = $templating;
         $this->overlay = $overlay;
         $this->parameters = $parameters;
         $this->useBootstrap = $parameters['use_bootstrap'];
@@ -130,6 +138,7 @@ class CrudHelper
      *        * text_last:  Text ">>" (only if text buttons is used)
      *        * use_bootstrap: Use or not bootstap
      *        * bootstrap_size: Bootstrap nav size (lg sm or null)
+     *        * template: Template used. If null, default template is used
      * @return string
      */
     public function paginatorLinks(AbstractPaginator $paginator, $routeName, $routeParams, $options)
@@ -153,6 +162,7 @@ class CrudHelper
                 'text_last' => '&raquo;',
                 'use_bootstrap' => $this->useBootstrap,
                 'bootstrap_size' => null,
+                'template' => null,
             )
         );
         $resolver->setAllowedTypes('ajax_options', array('null', 'array'));
@@ -163,6 +173,18 @@ class CrudHelper
         $resolver->setAllowedTypes('use_bootstrap', 'bool');
         $resolver->setAllowedValues('bootstrap_size', array('lg', 'sm', null));
         $options = $resolver->resolve($options);
+
+        if ($options['template']) {
+            return $this->templating->render(
+                $options['template'],
+                array(
+                    'paginator' => $paginator,
+                    'routeName' => $routeName,
+                    'routeParams' => $routeParams,
+                    'options' => $options,
+                )
+            );
+        }
 
         $navigation = '';
         if ($paginator->haveToPaginate()) {
@@ -314,6 +336,7 @@ class CrudHelper
      *        * label: Label. If null, default label is displayed
      *        * image_up: Url image "^"
      *        * image_down: Url image "V"
+     *        * template: Template used. If null, default template is used
      * @param array $thOptions Html options
      * @param array $ajaxOptions Ajax Options
      * @return string
@@ -326,9 +349,22 @@ class CrudHelper
                 'label' => null,
                 'image_up' => $this->parameters['images']['th_image_up'],
                 'image_down' => $this->parameters['images']['th_image_down'],
+                'template' => null,
             )
         );
         $options = $resolver->resolve($options);
+
+        if ($options['template']) {
+            return $this->templating->render(
+                $options['template'],
+                array(
+                    'column_id' => $column_id,
+                    'crud' => $crud,
+                    'th_options' => $thOptions,
+                    'ajax_options' => $ajaxOptions,
+                )
+            );
+        }
 
         if (!isset($ajaxOptions['update'])) {
             $ajaxOptions['update'] = $crud->getDivIdList();
@@ -386,12 +422,36 @@ class CrudHelper
      * @param string $column_id Column id
      * @param Crud $crud
      * @param string $value Value
-     * @param bool $escape Escape (or not) the value
+     * @param array $options Options :
+     *        * escape: Escape (or not) the value
+     *        * template: Template used. If null, default template is used
      * @param array $tdOptions Html options
      * @return string
      */
-    public function td($column_id, Crud $crud, $value, $escape, $tdOptions)
+    public function td($column_id, Crud $crud, $value, $options, $tdOptions)
     {
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults(
+            array(
+                'escape' => true,
+                'template' => null,
+            )
+        );
+        $options = $resolver->resolve($options);
+
+        if ($options['template']) {
+            return $this->templating->render(
+                $options['template'],
+                array(
+                    'column_id' => $column_id,
+                    'crud' => $crud,
+                    'value' => $value,
+                    'options' => $options,
+                    'td_options' => $tdOptions,
+                )
+            );
+        }
+
         //If the column is not to be shown, returns empty
         $session_values = $crud->getSessionValues();
         if (!\in_array($column_id, $session_values->displayedColumns)) {
@@ -399,7 +459,7 @@ class CrudHelper
         }
 
         //XSS protection
-        if ($escape) {
+        if ($options['escape']) {
             $value = \htmlentities($value, ENT_QUOTES, 'UTF-8');
         }
 
@@ -465,6 +525,7 @@ class CrudHelper
      * @param Crud $crud
      * @param array $options Options :
      *        * label: Label. Défault: Reset
+     *        * template: Template used. If null, default template is used
      * @param array $ajaxOptions Ajax options
      * @param array $htmlOptions Html options
      * @return string
@@ -475,9 +536,22 @@ class CrudHelper
         $resolver->setDefaults(
             array(
                 'label' => 'Reset',
+                'template' => null,
             )
         );
         $options = $resolver->resolve($options);
+
+        if ($options['template']) {
+            return $this->templating->render(
+                $options['template'],
+                array(
+                    'crud' => $crud,
+                    'options' => $options,
+                    'ajax_options' => $ajaxOptions,
+                    'html_options' => $htmlOptions,
+                )
+            );
+        }
 
         if (!isset($ajaxOptions['update'])) {
             $ajaxOptions['update'] = 'js_holder_for_multi_update_' . $crud->getSessionName();
