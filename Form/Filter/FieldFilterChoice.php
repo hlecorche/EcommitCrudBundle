@@ -42,11 +42,9 @@ class FieldFilterChoice extends AbstractFieldFilter
         $resolver->setDefaults(
             array(
                 'choices' => null,
-                'choice_list' => null,
+                'choices_as_values' => true,
             )
         );
-
-        $resolver->setAllowedTypes('choice_list', array('null', 'Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface'));
     }
 
     /**
@@ -55,9 +53,7 @@ class FieldFilterChoice extends AbstractFieldFilter
     protected function configureTypeOptions($typeOptions)
     {
         $typeOptions['choices'] = $this->options['choices'];
-        if ($this->options['choice_list']) {
-            $typeOptions['choice_list'] = $this->options['choice_list'];
-        }
+        $typeOptions['choices_as_values'] = $this->options['choices_as_values'];
         $typeOptions['multiple'] = $this->options['multiple'];
         if (!isset($typeOptions['placeholder']) && !$typeOptions['required']) {
             $typeOptions['placeholder'] = 'filter.choices.placeholder';

@@ -48,30 +48,22 @@ class FieldFilterEntity extends FieldFilterChoice implements FieldFilterDoctrine
             )
         );
 
-        $resolver->setNormalizers(
-            array(
-                'em' => $this->getEmNormalizer($this->registry),
-                'query_builder' => $this->getQueryBuilderNormalizer(),
-                'identifier' => $this->getIdentifierNormalizer(),
-            )
-        );
+        $resolver->setNormalizer('em', $this->getEmNormalizer($this->registry));
+        $resolver->setNormalizer('query_builder', $this->getQueryBuilderNormalizer());
+        $resolver->setNormalizer('identifier', $this->getIdentifierNormalizer());
     }
 
     protected function configureTypeOptions($typeOptions)
     {
         $typeOptions = parent::configureTypeOptions($typeOptions);
 
-        $queryBuilderLoader = new ORMQueryBuilderLoader(
-            $this->options['query_builder'],
-            $this->options['em'],
-            $this->options['class']
-        );
+        $queryBuilderLoader = new ORMQueryBuilderLoader($this->options['query_builder']);
 
         $accessor = PropertyAccess::createPropertyAccessor();
         $choices = array();
         foreach ($queryBuilderLoader->getEntities() as $entity) {
             $id = $accessor->getValue($entity, $this->options['identifier']);
-            $choices[$id] = $this->extractLabel($entity);
+            $choices[$this->extractLabel($entity)] = $id;
         }
 
         $typeOptions['choices'] = $choices;

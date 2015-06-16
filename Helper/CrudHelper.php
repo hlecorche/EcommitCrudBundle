@@ -481,7 +481,7 @@ class CrudHelper
         }
         $columnsChoices = array();
         foreach ($crud->getColumns() as $column) {
-            $columnsChoices[$column->id] = $column->label;
+            $columnsChoices[$column->label] = $column->id;
         }
         $data = array(
             'resultsPerPage' => $crud->getSessionValues()->resultsPerPage,

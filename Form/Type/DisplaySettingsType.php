@@ -13,7 +13,7 @@ namespace Ecommit\CrudBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DisplaySettingsType extends AbstractType
 {
@@ -28,6 +28,7 @@ class DisplaySettingsType extends AbstractType
             'choice',
             array(
                 'choices' => $options['resultsPerPageChoices'],
+                'choices_as_values' => true,
                 'label' => 'Number of results per page',
             )
         );
@@ -38,6 +39,7 @@ class DisplaySettingsType extends AbstractType
             'choice',
             array(
                 'choices' => $options['columnsChoices'],
+                'choices_as_values' => true,
                 'multiple' => true,
                 'expanded' => true,
                 'label' => 'Columns to be shown'
@@ -48,7 +50,7 @@ class DisplaySettingsType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             array(
