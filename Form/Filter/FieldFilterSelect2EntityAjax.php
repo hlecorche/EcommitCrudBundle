@@ -11,6 +11,7 @@
 namespace Ecommit\CrudBundle\Form\Filter;
 
 use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FieldFilterSelect2EntityAjax extends FieldFilterChoice
@@ -24,7 +25,17 @@ class FieldFilterSelect2EntityAjax extends FieldFilterChoice
             array(
                 'em' => null,
                 'query_builder' => null,
-                'property' => null,
+                'property' => null, // deprecated since 2.2, use "choice_label"
+                'choice_label' => function (Options $options) {
+                    // BC with the "property" option
+                    if ($options['property']) {
+                        trigger_error('The "property" option is deprecated since version 2.2. Use "choice_label" instead.', E_USER_DEPRECATED);
+
+                        return $options['property'];
+                    }
+
+                    return null;
+                },
                 'identifier' => null,
                 'url' => null, //Required in FormType if route_name is empty
                 'route_name' => null,
