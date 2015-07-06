@@ -28,7 +28,7 @@ class DisplaySettingsType extends AbstractType
             'choice',
             array(
                 'choices' => $options['resultsPerPageChoices'],
-                'choices_as_values' => true,
+                'choices_as_values' => false,
                 'label' => 'Number of results per page',
             )
         );
@@ -39,7 +39,7 @@ class DisplaySettingsType extends AbstractType
             'choice',
             array(
                 'choices' => $options['columnsChoices'],
-                'choices_as_values' => true,
+                'choices_as_values' => false,
                 'multiple' => true,
                 'expanded' => true,
                 'label' => 'Columns to be shown'
