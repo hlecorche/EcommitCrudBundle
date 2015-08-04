@@ -73,6 +73,10 @@ abstract class AbstractCrudController extends Controller
             return sprintf('%s%s:%s:%s.html.twig', $matches['vendor'], $matches['bundle'], $matches['controller'], $name);
         } elseif (preg_match('/^(?P<vendor>\w+)\\\(?P<bundle>\w+)\\\Controller\\\(?P<dir>\w+)\\\(?P<controller>\w+)Controller$/', get_class($this), $matches)) {
             return sprintf('%s%s:%s/%s:%s.html.twig', $matches['vendor'], $matches['bundle'], $matches['dir'], $matches['controller'], $name);
+        } elseif (preg_match('/^AppBundle\\\Controller\\\(?P<controller>\w+)Controller$/', get_class($this), $matches)) {
+            return sprintf('AppBundle:%s:%s.html.twig', $matches['controller'], $name);
+        } elseif (preg_match('/^AppBundle\\\Controller\\\(?P<dir>\w+)\\\(?P<controller>\w+)Controller$/', get_class($this), $matches)) {
+            return sprintf('AppBundle:%s/%s:%s.html.twig', $matches['dir'], $matches['controller'], $name);
         }
 
         new \Exception('getPathView: Bad structure');
