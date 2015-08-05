@@ -28,6 +28,8 @@ abstract class AbstractFormSearcher
      */
     protected $accessor;
 
+    public $isSubmitted = false;
+
     /**
      * Declares fields
      *

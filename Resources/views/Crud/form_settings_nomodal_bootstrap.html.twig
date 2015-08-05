@@ -45,8 +45,10 @@
 </script>
 
 
+{% if display_button %}
 <button type="button" class="display_settings-bootstrap btn btn-default btn-sm" onclick="clickChangeSettings{{ suffix }}(); return false;">
     <span class="glyphicon glyphicon-cog"></span> {% trans %}Display Settings{% endtrans %}
 </button>
+{% endif %}
 
 <div id="js_holder_for_multi_update_{{ suffix }}" style="display: none;"></div>

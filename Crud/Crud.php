@@ -57,6 +57,8 @@ class Crud
     protected $updateDatabase = false;
     protected $paginator = null;
     protected $buildPaginator = true;
+    protected $displayResultsOnlyIfSearch = false;
+    protected $displayResults = true;
 
     /*
      * Router
@@ -419,8 +421,13 @@ class Crud
             return;
         }
         if ($this->request->getMethod() == 'POST') {
+            if ($this->displayResultsOnlyIfSearch) {
+                $this->displayResults = false;
+            }
             $this->formSearcher->handleRequest($this->request);
             if ($this->formSearcher->isValid()) {
+                $this->displayResults = true;
+                $this->formSearcher->getData()->isSubmitted = true;
                 $this->changeFilterValues($this->formSearcher->getData());
                 $this->changePage(1);
                 $this->save();
@@ -560,6 +567,11 @@ class Crud
 
         //Loads user values inside this object
         $this->load();
+
+        //Display or not results
+        if (!empty($this->defaultFormSearcherData) && $this->displayResultsOnlyIfSearch) {
+            $this->displayResults = $this->sessionValues->formSearcherData->isSubmitted;
+        }
 
         //Process request (resultsPerPage, sort, sense, change_columns)
         $this->processRequest();
@@ -826,6 +838,10 @@ class Crud
         }
         $this->changePage(1);
         $this->save();
+
+        if ($this->displayResultsOnlyIfSearch) {
+            $this->displayResults = false;
+        }
     }
 
     /**
@@ -899,25 +915,27 @@ class Crud
 
 
         //Builds paginator
-        if (is_object($this->buildPaginator) && $this->buildPaginator instanceof \Closure) {
-            //Case: Manual paginator (by closure) is enabled
-            $this->paginator = $this->buildPaginator->__invoke(
-                $this->queryBuilder,
-                $this->sessionValues->page,
-                $this->sessionValues->resultsPerPage
-            );
-        } elseif ($this->buildPaginator) {
-            //Case: Auto paginator is enabled
-            $page = $this->sessionValues->page;
+        if ($this->displayResults) {
+            if (is_object($this->buildPaginator) && $this->buildPaginator instanceof \Closure) {
+                //Case: Manual paginator (by closure) is enabled
+                $this->paginator = $this->buildPaginator->__invoke(
+                    $this->queryBuilder,
+                    $this->sessionValues->page,
+                    $this->sessionValues->resultsPerPage
+                );
+            } elseif ($this->buildPaginator) {
+                //Case: Auto paginator is enabled
+                $page = $this->sessionValues->page;
 
-            if ($this->useDbal) {
-                $this->paginator = new DoctrineDBALPaginator($this->sessionValues->resultsPerPage);
-            } else {
-                $this->paginator = new DoctrineORMPaginator($this->sessionValues->resultsPerPage);
+                if ($this->useDbal) {
+                    $this->paginator = new DoctrineDBALPaginator($this->sessionValues->resultsPerPage);
+                } else {
+                    $this->paginator = new DoctrineORMPaginator($this->sessionValues->resultsPerPage);
+                }
+                $this->paginator->setQueryBuilder($this->queryBuilder);
+                $this->paginator->setPage($page);
+                $this->paginator->init();
             }
-            $this->paginator->setQueryBuilder($this->queryBuilder);
-            $this->paginator->setPage($page);
-            $this->paginator->init();
         }
     }
 
@@ -1064,5 +1082,32 @@ class Crud
     public function getSessionName()
     {
         return $this->sessionName;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getDisplayResultsOnlyIfSearch()
+    {
+        return $this->displayResultsOnlyIfSearch;
+    }
+
+    /**
+     * @param boolean $displayResultsOnlyIfSearch
+     * @return Crud
+     */
+    public function setDisplayResultsOnlyIfSearch($displayResultsOnlyIfSearch)
+    {
+        $this->displayResultsOnlyIfSearch = $displayResultsOnlyIfSearch;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getDisplayResults()
+    {
+        return $this->displayResults;
     }
 }

@@ -221,6 +221,7 @@ class CrudExtension extends Twig_Extension
                 'use_bootstrap' => $options['use_bootstrap'],
                 'close_div_class' => $options['modal_close_div_class'],
                 'overlay_service' => $this->crudHelper->getOverlayService(),
+                'display_button' => $crud->getDisplayResults(),
             )
         );
     }
