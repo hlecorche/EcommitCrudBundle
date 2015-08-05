@@ -1016,6 +1016,8 @@ class Crud
     public function setPaginator($value)
     {
         $this->paginator = $value;
+
+        return $this;
     }
 
     /**
