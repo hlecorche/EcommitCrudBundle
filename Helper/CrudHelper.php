@@ -516,6 +516,10 @@ class CrudHelper
             $ajaxOptions['update'] = 'js_holder_for_multi_update_' . $crud->getSessionName();
         }
 
+        if (!isset($htmlOptions['novalidate'])) {
+            $htmlOptions['novalidate'] = 'novalidate';
+        }
+
         return $this->javascriptManager->jQueryFormToRemote($crud->getSearcherForm(), $ajaxOptions, $htmlOptions);
     }
 

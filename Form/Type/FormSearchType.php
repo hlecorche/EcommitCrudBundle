@@ -32,7 +32,6 @@ class FormSearchType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => 'Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher',
             'csrf_protection' => false,
-            'required' => false,
         ));
     }
     
