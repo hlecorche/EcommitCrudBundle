@@ -19,10 +19,10 @@ function scrollToFirstMessage(scrollToError, scrollToFlashMessage, openTableIfMe
                 }
                 var popupWrapper = $(cible).parents('.popup_wrapper_visible:first');
                 if (popupWrapper.length > 0) {
-                    height = cible.position().top;
+                    height = getPositionTocenter(getCiblePositionInModal(cible));
                     $(popupWrapper).animate({scrollTop:height});
                 } else {
-                    height = cible.offset().top;
+                    height = getPositionTocenter(cible.offset().top);
                     $('html,body').animate({scrollTop:height});
                 }
                 return;
@@ -38,10 +38,10 @@ function scrollToFirstMessage(scrollToError, scrollToFlashMessage, openTableIfMe
 
                 var popupWrapper = $(cible).parents('.popup_wrapper_visible:first');
                 if (popupWrapper.length > 0) {
-                    height = cible.position().top;
+                    height = getPositionTocenter(getCiblePositionInModal(cible));
                     $(popupWrapper).animate({scrollTop:height});
                 } else {
-                    height = cible.offset().top;
+                    height = getPositionTocenter(cible.offset().top);
                     $('html,body').animate({scrollTop:height});
                 }
                 return;
@@ -60,4 +60,24 @@ function openTable(cible)
         api = $("#"+idTable).tabs();
         api.click(indexPane);
     }
+}
+
+function getCiblePositionInModal(cible)
+{
+    var divModal = $(cible).parents('.crud_modal:first');
+    var cibleOffset = parseInt(cible.offset().top);
+    var divModalOffset = parseInt(divModal.offset().top);
+    var divModalMarginTop = parseInt(divModal.css('margin-top'));
+
+    return cibleOffset - divModalOffset + divModalMarginTop;
+}
+
+function getPositionTocenter(errorPosition)
+{
+    var positionToCenter =  errorPosition - ($(window).height() / 2);
+    if (positionToCenter < 0) {
+        positionToCenter = 0;
+    }
+
+    return positionToCenter;
 }
