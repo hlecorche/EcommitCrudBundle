@@ -35,7 +35,10 @@ abstract class AbstractFormSearcher
      *
      * @return array
      */
-    abstract public function configureFieldsFilter();
+    public function configureFieldsFilter()
+    {
+        return array();
+    }
 
     /**
      * Gets field value
