@@ -851,6 +851,17 @@ class Crud
     }
 
     /**
+     * Reset sort
+     *
+     */
+    public function razSort()
+    {
+        $this->sessionValues->sense = $this->defaultSense;
+        $this->sessionValues->sort = $this->defaultSort;
+        $this->save();
+    }
+
+    /**
      * Builds the query
      *
      */
