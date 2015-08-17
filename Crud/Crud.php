@@ -382,15 +382,21 @@ class Crud
      * Adds search form
      *
      * @param AbstractFormSearcher $defaultFormSearcherData
+     * @param null|FormTypeInterface $type The type of the form. If null, FormSearchType is used
+     * @param array $options  The options
      * @return Crud
      */
-    public function createSearcherForm(AbstractFormSearcher $defaultFormSearcherData)
+    public function createSearcherForm(AbstractFormSearcher $defaultFormSearcherData, $type = null, $options = array())
     {
+        if ($type === null) {
+            $type = new FormSearchType();
+        }
+
         $this->defaultFormSearcherData = $defaultFormSearcherData;
         $this->initializeFieldsFilter($defaultFormSearcherData);
 
         $formName = sprintf('crud_search_%s', $this->sessionName);
-        $formBuilder = $this->formFactory->createNamedBuilder($formName, new FormSearchType());
+        $formBuilder = $this->formFactory->createNamedBuilder($formName, $type, null, $options);
         foreach ($defaultFormSearcherData->getFieldsFilter($this->registry) as $field) {
             if (!($field instanceof \Ecommit\CrudBundle\Form\Filter\AbstractFieldFilter)) {
                 throw new \Exception(
@@ -1111,5 +1117,16 @@ class Crud
     public function getDisplayResults()
     {
         return $this->displayResults;
+    }
+
+    /**
+     * @param bool $displayResults
+     * @return Crud
+     */
+    public function setDisplayResults($displayResults)
+    {
+        $this->displayResults = $displayResults;
+
+        return $this;
     }
 }
