@@ -60,13 +60,24 @@ abstract class AbstractFormSearcher
     /**
      * Clears this objet
      * Used before storing this object in session
-     * If one property is not public and it doesn't begin
+     * By default, If one property is not public and it doesn't begin
      * by "field", it will be deleted
      */
     public function clear()
     {
         unset($this->fieldFilters);
         unset($this->accessor);
+        $this->clearExceptFields();
+    }
+
+    /**
+     * Sub method of "clear" method
+     * Remove properties if they are not fields
+     * If one property is not public and it doesn't begin
+     * by "field", it will be deleted
+     */
+    protected function clearExceptFields()
+    {
         foreach ($this as $key => $value) {
             $variable = new \ReflectionProperty($this, $key);
             if (!$variable->isPublic() && !\preg_match('/^field/', $key)) {
