@@ -20,6 +20,7 @@ use Ecommit\CrudBundle\Paginator\DoctrineORMPaginator;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -395,8 +396,12 @@ class Crud
         $this->defaultFormSearcherData = $defaultFormSearcherData;
         $this->initializeFieldsFilter($defaultFormSearcherData);
 
-        $formName = sprintf('crud_search_%s', $this->sessionName);
-        $formBuilder = $this->formFactory->createNamedBuilder($formName, $type, null, $options);
+        if ($type  && $type instanceof FormTypeInterface) {
+            $formBuilder = $this->formFactory->createBuilder($type, null, $options);
+        } else {
+            $formName = sprintf('crud_search_%s', $this->sessionName);
+            $formBuilder = $this->formFactory->createNamedBuilder($formName, $type, null, $options);
+        }
         foreach ($defaultFormSearcherData->getFieldsFilter($this->registry) as $field) {
             if (!($field instanceof \Ecommit\CrudBundle\Form\Filter\AbstractFieldFilter)) {
                 throw new \Exception(
