@@ -389,16 +389,15 @@ class Crud
      */
     public function createSearcherForm(AbstractFormSearcher $defaultFormSearcherData, $type = null, $options = array())
     {
-        if ($type === null) {
-            $type = new FormSearchType();
-        }
-
         $this->defaultFormSearcherData = $defaultFormSearcherData;
         $this->initializeFieldsFilter($defaultFormSearcherData);
 
         if ($type  && $type instanceof FormTypeInterface) {
             $formBuilder = $this->formFactory->createBuilder($type, null, $options);
         } else {
+            if ($type === null) {
+                $type = new FormSearchType();
+            }
             $formName = sprintf('crud_search_%s', $this->sessionName);
             $formBuilder = $this->formFactory->createNamedBuilder($formName, $type, null, $options);
         }
