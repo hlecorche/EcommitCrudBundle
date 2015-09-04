@@ -177,9 +177,12 @@ class Crud
      * @param string $id Column id (used everywhere inside the crud)
      * @param string $aliasSearch Column SQL alias, used during searchs.
      * @return Crud
+     * @deprecated Deprecated since version 2.2.
      */
     public function addVirtualColumn($id, $aliasSearch)
     {
+        trigger_error('addVirtualColumn is deprecated since 2.2 version.', E_USER_DEPRECATED);
+
         $column = new CrudColumn($id, $aliasSearch, null, false, false, null, null);
         $this->availableVirtualColumns[$id] = $column;
 
