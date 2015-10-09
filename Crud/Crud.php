@@ -111,7 +111,7 @@ class Crud
         Registry $registry,
         UserInterface $user
     ) {
-        if (!\preg_match('/^[a-zA-Z0-9_]{1,30}$/', $sessionName)) {
+        if (!\preg_match('/^[a-zA-Z0-9_]{1,50}$/', $sessionName)) {
             throw new \Exception('Variable sessionName is not given or is invalid');
         }
         $this->sessionName = $sessionName;
