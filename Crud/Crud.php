@@ -596,7 +596,7 @@ class Crud
             //because otherwise it will be linked to form, and will be updated when the "bind" function will
             //be called (If form is not valid, the session values will still be updated: Undesirable behavior)
             $values = clone $this->sessionValues->formSearcherData;
-            $this->initializeFieldsFilter($values);
+            $values->setFieldsFilter($this->defaultFormSearcherData->getFieldsFilter()); //Copy fields from defaultFormSearcherData to current data
             $this->formSearcher->setData($values);
         }
 

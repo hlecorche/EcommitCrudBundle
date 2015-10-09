@@ -108,6 +108,16 @@ abstract class AbstractFormSearcher
     }
 
     /**
+     * Sets fields
+     *
+     * @param array $filters
+     */
+    public function setFieldsFilter(array $filters)
+    {
+        $this->fieldFilters = $filters;
+    }
+
+    /**
      * Changes the form (global change)
      *
      * @param \Symfony\Component\Form\FormBuilderInterface $formBuilder
