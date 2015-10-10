@@ -30,6 +30,7 @@ class DisplaySettingsType extends AbstractType
                 'choices' => $options['resultsPerPageChoices'],
                 'choices_as_values' => false,
                 'label' => 'Number of results per page',
+                'choice_translation_domain' => false,
             )
         );
 
