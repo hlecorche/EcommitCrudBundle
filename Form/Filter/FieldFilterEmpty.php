@@ -12,6 +12,7 @@
 namespace Ecommit\CrudBundle\Form\Filter;
 
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilder;
 
 class FieldFilterEmpty extends AbstractFieldFilter
@@ -31,7 +32,7 @@ class FieldFilterEmpty extends AbstractFieldFilter
      */
     public function addField(FormBuilder $formBuilder)
     {
-        $formBuilder->add($this->property, 'checkbox', $this->typeOptions);
+        $formBuilder->add($this->property, CheckboxType::class, $this->typeOptions);
 
         return $formBuilder;
     }

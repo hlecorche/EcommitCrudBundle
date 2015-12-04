@@ -38,7 +38,7 @@ class FormSearchType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'crud_search';
     }

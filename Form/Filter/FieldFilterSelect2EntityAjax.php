@@ -10,6 +10,7 @@
 
 namespace Ecommit\CrudBundle\Form\Filter;
 
+use Ecommit\JavascriptBundle\Form\Type\Select2\Select2EntityAjaxType;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -70,7 +71,7 @@ class FieldFilterSelect2EntityAjax extends FieldFilterChoice
      */
     public function addField(FormBuilder $formBuilder)
     {
-        $formBuilder->add($this->property, 'ecommit_javascript_select2entityajax', $this->typeOptions);
+        $formBuilder->add($this->property, Select2EntityAjaxType::class, $this->typeOptions);
 
         return $formBuilder;
     }

@@ -12,6 +12,7 @@
 namespace Ecommit\CrudBundle\Form\Filter;
 
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -38,7 +39,7 @@ class FieldFilterText extends AbstractFieldFilter
      */
     public function addField(FormBuilder $formBuilder)
     {
-        $formBuilder->add($this->property, 'text', $this->typeOptions);
+        $formBuilder->add($this->property, TextType::class, $this->typeOptions);
 
         return $formBuilder;
     }

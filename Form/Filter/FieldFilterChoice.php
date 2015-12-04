@@ -12,6 +12,7 @@
 namespace Ecommit\CrudBundle\Form\Filter;
 
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -68,7 +69,7 @@ class FieldFilterChoice extends AbstractFieldFilter
      */
     public function addField(FormBuilder $formBuilder)
     {
-        $formBuilder->add($this->property, 'choice', $this->typeOptions);
+        $formBuilder->add($this->property, ChoiceType::class, $this->typeOptions);
 
         return $formBuilder;
     }

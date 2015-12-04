@@ -12,6 +12,7 @@
 namespace Ecommit\CrudBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -25,7 +26,7 @@ class DisplaySettingsType extends AbstractType
         //Field "resultsPerPage"
         $builder->add(
             'resultsPerPage',
-            'choice',
+            ChoiceType::class,
             array(
                 'choices' => $options['resultsPerPageChoices'],
                 'choices_as_values' => false,
@@ -34,10 +35,10 @@ class DisplaySettingsType extends AbstractType
             )
         );
 
-        //Field "ddisplayedColumns"
+        //Field "displayedColumns"
         $builder->add(
             'displayedColumns',
-            'choice',
+            ChoiceType::class,
             array(
                 'choices' => $options['columnsChoices'],
                 'choices_as_values' => false,
@@ -70,7 +71,7 @@ class DisplaySettingsType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'crud_display_settings';
     }

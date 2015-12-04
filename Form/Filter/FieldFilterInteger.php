@@ -12,6 +12,7 @@
 namespace Ecommit\CrudBundle\Form\Filter;
 
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -51,7 +52,7 @@ class FieldFilterInteger extends AbstractFieldFilter
      */
     public function addField(FormBuilder $formBuilder)
     {
-        $formBuilder->add($this->property, 'integer', $this->typeOptions);
+        $formBuilder->add($this->property, IntegerType::class, $this->typeOptions);
 
         return $formBuilder;
     }

@@ -11,6 +11,7 @@
 
 namespace Ecommit\CrudBundle\Form\Filter;
 
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilder;
 
 class FieldFilterNumber extends FieldFilterInteger
@@ -20,7 +21,7 @@ class FieldFilterNumber extends FieldFilterInteger
      */
     public function addField(FormBuilder $formBuilder)
     {
-        $formBuilder->add($this->property, 'number', $this->typeOptions);
+        $formBuilder->add($this->property, NumberType::class, $this->typeOptions);
 
         return $formBuilder;
     }

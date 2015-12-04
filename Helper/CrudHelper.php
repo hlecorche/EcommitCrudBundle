@@ -490,7 +490,7 @@ class CrudHelper
 
         $form = $this->formFactory->createNamed(
             $form_name,
-            new DisplaySettingsType(),
+            DisplaySettingsType::class,
             $data,
             array(
                 'resultsPerPageChoices' => $resultsPerPageChoices,

@@ -11,6 +11,7 @@
 namespace Ecommit\CrudBundle\Form\Filter;
 
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
+use Ecommit\JavascriptBundle\Form\Type\JqueryAutocompleteEntityAjaxType;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -73,7 +74,7 @@ class FieldFilterJqueryAutocompleteEntityAjax extends AbstractFieldFilter
      */
     public function addField(FormBuilder $formBuilder)
     {
-        $formBuilder->add($this->property, 'ecommit_javascript_jqueryautocompleteentityajax', $this->typeOptions);
+        $formBuilder->add($this->property, JqueryAutocompleteEntityAjaxType::class, $this->typeOptions);
 
         return $formBuilder;
     }
