@@ -13,6 +13,7 @@ namespace Ecommit\CrudBundle\Form\Filter;
 
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 use Ecommit\JavascriptBundle\Form\Type\JqueryDatePickerType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -56,8 +57,8 @@ class FieldFilterDate extends AbstractFieldFilter
         $resolver->setAllowedValues(
             'type',
             array(
-                'date',
-                'ecommit_javascript_jquerydatepicker',
+                DateType::class,
+                JqueryDatePickerType::class,
             )
         );
     }
