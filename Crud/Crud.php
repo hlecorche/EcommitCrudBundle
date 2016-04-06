@@ -590,6 +590,7 @@ class Crud
             //be called (If form is not valid, the session values will still be updated: Undesirable behavior)
             $values = clone $this->sessionValues->formSearcherData;
             $values->setFieldsFilter($this->defaultFormSearcherData->getFieldsFilter()); //Copy fields from defaultFormSearcherData to current data
+            $values->setCommonOptions($this->defaultFormSearcherData->getCommonOptions());
             $this->formSearcher->setData($values);
         }
 
@@ -639,6 +640,9 @@ class Crud
         if (!empty($object)) {
             $this->sessionValues = $object;
             $this->checkCrudSession();
+            if (!empty($this->defaultFormSearcherData)) {
+                $object->formSearcherData->setCommonOptions($this->defaultFormSearcherData->getCommonOptions());
+            }
 
             return;
         }

@@ -28,6 +28,8 @@ abstract class AbstractFormSearcher
      */
     protected $accessor;
 
+    protected $commonOptions = array();
+
     public $isSubmitted = false;
 
     /**
@@ -179,5 +181,21 @@ abstract class AbstractFormSearcher
             $this->accessor = PropertyAccess::createPropertyAccessor();
         }
         return $this->accessor;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCommonOptions()
+    {
+        return $this->commonOptions;
+    }
+
+    /**
+     * @param array $commonOptions
+     */
+    public function setCommonOptions($commonOptions)
+    {
+        $this->commonOptions = $commonOptions;
     }
 }
