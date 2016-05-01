@@ -101,7 +101,7 @@ class FieldFilterTokenInputEntitiesAjax extends AbstractFieldFilter
     {
         $value = $formData->get($this->property);
         $parameterName = 'value_choice' . str_replace(' ', '', $this->property);
-        if (empty($value) || !is_array($value)) {
+        if (null === $value || '' === $value || !is_array($value) || array() === $value) {
             return $queryBuilder;
         }
 

@@ -99,7 +99,7 @@ class FieldFilterJqueryAutocompleteEntityAjax extends AbstractFieldFilter
     {
         $value = $formData->get($this->property);
         $parameterName = 'value_jquery_auto' . str_replace(' ', '', $this->property);
-        if (empty($value) || !is_scalar($value)) {
+        if (null === $value || '' === $value || !is_scalar($value)) {
             return $queryBuilder;
         }
 
