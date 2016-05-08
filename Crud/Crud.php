@@ -52,7 +52,7 @@ class Crud
     protected $defaultFormSearcherData = null;
 
     protected $queryBuilder = null;
-    protected $useDbal = false;
+    protected $useDbal = false; //Deprecated. Not used
     protected $persistentSettings = false;
     protected $updateDatabase = false;
     protected $paginator = null;
@@ -203,6 +203,11 @@ class Crud
      */
     public function setQueryBuilder($queryBuilder)
     {
+        if (!($queryBuilder instanceof \Doctrine\ORM\QueryBuilder) &&
+            !($queryBuilder instanceof \Doctrine\DBAL\Query\QueryBuilder) &&
+            !($queryBuilder instanceof QueryBuilderInterface)) {
+            throw new \Exception('Bad query builder');
+        }
         $this->queryBuilder = $queryBuilder;
 
         return $this;
@@ -358,9 +363,12 @@ class Crud
      * Use (or not) DBAL
      * 
      * @param bool $value
+     * @deprecated Deprecated since version 2.3.
      */
     public function setUseDbal($value)
     {
+        trigger_error('setUseDbal is deprecated since 2.3 version.', E_USER_DEPRECATED);
+
         $this->useDbal = $value;
 
         return $this;
@@ -905,6 +913,11 @@ class Crud
         //Adds form searcher filters
         if (!empty($this->defaultFormSearcherData)) {
             foreach ($this->defaultFormSearcherData->getFieldsFilter() as $field) {
+                if (!($this->queryBuilder instanceof \Doctrine\ORM\QueryBuilder) &&
+                    !($this->queryBuilder instanceof \Doctrine\DBAL\Query\QueryBuilder)) {
+                    throw new \Exception('getFieldsFilter can not be used');
+                }
+
                 if (isset($this->availableColumns[$field->getColumnId()])) {
                     $column = $this->availableColumns[$field->getColumnId()];
                 } elseif (isset($this->availableVirtualColumns[$field->getColumnId()])) {
@@ -948,10 +961,12 @@ class Crud
                 //Case: Auto paginator is enabled
                 $page = $this->sessionValues->page;
 
-                if ($this->useDbal) {
+                if ($this->queryBuilder instanceof \Doctrine\DBAL\Query\QueryBuilder) {
                     $this->paginator = new DoctrineDBALPaginator($this->sessionValues->resultsPerPage);
-                } else {
+                } elseif ($this->queryBuilder instanceof \Doctrine\ORM\QueryBuilder) {
                     $this->paginator = new DoctrineORMPaginator($this->sessionValues->resultsPerPage);
+                } else {
+                    throw new \Exception('setBuildPaginator must be used with closure');
                 }
                 $this->paginator->setQueryBuilder($this->queryBuilder);
                 $this->paginator->setPage($page);
