@@ -11,12 +11,12 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "symfony/framework-bundle": ">=2.8, <3.1",
+        "symfony/framework-bundle": "~3.0",
         "twig/extensions": "*",
         "doctrine/orm": "*",
         "doctrine/doctrine-bundle": "*",
-        "ecommit/util-bundle": "2.3.*@dev",
-        "ecommit/javascript-bundle": "2.3.*@dev"
+        "ecommit/util-bundle": "2.4.*@dev",
+        "ecommit/javascript-bundle": "2.4.*@dev"
     },
     "autoload": {
         "psr-0": { "Ecommit\\CrudBundle": "" }
@@ -24,7 +24,7 @@
     "target-dir": "Ecommit/CrudBundle",
     "extra": {
         "branch-alias": {
-            "dev-master": "2.3.x-dev"
+            "dev-master": "2.4.x-dev"
         }
     }
 }
