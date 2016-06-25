@@ -84,8 +84,8 @@ abstract class AbstractCrudController extends Controller
 
     public function autoAjaxListAction()
     {
-        $request = $this->get('request');
-        if (!$request->isXmlHttpRequest()) {
+        $masterRequest = $this->get('request_stack')->getMasterRequest();
+        if (!$masterRequest->isXmlHttpRequest()) {
             throw new NotFoundHttpException('Ajax is required');
         }
         $data = $this->prepareList();
@@ -95,8 +95,8 @@ abstract class AbstractCrudController extends Controller
 
     public function autoAjaxSearchAction()
     {
-        $request = $this->get('request');
-        if (!$request->isXmlHttpRequest()) {
+        $masterRequest = $this->get('request_stack')->getMasterRequest();
+        if (!$masterRequest->isXmlHttpRequest()) {
             throw new NotFoundHttpException('Ajax is required');
         }
         $data = $this->processSearch();
