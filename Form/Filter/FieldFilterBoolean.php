@@ -40,7 +40,6 @@ class FieldFilterBoolean extends AbstractFieldFilter
     {
         $typeOptions['multiple'] = false;
         $typeOptions['choices'] = self::getChoices();
-        $typeOptions['choices_as_values'] = true;
         if (!isset($typeOptions['placeholder']) && !$typeOptions['required']) {
             $typeOptions['placeholder'] = 'filter.choices.placeholder';
         }

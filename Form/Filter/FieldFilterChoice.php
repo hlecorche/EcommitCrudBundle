@@ -43,7 +43,6 @@ class FieldFilterChoice extends AbstractFieldFilter
         $resolver->setDefaults(
             array(
                 'choices' => null,
-                'choices_as_values' => true,
             )
         );
     }
@@ -54,7 +53,6 @@ class FieldFilterChoice extends AbstractFieldFilter
     protected function configureTypeOptions($typeOptions)
     {
         $typeOptions['choices'] = $this->options['choices'];
-        $typeOptions['choices_as_values'] = $this->options['choices_as_values'];
         $typeOptions['multiple'] = $this->options['multiple'];
         if (!isset($typeOptions['placeholder']) && !$typeOptions['required']) {
             $typeOptions['placeholder'] = 'filter.choices.placeholder';
