@@ -19,9 +19,8 @@
         "ecommit/javascript-bundle": "2.4.*@dev"
     },
     "autoload": {
-        "psr-0": { "Ecommit\\CrudBundle": "" }
+        "psr-4": { "Ecommit\\CrudBundle\\": "" }
     },
-    "target-dir": "Ecommit/CrudBundle",
     "extra": {
         "branch-alias": {
             "dev-master": "2.4.x-dev"
