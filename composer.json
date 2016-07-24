@@ -12,9 +12,9 @@
     "require": {
         "php": ">=5.5.9",
         "symfony/framework-bundle": "~3.0",
-        "twig/extensions": "*",
-        "doctrine/orm": "*",
-        "doctrine/doctrine-bundle": "*",
+        "twig/extensions": "^1.0",
+        "doctrine/orm": "~2.3",
+        "doctrine/doctrine-bundle": "^1.6",
         "ecommit/util-bundle": "2.4.*@dev",
         "ecommit/javascript-bundle": "2.4.*@dev"
     },
