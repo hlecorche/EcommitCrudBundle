@@ -21,7 +21,7 @@ class DisplaySettingsType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
         //Field "resultsPerPage"
         $builder->add(
