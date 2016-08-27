@@ -32,10 +32,11 @@ class Paginate
      * @param Query $query
      * @param bool $simplifiedRequest  Use simplified request (not subrequest and not order by) or not
      * @return int
+     * @deprecated Deprecated since version 2.4. Use countQueryBuilder or Doctrine\ORM\Tools\Pagination\Paginator::count method instead.
      */
     static public function count(Query $query, $simplifiedRequest = true)
     {
-        //Must be deprecated in 2.4
+        trigger_error('Paginate::count is deprecated since 2.4 version. Use countQueryBuilder or Doctrine\ORM\Tools\Pagination\Paginator::count method instead.', E_USER_DEPRECATED);
 
         $doctrinePaginator = new Paginator($query);
         $doctrinePaginator->setUseOutputWalkers(!$simplifiedRequest);
