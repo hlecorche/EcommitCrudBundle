@@ -12,11 +12,10 @@
 namespace Ecommit\CrudBundle\Crud;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Ecommit\CrudBundle\DoctrineExtension\Paginate;
 use Ecommit\CrudBundle\Entity\UserCrudSettings;
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 use Ecommit\CrudBundle\Form\Type\FormSearchType;
-use Ecommit\CrudBundle\Paginator\DoctrineDBALPaginator;
-use Ecommit\CrudBundle\Paginator\DoctrineORMPaginator;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactory;
@@ -350,7 +349,7 @@ class Crud
     /**
      * Enables (or not) the auto build paginator
      *
-     * @param bool|closure $value
+     * @param bool|closure|array $value
      */
     public function setBuildPaginator($value)
     {
@@ -957,19 +956,19 @@ class Crud
                     $this->sessionValues->page,
                     $this->sessionValues->resultsPerPage
                 );
-            } elseif ($this->buildPaginator) {
+            } elseif (true === $this->buildPaginator || is_array($this->buildPaginator)) {
                 //Case: Auto paginator is enabled
-                $page = $this->sessionValues->page;
-
-                if ($this->queryBuilder instanceof \Doctrine\DBAL\Query\QueryBuilder) {
-                    $this->paginator = new DoctrineDBALPaginator($this->sessionValues->resultsPerPage);
-                } elseif ($this->queryBuilder instanceof \Doctrine\ORM\QueryBuilder) {
-                    $this->paginator = new DoctrineORMPaginator($this->sessionValues->resultsPerPage);
-                } else {
-                    throw new \Exception('setBuildPaginator must be used with closure');
+                $paginatorOptions = array();
+                if (is_array($this->buildPaginator)) {
+                    $paginatorOptions = $this->buildPaginator;
                 }
-                $this->paginator->setQueryBuilder($this->queryBuilder);
-                $this->paginator->setPage($page);
+
+                $this->paginator = Paginate::createDoctrinePaginator(
+                    $this->queryBuilder,
+                    $this->sessionValues->page,
+                    $this->sessionValues->resultsPerPage,
+                    $paginatorOptions
+                );
                 $this->paginator->init();
             }
         }
