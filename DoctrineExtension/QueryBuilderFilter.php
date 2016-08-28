@@ -19,16 +19,26 @@ class QueryBuilderFilter
     /**
      * Add SQL WHERE IN or WHERE NOT IN filter
      * @param \Doctrine\DBAL\Query\QueryBuilder|\Doctrine\ORM\QueryBuilder $queryBuilder
-     * @param string $filterSign  ALL (no filter), IN (WHERE IN), NIN (WHRE NOT IN)
+     * @param string $filterSign  ALL (no filter), IN (WHERE IN), NIN (WHERE NOT IN)
      * @param array $filterValues  Values
      * @param string $sqlField  SQL field name
      * @param string $paramName SQL parameter name
+     * @param bool $noResultIfNoInValue Return no result or not when $filterSign=IN and $filterValues is empty
      * @return \Doctrine\DBAL\Query\QueryBuilder|\Doctrine\ORM\QueryBuilder
      */
-    public static function addMultiFilter($queryBuilder, $filterSign, $filterValues, $sqlField, $paramName)
+    public static function addMultiFilter($queryBuilder, $filterSign, $filterValues, $sqlField, $paramName, $noResultIfNoInValue = false)
     {
-        if (($filterSign != self::SELECT_IN && $filterSign != self::SELECT_NOT_IN)
-            || empty($filterValues) || 0 === count($filterValues)) {
+        if ($filterSign != self::SELECT_IN && $filterSign != self::SELECT_NOT_IN) {
+            return $queryBuilder;
+        }
+        if (empty($filterValues) || 0 === count($filterValues)) {
+            if (self::SELECT_NOT_IN == $filterSign || !$noResultIfNoInValue) {
+                return $queryBuilder;
+            }
+
+            //Must return no result
+            $queryBuilder->andWhere('0 = 1');
+
             return $queryBuilder;
         }
 
@@ -42,13 +52,13 @@ class QueryBuilderFilter
     /**
      * Add SQL WHERE IN or WHERE NOT IN filter without group
      * @param \Doctrine\DBAL\Query\QueryBuilder|\Doctrine\ORM\QueryBuilder $queryBuilder
-     * @param string $filterSign  ALL (no filter), IN (WHERE IN), NIN (WHRE NOT IN)
+     * @param string $filterSign  ALL (no filter), IN (WHERE IN), NIN (WHERE NOT IN)
      * @param array $filterValues  Values
      * @param string $sqlField  SQL field name
      * @param string $paramName  SQL parameter name
      * @return \Doctrine\DBAL\Query\QueryBuilder|\Doctrine\ORM\QueryBuilder
      */
-    public static function addSimpleMultiFilter($queryBuilder, $filterSign, $filterValues, $sqlField, $paramName)
+    protected static function addSimpleMultiFilter($queryBuilder, $filterSign, $filterValues, $sqlField, $paramName)
     {
         $clauseSql = ($filterSign == self::SELECT_IN)? 'IN' : 'NOT IN';
 
@@ -61,13 +71,13 @@ class QueryBuilderFilter
     /**
      * Add SQL WHERE IN or WHERE NOT IN filter with group
      * @param \Doctrine\DBAL\Query\QueryBuilder|\Doctrine\ORM\QueryBuilder $queryBuilder
-     * @param string $filterSign  ALL (no filter), IN (WHERE IN), NIN (WHRE NOT IN)
+     * @param string $filterSign  ALL (no filter), IN (WHERE IN), NIN (WHERE NOT IN)
      * @param array $filterValues  Values
      * @param string $sqlField  SQL field name
      * @param string $paramName  SQL parameter name
      * @return \Doctrine\DBAL\Query\QueryBuilder|\Doctrine\ORM\QueryBuilder
      */
-    public static function addGroupMultiFilter($queryBuilder, $filterSign, $filterValues, $sqlField, $paramName)
+    protected static function addGroupMultiFilter($queryBuilder, $filterSign, $filterValues, $sqlField, $paramName)
     {
         $clauseSql = ($filterSign == self::SELECT_IN)? 'IN' : 'NOT IN';
         $separatorClauseSql = ($filterSign == self::SELECT_IN)? 'OR' : 'AND';
@@ -86,25 +96,20 @@ class QueryBuilderFilter
     }
 
     /**
-     * Add SQL WHERE IN or WHERE NOT IN filter. Values must be in the whitelist or must not be in the blacklist
+     * Add SQL WHERE IN or WHERE NOT IN filter. And result MUST BE in the whitelist (if $restrictSign=IN) or MUST NOT BE in the blacklist (if $restrictSign=NIN)
      * @param \Doctrine\DBAL\Query\QueryBuilder|\Doctrine\ORM\QueryBuilder $queryBuilder
-     * @param string $filterSign  ALL (no filter), IN (WHERE IN), NIN (WHRE NOT IN)
+     * @param string $filterSign  ALL (no filter), IN (WHERE IN), NIN (WHERE NOT IN)
      * @param array $filterValues  Values
      * @param string $sqlField  SQL field name
      * @param string $paramName  SQL parameter name
-     * @param string $restrictSign IN (WHERE IN), NIN (WHRE NOT IN)
+     * @param string $restrictSign IN (WHERE IN), NIN (WHERE NOT IN)
      * @param array $restrictValues Whitelist (if $restrictSign=IN) or blacklist (if $restrictSign=NIN)
+     * @param bool $noResultIfNoInValue Return no result or not when $filterSign=IN and $filterValues is empty
+     * @param bool $noResultIfNoInRestrictValue Return no result or not when $restrictSign=IN and $restrictValues is empty
      * @return \Doctrine\DBAL\Query\QueryBuilder|\Doctrine\ORM\QueryBuilder
      */
-    public static function addMultiFilterWithRestrictValues($queryBuilder, $filterSign, $filterValues, $sqlField, $paramName, $restrictSign, $restrictValues)
+    public static function addMultiFilterWithRestrictValues($queryBuilder, $filterSign, $filterValues, $sqlField, $paramName, $restrictSign, $restrictValues, $noResultIfNoInValue = false, $noResultIfNoInRestrictValue = true)
     {
-        if ((self::SELECT_IN === $restrictSign && 0 === count($restrictValues)) || (self::SELECT_IN === $filterSign && 0 === count($filterValues))) {
-            //Must return no result
-            $queryBuilder->andWhere('0 = 1');
-
-            return $queryBuilder;
-        }
-
         if (self::SELECT_IN === $restrictSign && self::SELECT_IN === $filterSign && count($filterValues) > 0 && count($restrictValues) > 0) {
             //We can simplify the query
 
@@ -116,12 +121,7 @@ class QueryBuilderFilter
                 }
             }
 
-            if (count($cleanValues) > 0) {
-                $queryBuilder = self::addMultiFilter($queryBuilder, $filterSign, $cleanValues, $sqlField, $paramName);
-            } elseif($filterSign == self::SELECT_IN) {
-                //Must return no result
-                $queryBuilder->andWhere('0 = 1');
-            }
+            $queryBuilder = self::addMultiFilter($queryBuilder, $filterSign, $cleanValues, $sqlField, $paramName, true);
         } elseif (self::SELECT_NOT_IN === $restrictSign && self::SELECT_NOT_IN === $filterSign && count($filterValues) > 0 && count($restrictValues) > 0) {
             //We can simplify the query
 
@@ -136,8 +136,8 @@ class QueryBuilderFilter
             $queryBuilder = self::addMultiFilter($queryBuilder, $filterSign, $cleanValues, $sqlField, $paramName);
         } else {
             //Two filters
-            self::addMultiFilter($queryBuilder, $filterSign, $filterValues, $sqlField, $paramName);
-            self::addMultiFilter($queryBuilder, $restrictSign, $restrictValues, $sqlField, $paramName);
+            self::addMultiFilter($queryBuilder, $filterSign, $filterValues, $sqlField, $paramName, $noResultIfNoInValue);
+            self::addMultiFilter($queryBuilder, $restrictSign, $restrictValues, $sqlField, $paramName, $noResultIfNoInRestrictValue);
         }
 
         return $queryBuilder;

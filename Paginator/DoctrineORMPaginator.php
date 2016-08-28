@@ -34,10 +34,15 @@ class DoctrineORMPaginator extends AbstractDoctrinePaginator
     {
         //Calculation of the number of lines
         if (is_null($this->manualCountResults)) {
-            $count = Paginate::countQueryBuilder($this->query, array(
-                'behavior' => 'orm',
-                'simplified_request' => $this->simplifiedRequest,
-            ));
+            $countOptions = $this->countOptions;
+            if (!isset($countOptions['behavior'])) {
+                $countOptions['behavior'] = Paginate::getDefaultCountBehavior($this->query);
+            }
+            if ('orm' === $countOptions['behavior'] && !isset($countOptions['simplified_request'])) {
+                $countOptions['simplified_request'] = $this->simplifiedRequest;
+            }
+
+            $count = Paginate::countQueryBuilder($this->query, $countOptions);
             $this->setCountResults($count);
         } else {
             $this->setCountResults($this->manualCountResults);

@@ -17,11 +17,10 @@ use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Ecommit\CrudBundle\Paginator\AbstractPaginator;
+use Ecommit\CrudBundle\Paginator\ArrayPaginator;
 use Ecommit\CrudBundle\Paginator\DoctrineDBALPaginator;
 use Ecommit\CrudBundle\Paginator\DoctrineORMPaginator;
-use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Paginate
@@ -49,7 +48,7 @@ class Paginate
      * @return int
      * @throws \Exception
      */
-    static public function countQueryBuilder($queryBuilder, array $options)
+    static public function countQueryBuilder($queryBuilder, array $options = array())
     {
         if ($queryBuilder instanceof \Doctrine\ORM\QueryBuilder) {
             $useORM = true;
@@ -62,13 +61,16 @@ class Paginate
         $resolver = new OptionsResolver();
         $resolver->setDefaults(array(
             //Behavior. Availabled values:
-            //  - count_by_alias: Use alias
+            //  - count_by_alias: Use alias. Option "alias" is required
             //  - count_by_sub_request: Use sub request
             //  - orm: Use Doctrine Paginator
-            'behavior' => 'count_by_sub_request',
+            'behavior' => self::getDefaultCountBehavior($queryBuilder),
             //Used when behavior=count_by_alias
             'alias' => null,
+            //Used when behavior=count_by_alias
+            'distinct_alias' => true,
         ));
+        $resolver->setAllowedTypes('distinct_alias', array('boolean'));
         if ($useORM) {
             $resolver->setAllowedValues('behavior', array('count_by_alias', 'count_by_sub_request', 'orm'));
             //Use only when ORM and behavior=orm
@@ -91,7 +93,8 @@ class Paginate
             } elseif ('count_by_alias' === $options['behavior']) {
                 /** @var \Doctrine\ORM\QueryBuilder $countQueryBuilder */
                 $countQueryBuilder = clone $queryBuilder;
-                $countQueryBuilder->select(\sprintf('count(%s)', $options['alias']));
+                $distinct = ($options['distinct_alias'])? 'DISTINCT ' : '';
+                $countQueryBuilder->select(\sprintf('count(%s%s)', $distinct, $options['alias']));
                 $countQueryBuilder->resetDQLPart('orderBy');
 
                 return  $countQueryBuilder->getQuery()->getSingleScalarResult();
@@ -117,7 +120,8 @@ class Paginate
             if ('count_by_alias' === $options['behavior']) {
                 /** @var \Doctrine\DBAL\Query\QueryBuilder $countQueryBuilder */
                 $countQueryBuilder = clone $queryBuilder;
-                $countQueryBuilder->select(\sprintf('count(%s)', $options['alias']));
+                $distinct = ($options['distinct_alias'])? 'DISTINCT ' : '';
+                $countQueryBuilder->select(\sprintf('count(%s%s)', $distinct, $options['alias']));
                 $countQueryBuilder->resetQueryPart('orderBy');
 
                 return  $countQueryBuilder->execute()->fetchColumn(0);
@@ -138,11 +142,28 @@ class Paginate
 
     /**
      * @param \Doctrine\ORM\QueryBuilde|\Doctrine\DBAL\Query\QueryBuilder $queryBuilder
+     * @return string
+     */
+    public static function getDefaultCountBehavior($queryBuilder)
+    {
+        if ($queryBuilder instanceof \Doctrine\ORM\QueryBuilder) {
+            return 'orm';
+        } elseif ($queryBuilder instanceof \Doctrine\DBAL\Query\QueryBuilder) {
+            return 'count_by_sub_request';
+        }
+
+        return null;
+    }
+
+    /**
+     * @param \Doctrine\ORM\QueryBuilde|\Doctrine\DBAL\Query\QueryBuilder $queryBuilder
+     * @param int $page Page number to display
+     * @param int $perPage Results per page
      * @param array $options
      * @return AbstractPaginator
      * @throws \Exception
      */
-    static public function createDoctrinePaginator($queryBuilder, array $options = array())
+    static public function createDoctrinePaginator($queryBuilder, $page, $perPage, array $options = array())
     {
         if ($queryBuilder instanceof \Doctrine\ORM\QueryBuilder) {
             $useORM = true;
@@ -156,72 +177,95 @@ class Paginate
         $resolver->setDefaults(array(
             //Behavior for create paginator. Availabled values :
             //  - doctrine_paginator: Return DoctrineORMPaginator or DoctrineDBALPaginator object
+            //  - identifier_by_sub_request: Primary keys are found by sub request. Return ArrayPaginator. Option "identifier" is required
             'behavior' => 'doctrine_paginator',
             //Manual value for the number of results
             'count_manual_value' => null,
-            //Behavior for count the number of results.
-            //Unread option if count_manual_value not null. Availables values:
-            //  - doctrine_paginator: Use internal system in DoctrineORMPaginator or DoctrineDBALPaginator. Used only if behavior=doctrine_paginator
-            //  - manual: Use "count_manual_value" value option
-            //  - internal: Use internal method (countQueryBuilder)
-            'count_behavior' => function (Options $options, $previousValue) {
-                if ('doctrine_paginator' === $options['behavior']) {
-                    return 'doctrine_paginator';
-                }
-
-                return null;
-            },
-            //Internal method (countQueryBuilder) options. See countQueryBuilder. Used only if count_behavior = internal
-            'count_internal_options' => array(),
-            //Page number to display
-            'page' => null,
-            //Results per page
-            'per_page' => null,
+            //Count options. See countQueryBuilder. Used only if count_manual_value = null
+            'count_options' => array(),
+            //Identifier used when behavior=identifier_by_sub_request
+            'identifier' => null,
         ));
-        if ($useORM) {
-            //Used only when ORM and count_behavior=doctrine_paginator
+        if ($useORM && 'doctrine_paginator' === $options['behavior']) {
+            //Used only when ORM and behavior=doctrine_paginator
             $resolver->setDefault('simplified_request', true);
             $resolver->setDefault('fetch_join_collection', false);
         }
-        $resolver->setRequired('page');
-        $resolver->setRequired('per_page');
-        $resolver->setAllowedValues('behavior', array('doctrine_paginator'));
-        $resolver->setAllowedValues('count_behavior', array('doctrine_paginator', 'manual', 'internal', null));
+        $resolver->setAllowedValues('behavior', array('doctrine_paginator', 'identifier_by_sub_request'));
         $options = $resolver->resolve($options);
 
-        if ('internal' === $options['count_behavior']) {
-            if (count($options['count_internal_options']) === 0) {
-                throw new MissingOptionsException('Option "count_internal_options" is required');
+        if ('identifier_by_sub_request' === $options['behavior']) {
+            if (null === $options['identifier']) {
+                throw new MissingOptionsException('Option "identifier" is required');
             }
-        }
-        if ('manual' === $options['count_behavior']) {
-            if (null === $options['count_manual_value']) {
-                throw new MissingOptionsException('Option "count_manual_value" is required');
-            }
-        }
-        if ('doctrine_paginator' === $options['count_behavior'] && 'doctrine_paginator' !== $options['behavior']) {
-            throw new InvalidOptionsException('count_behavior=doctrine_paginator not compatible when behavior!=doctrine_paginator');
         }
 
         if ('doctrine_paginator' === $options['behavior']) {
             if ($useORM) {
-                $paginator = new DoctrineORMPaginator($options['per_page']);
+                $paginator = new DoctrineORMPaginator($perPage);
                 $paginator->setSimplifiedRequest($options['simplified_request']);
                 $paginator->setFetchJoinCollection($options['fetch_join_collection']);
             } else {
-                $paginator = new DoctrineDBALPaginator($options['per_page']);
+                $paginator = new DoctrineDBALPaginator($perPage);
             }
             $paginator->setQueryBuilder($queryBuilder);
-            $paginator->setPage($options['page']);
-            if ('internal' === $options['count_behavior']) {
-                $paginator->setManualCountResults(self::countQueryBuilder($queryBuilder, $options['count_internal_options']));
-            } elseif ('manual' === $options['count_behavior']) {
+            $paginator->setPage($page);
+            if (null === $options['count_manual_value']) {
+                $paginator->setCountOptions($options['count_options']);
+            } else {
                 $paginator->setManualCountResults($options['count_manual_value']);
             }
 
             return $paginator;
-        } else {
-            throw new \Exception('Not managed');
+        } elseif ('identifier_by_sub_request' === $options['behavior']) {
+            $result = array();
+
+            if (null === $options['count_manual_value']) {
+                $countResults = self::countQueryBuilder($queryBuilder, $options['count_options']);
+            } else {
+                $countResults = $options['count_manual_value'];
+            }
+
+            if ($countResults) {
+                $idsQueryBuilder = clone $queryBuilder;
+                $idsQueryBuilder->select(\sprintf('DISTINCT %s as pk', $options['identifier']));
+
+                if ($useORM) {
+                    $tmpPaginator = new DoctrineORMPaginator($perPage);
+                    $tmpPaginator->setSimplifiedRequest(false);
+                    $tmpPaginator->setFetchJoinCollection(false);
+                } else {
+                    $tmpPaginator = new DoctrineDBALPaginator($perPage);
+                }
+                $tmpPaginator->setQueryBuilder($idsQueryBuilder);
+                $tmpPaginator->setPage($page);
+                $tmpPaginator->setManualCountResults($countResults);
+                $tmpPaginator->init();
+
+                $ids = array();
+                foreach ($tmpPaginator->getResults() as $line) {
+                    $ids[] = $line['pk'];
+                }
+
+                $finalQueryBuilder = clone $queryBuilder;
+                if ($useORM) {
+                    $finalQueryBuilder->resetDQLPart('where');
+                    $finalQueryBuilder->setParameters(array());
+                    QueryBuilderFilter::addMultiFilter($finalQueryBuilder, QueryBuilderFilter::SELECT_IN, $ids, $options['identifier'], 'paginate_pks');
+                    $result = $finalQueryBuilder->getQuery()->getResult();
+                } else {
+                    $finalQueryBuilder->resetQueryPart('where');
+                    $finalQueryBuilder->setParameters(array());
+                    QueryBuilderFilter::addMultiFilter($finalQueryBuilder, QueryBuilderFilter::SELECT_IN, $ids, $options['identifier'], 'paginate_pks');
+                    $result = $finalQueryBuilder->execute()->fetchAll();
+                }
+            }
+
+            $paginator = new ArrayPaginator($perPage);
+            $paginator->setPage($page);
+            $paginator->setDataWithoutSlice($result, $countResults);
+
+            return $paginator;
         }
     }
 }

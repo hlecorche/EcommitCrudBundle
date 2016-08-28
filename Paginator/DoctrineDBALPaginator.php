@@ -11,6 +11,8 @@
 
 namespace Ecommit\CrudBundle\Paginator;
 
+use Ecommit\CrudBundle\DoctrineExtension\Paginate;
+
 class DoctrineDBALPaginator extends AbstractDoctrinePaginator
 {
     /**
@@ -28,16 +30,7 @@ class DoctrineDBALPaginator extends AbstractDoctrinePaginator
     {
         //Calculation of the number of lines
         if (is_null($this->manualCountResults)) {
-            $queryBuilderCount = clone $this->query;
-            $queryBuilderClone = clone $this->query;
-
-            $queryBuilderClone->resetQueryPart('orderBy'); //Disable sort (> performance)
-
-            $queryBuilderCount->resetQueryParts(); //Remove Query Parts
-            $queryBuilderCount->select('count(*)')
-                ->from('(' . $queryBuilderClone->getSql() . ')', 'mainquery');
-
-            $count = $queryBuilderCount->execute()->fetchColumn(0);
+            $count = Paginate::countQueryBuilder($this->query, $this->countOptions);
             $this->setCountResults($count);
         } else {
             $this->setCountResults($this->manualCountResults);
