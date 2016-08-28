@@ -14,6 +14,7 @@ abstract class AbstractDoctrinePaginator extends AbstractPaginator
 {
     protected $query = null;
     protected $manualCountResults = null;
+    protected $countOptions = array();
 
     /**
      * @return string
@@ -87,6 +88,29 @@ abstract class AbstractDoctrinePaginator extends AbstractPaginator
     public function setManualCountResults($manualCountResults)
     {
         $this->manualCountResults = $manualCountResults;
+
+        return $this;
+    }
+
+    /**
+     * Returns count options
+     *
+     * @return array
+     */
+    public function getCountOptions()
+    {
+        return $this->countOptions;
+    }
+
+    /**
+     * Sets count options
+     *
+     * @param array $countOptions
+     * @return AbstractDoctrinePaginator
+     */
+    public function setCountOptions(array $countOptions)
+    {
+        $this->countOptions = $countOptions;
 
         return $this;
     }
