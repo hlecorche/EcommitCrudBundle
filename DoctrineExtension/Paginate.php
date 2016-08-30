@@ -186,12 +186,10 @@ class Paginate
             'count_options' => array(),
             //Identifier used when behavior=identifier_by_sub_request
             'identifier' => null,
-        ));
-        if ($useORM && 'doctrine_paginator' === $options['behavior']) {
             //Used only when ORM and behavior=doctrine_paginator
-            $resolver->setDefault('simplified_request', true);
-            $resolver->setDefault('fetch_join_collection', false);
-        }
+            'simplified_request' => true,
+            'fetch_join_collection' => false,
+        ));
         $resolver->setAllowedValues('behavior', array('doctrine_paginator', 'identifier_by_sub_request'));
         $options = $resolver->resolve($options);
 
