@@ -15,6 +15,8 @@ use Doctrine\ORM\Mapping\ClassMetadataInfo;
 
 class MappingEntities
 {
+    protected $isLoad = false;
+
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
     {
         $metadata = $eventArgs->getClassMetadata();
@@ -24,16 +26,21 @@ class MappingEntities
         }
 
         $className = $metadata->getName();
-        if (is_subclass_of($className, 'Ecommit\CrudBundle\Entity\UserCrudInterface')) {
-            $this->mappUserCrudSettings($eventArgs, $metadata);
+        if (!$this->isLoad && is_subclass_of($className, 'Ecommit\CrudBundle\Entity\UserCrudInterface')) {
+            $userCrudSettingsMetadata = $eventArgs->getEntityManager()->getMetadataFactory()->getMetadataFor('Ecommit\CrudBundle\Entity\UserCrudSettings');
+            $this->mappUserCrudSettings($userCrudSettingsMetadata, $metadata);
+        }
+        if (!$this->isLoad && 'Ecommit\CrudBundle\Entity\UserCrudSettings' === $className) {
+            $userMetadata = $eventArgs->getEntityManager()->getMetadataFactory()->getMetadataFor('Ecommit\CrudBundle\Entity\UserCrudInterface');
+            $this->mappUserCrudSettings($metadata, $userMetadata);
         }
     }
 
-    protected function mappUserCrudSettings(LoadClassMetadataEventArgs $eventArgs, ClassMetadataInfo $userMetadata)
+    protected function mappUserCrudSettings(ClassMetadataInfo $userCrudSettingsMetadata, ClassMetadataInfo $userMetadata)
     {
-        $metadata= $eventArgs->getEntityManager()->getMetadataFactory()->getMetadataFor('Ecommit\CrudBundle\Entity\UserCrudSettings');
+        $this->isLoad = true;
 
-        $metadata->setAssociationOverride(
+        $userCrudSettingsMetadata->setAssociationOverride(
             'user',
             array(
                 'targetEntity' => $userMetadata->getName(),
