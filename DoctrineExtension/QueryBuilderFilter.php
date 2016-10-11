@@ -12,15 +12,15 @@ namespace Ecommit\CrudBundle\DoctrineExtension;
 
 class QueryBuilderFilter
 {
-    const SELECT_IN = 'IN';
-    const SELECT_NOT_IN = 'NIN';
-    const SELECT_ALL = 'ALL';
-    const SELECT_AUTO = 'AUT';
+    const SELECT_IN = 'IN'; //WHERE IN
+    const SELECT_NOT_IN = 'NIN'; //WHERE NOT IN
+    const SELECT_ALL = 'ALL'; //No Filter (all values) 
+    const SELECT_AUTO = 'AUT'; //WHERE IN. If filter values are empty, no filter (all values)
 
     /**
      * Add SQL WHERE IN or WHERE NOT IN filter
      * @param \Doctrine\DBAL\Query\QueryBuilder|\Doctrine\ORM\QueryBuilder $queryBuilder
-     * @param string $filterSign  ALL (no filter), IN (WHERE IN), NIN (WHERE NOT IN), AUT (WHERE IN if $filterValues is not empty. 0 result else)
+     * @param string $filterSign  ALL (no filter), IN (WHERE IN), NIN (WHERE NOT IN), AUT (WHERE IN if $filterValues is not empty. No filter else)
      * @param array $filterValues  Values
      * @param string $sqlField  SQL field name
      * @param string $paramName SQL parameter name
@@ -52,7 +52,7 @@ class QueryBuilderFilter
     /**
      * Add SQL WHERE IN or WHERE NOT IN filter without group
      * @param \Doctrine\DBAL\Query\QueryBuilder|\Doctrine\ORM\QueryBuilder $queryBuilder
-     * @param string $filterSign  ALL (no filter), IN (WHERE IN), NIN (WHERE NOT IN), AUT (WHERE IN if $filterValues is not empty. 0 result else)
+     * @param string $filterSign  ALL (no filter), IN (WHERE IN), NIN (WHERE NOT IN), AUT (WHERE IN if $filterValues is not empty. No filter else)
      * @param array $filterValues  Values
      * @param string $sqlField  SQL field name
      * @param string $paramName  SQL parameter name
@@ -71,7 +71,7 @@ class QueryBuilderFilter
     /**
      * Add SQL WHERE IN or WHERE NOT IN filter with group
      * @param \Doctrine\DBAL\Query\QueryBuilder|\Doctrine\ORM\QueryBuilder $queryBuilder
-     * @param string $filterSign  ALL (no filter), IN (WHERE IN), NIN (WHERE NOT IN), AUT (WHERE IN if $filterValues is not empty. 0 result else)
+     * @param string $filterSign  ALL (no filter), IN (WHERE IN), NIN (WHERE NOT IN), AUT (WHERE IN if $filterValues is not empty. No filter else)
      * @param array $filterValues  Values
      * @param string $sqlField  SQL field name
      * @param string $paramName  SQL parameter name
@@ -98,11 +98,11 @@ class QueryBuilderFilter
     /**
      * Add SQL WHERE IN or WHERE NOT IN filter. And result MUST BE in the whitelist (if $restrictSign=IN) or MUST NOT BE in the blacklist (if $restrictSign=NIN)
      * @param \Doctrine\DBAL\Query\QueryBuilder|\Doctrine\ORM\QueryBuilder $queryBuilder
-     * @param string $filterSign  ALL (no filter), IN (WHERE IN), NIN (WHERE NOT IN), AUT (WHERE IN if $filterValues is not empty. 0 result else)
+     * @param string $filterSign  ALL (no filter), IN (WHERE IN), NIN (WHERE NOT IN), AUT (WHERE IN if $filterValues is not empty. No filter else)
      * @param array $filterValues  Values
      * @param string $sqlField  SQL field name
      * @param string $paramName  SQL parameter name
-     * @param string $restrictSign IN (WHERE IN), NIN (WHERE NOT IN), AUT (WHERE IN if $restrictValues is not empty. 0 result else)
+     * @param string $restrictSign IN (WHERE IN), NIN (WHERE NOT IN), AUT (WHERE IN if $restrictValues is not empty. No filter else)
      * @param array $restrictValues Whitelist (if $restrictSign=IN or AUT) or blacklist (if $restrictSign=NIN)
      * @return \Doctrine\DBAL\Query\QueryBuilder|\Doctrine\ORM\QueryBuilder
      */
