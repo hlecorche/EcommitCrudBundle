@@ -161,15 +161,16 @@ abstract class AbstractFormSearcher
 
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
-        $callback = function (AbstractFormSearcher $value, ExecutionContextInterface $context) {
-            if ($value->automaticValidationIsEnabled()) {
-                foreach ($value->getFieldsFilter() as $field) {
-                    $field->autoValidate($value, $context);
-                }
-            }
-        };
+        $metadata->addConstraint(new Callback('validateFormSearcher'));
+    }
 
-        $metadata->addConstraint(new Callback($callback));
+    public static function validateFormSearcher($value, ExecutionContextInterface $context)
+    {
+        if ($value->automaticValidationIsEnabled()) {
+            foreach ($value->getFieldsFilter() as $field) {
+                $field->autoValidate($value, $context);
+            }
+        }
     }
 
     /**
