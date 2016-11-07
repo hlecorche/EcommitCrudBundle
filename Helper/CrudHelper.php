@@ -148,6 +148,9 @@ class CrudHelper
      */
     public function paginatorLinks(AbstractPaginator $paginator, $routeName, $routeParams, $options)
     {
+        if (isset($this->parameters['template_configuration']['paginator_links'])) {
+            $options = array_merge($this->parameters['template_configuration']['paginator_links'], $options);
+        }
         $resolver = new OptionsResolver();
         $resolver->setDefaults(
             array(
@@ -324,6 +327,7 @@ class CrudHelper
      */
     public function crudPaginatorLinks(Crud $crud, $options, $ajaxOptions)
     {
+        $options = array_merge($crud->getTemplateConfiguration('crud_paginator_links'), $options);
         if (!isset($ajaxOptions['update'])) {
             $ajaxOptions['update'] = $crud->getDivIdList();
         }
@@ -348,6 +352,7 @@ class CrudHelper
      */
     public function th($column_id, Crud $crud, $options, $thOptions, $ajaxOptions)
     {
+        $options = array_merge($crud->getTemplateConfiguration('crud_th'), $options);
         $resolver = new OptionsResolver();
         $resolver->setDefaults(
             array(
@@ -435,6 +440,7 @@ class CrudHelper
      */
     public function td($column_id, Crud $crud, $value, $options, $tdOptions)
     {
+        $options = array_merge($crud->getTemplateConfiguration('crud_td'), $options);
         $resolver = new OptionsResolver();
         $resolver->setDefaults(
             array(
@@ -557,6 +563,7 @@ class CrudHelper
      */
     public function searchResetButton(Crud $crud, $options, $ajaxOptions, $htmlOptions)
     {
+        $options = array_merge($crud->getTemplateConfiguration('crud_search_reset'), $options);
         $resolver = new OptionsResolver();
         $resolver->setDefaults(
             array(
@@ -620,6 +627,7 @@ class CrudHelper
      */
     public function remoteModal($modalId, $url, $options, $ajaxOptions)
     {
+        $options = array_merge($crud->getTemplateConfiguration('crud_remote_modal'), $options);
         $modalId = str_replace(' ', '', $modalId);
 
         $resolver = new OptionsResolver();

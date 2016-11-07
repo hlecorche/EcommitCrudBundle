@@ -96,6 +96,11 @@ class Crud
     protected $user;
 
     /**
+     * @var array
+     */
+    protected $templateConfiguration;
+
+    /**
      * Constructor
      *
      * @param string $sessionName Session name
@@ -107,7 +112,8 @@ class Crud
         FormFactory $formFactory,
         Request $request,
         Registry $registry,
-        UserInterface $user
+        UserInterface $user,
+        array $templateConfiguration = array()
     ) {
         if (!\preg_match('/^[a-zA-Z0-9_]{1,50}$/', $sessionName)) {
             throw new \Exception('Variable sessionName is not given or is invalid');
@@ -119,6 +125,9 @@ class Crud
         $this->registry = $registry;
         $this->user = $user;
         $this->sessionValues = new CrudSession();
+        foreach ($templateConfiguration as $functionName => $value) {
+            $this->configureTemplate($functionName, $value);
+        }
 
         return $this;
     }
@@ -1157,5 +1166,56 @@ class Crud
         $this->displayResults = $displayResults;
 
         return $this;
+    }
+
+    /**
+     * @param string $functionName
+     * @param mixed $value
+     */
+    public function configureTemplate($functionName, $value)
+    {
+        if (!self::validateConfigureTemplateFunctionName($functionName)) {
+            throw new \Exception(\sprintf('%s method is not allowed in configureTemplate', $functionName));
+        }
+
+        if (isset($this->templateConfiguration[$functionName])) {
+            $this->templateConfiguration[$functionName] = array_merge(
+                $this->templateConfiguration[$functionName],
+                $value
+            );
+        } else {
+            $this->templateConfiguration[$functionName] = $value;
+        }
+    }
+
+    /**
+     * @param string $functionName
+     * @return bool
+     */
+    public static function validateConfigureTemplateFunctionName($functionName)
+    {
+        $functionsAllowed = array(
+            'paginator_links',
+            'crud_paginator_links',
+            'crud_th',
+            'crud_td',
+            'crud_search_reset',
+            'crud_remote_modal',
+        );
+
+        return in_array($functionName, $functionsAllowed);
+    }
+
+    /**
+     * @param string $functionName
+     * @return array
+     */
+    public function getTemplateConfiguration($functionName)
+    {
+        if (isset($this->templateConfiguration[$functionName])) {
+            return $this->templateConfiguration[$functionName];
+        }
+
+        return array();
     }
 }
