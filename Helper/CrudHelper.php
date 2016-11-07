@@ -71,6 +71,11 @@ class CrudHelper
     protected $parameters;
 
     /**
+     * @var array
+     */
+    protected $lastValues = array();
+
+    /**
      * Constructor
      *
      * @param UtilHelper $util
@@ -435,6 +440,7 @@ class CrudHelper
             array(
                 'escape' => true,
                 'template' => null,
+                'repeated_values_string' => null,
             )
         );
         $options = $resolver->resolve($options);
@@ -456,6 +462,21 @@ class CrudHelper
         $session_values = $crud->getSessionValues();
         if (!\in_array($column_id, $session_values->displayedColumns)) {
             return '';
+        }
+
+        //Repeated values
+        if (null !== $options['repeated_values_string']) {
+            if (null === $value) {
+                $value = '';
+            }
+
+            if (isset($this->lastValues[$column_id]) && $this->lastValues[$column_id] === $value) {
+                if ('' !== $value) {
+                    $value = $options['repeated_values_string'];
+                }
+            } else {
+                $this->lastValues[$column_id] = $value;
+            }
         }
 
         //XSS protection
