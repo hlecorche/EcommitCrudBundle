@@ -21,9 +21,11 @@
     </form>
 {% endmacro %}
 
-{{ overlay_service.declareHtmlModal(modalId, {content: _self.contentDisplaySettings(_context), close_div_class: close_div_class})|raw }}
-
 <script type="text/javascript">
+    if ($('#{{ modalId }}').length == 0) {
+        $('#{{ div_id_list }}').append('{{ overlay_service.declareHtmlModal(modalId, {close_div_class: close_div_class})|raw }}');
+    }
+    $('#{{ modalId }} .contentWrap').html('{{ _self.contentDisplaySettings(_context)|replace({"\n":' ', "\r":' '})|e('js') }}');
     {{ overlay_service.declareJavascriptModal(modalId, {close_div_class: close_div_class})|raw }}
 
     function processCrudDisplaySettings_{{ suffix }}()

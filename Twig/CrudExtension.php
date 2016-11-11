@@ -173,6 +173,7 @@ class CrudExtension extends Twig_Extension
      */
     public function displaySettings(Crud $crud, $options = array(), $ajaxOptions = array())
     {
+        $options = array_merge($crud->getTemplateConfiguration('crud_display_settings'), $options);
         $resolver = new OptionsResolver();
         $resolver->setDefaults(
             array(
@@ -222,6 +223,7 @@ class CrudExtension extends Twig_Extension
                 'close_div_class' => $options['modal_close_div_class'],
                 'overlay_service' => $this->crudHelper->getOverlayService(),
                 'display_button' => $crud->getDisplayResults(),
+                'div_id_list' => $crud->getDivIdList(),
             )
         );
     }

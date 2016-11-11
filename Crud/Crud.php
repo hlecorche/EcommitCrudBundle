@@ -1201,6 +1201,7 @@ class Crud
             'crud_td',
             'crud_search_reset',
             'crud_remote_modal',
+            'crud_display_settings',
         );
 
         return in_array($functionName, $functionsAllowed);
