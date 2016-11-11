@@ -223,6 +223,7 @@ class CrudExtension extends Twig_Extension
                 'close_div_class' => $options['modal_close_div_class'],
                 'overlay_service' => $this->crudHelper->getOverlayService(),
                 'display_button' => $crud->getDisplayResults(),
+                'div_id_list' => $crud->getDivIdList(),
             )
         );
     }
