@@ -173,6 +173,7 @@ class CrudExtension extends Twig_Extension
      */
     public function displaySettings(Crud $crud, $options = array(), $ajaxOptions = array())
     {
+        $options = array_merge($crud->getTemplateConfiguration('crud_display_settings'), $options);
         $resolver = new OptionsResolver();
         $resolver->setDefaults(
             array(
