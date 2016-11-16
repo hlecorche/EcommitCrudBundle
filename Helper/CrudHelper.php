@@ -627,7 +627,9 @@ class CrudHelper
      */
     public function remoteModal($modalId, $url, $options, $ajaxOptions)
     {
-        $options = array_merge($crud->getTemplateConfiguration('crud_remote_modal'), $options);
+        if (isset($this->parameters['template_configuration']['crud_remote_modal'])) {
+            $options = array_merge($this->parameters['template_configuration']['crud_remote_modal'], $options);
+        }
         $modalId = str_replace(' ', '', $modalId);
 
         $resolver = new OptionsResolver();
