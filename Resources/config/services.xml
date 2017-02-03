@@ -7,7 +7,7 @@
             <argument type="service" id="router"/>
             <argument type="service" id="form.factory"/>
             <argument type="service" id="request_stack"/>
-            <argument type="service" id="doctrine"/>
+            <argument type="service" id="doctrine" on-invalid="null" />
             <argument type="service" id="security.token_storage"/>
             <argument>%ecommit_crud.template_configuration%</argument>
         </service>
