@@ -28,7 +28,7 @@ class UserCrudSettings
 
     /**
      * @ORM\Id
-     * @ORM\Column(type="string", length=30, name="crud_name")
+     * @ORM\Column(type="string", length=255, name="crud_name")
      */
     protected $crudName;
 
