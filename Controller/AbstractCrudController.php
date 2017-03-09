@@ -38,7 +38,9 @@ abstract class AbstractCrudController extends Controller
     protected function prepareList()
     {
         $this->cm = $this->configCrud();
+        $this->beforeBuildQuery();
         $this->cm->buildQuery();
+        $this->afterBuildQuery();
         $data = $this->addDataAfterBuildQuery();
         $this->cm->clearTemplate();
 
@@ -59,6 +61,14 @@ abstract class AbstractCrudController extends Controller
     protected function addDataAfterBuildQuery()
     {
         return array();
+    }
+
+    protected function beforeBuildQuery()
+    {
+    }
+
+    protected function afterBuildQuery()
+    {
     }
 
     /**
@@ -121,7 +131,9 @@ abstract class AbstractCrudController extends Controller
     {
         $this->cm = $this->configCrud();
         $this->cm->processForm();
+        $this->beforeBuildQuery();
         $this->cm->buildQuery();
+        $this->afterBuildQuery();
         $data = $this->addDataAfterBuildQuery();
         $this->cm->clearTemplate();
 
