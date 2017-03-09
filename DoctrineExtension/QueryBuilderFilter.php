@@ -31,7 +31,7 @@ class QueryBuilderFilter
         if ($filterSign != self::SELECT_IN && $filterSign != self::SELECT_NOT_IN && $filterSign != self::SELECT_AUTO) {
             return $queryBuilder;
         }
-        if (empty($filterValues) || 0 === count($filterValues)) {
+        if (null === $filterValues || 0 === count($filterValues)) {
             if (self::SELECT_NOT_IN == $filterSign || self::SELECT_AUTO == $filterSign) {
                 return $queryBuilder;
             }
@@ -152,7 +152,7 @@ class QueryBuilderFilter
      */
     public static function addEqualFilter($queryBuilder, $equal, $filterValue, $sqlField, $paramName)
     {
-        if (empty($filterValue)) {
+        if (null === $filterValue || '' === $filterValue) {
             return $queryBuilder;
         }
 
@@ -177,7 +177,7 @@ class QueryBuilderFilter
      */
     public static function addComparatorFilter($queryBuilder, $sign, $filterValue, $sqlField, $paramName)
     {
-        if (empty($filterValue) && $filterValue !== 0) {
+        if (null === $filterValue || '' === $filterValue) {
             return $queryBuilder;
         }
 
@@ -198,7 +198,7 @@ class QueryBuilderFilter
      */
     public static function addContainFilter($queryBuilder, $contain, $filterValue, $sqlField, $paramName)
     {
-        if (empty($filterValue)) {
+        if (null === $filterValue || '' === $filterValue) {
             return $queryBuilder;
         }
 
