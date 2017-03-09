@@ -12,6 +12,7 @@
 namespace Ecommit\CrudBundle\Form\Filter;
 
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
+use Ecommit\UtilBundle\Util\Util;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -106,7 +107,8 @@ class FieldFilterChoice extends AbstractFieldFilter
             if (!is_array($value)) {
                 $value = array($value);
             }
-            if (count($value) > $this->options['max']) {
+            $value = Util::filterScalarValues($value);
+            if (count($value) > $this->options['max'] || 0 === count($value)) {
                 return $queryBuilder;
             }
             if ($this->options['min'] && count($value) < $this->options['min']) {
@@ -115,7 +117,7 @@ class FieldFilterChoice extends AbstractFieldFilter
             $queryBuilder->andWhere($queryBuilder->expr()->in($aliasSearch, ':' . $parameterName))
                 ->setParameter($parameterName, $value);
         } else {
-            if (is_array($value)) {
+            if (!is_scalar($value)) {
                 return $queryBuilder;
             }
             $queryBuilder->andWhere(sprintf('%s = :%s', $aliasSearch, $parameterName))

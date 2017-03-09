@@ -12,6 +12,7 @@ namespace Ecommit\CrudBundle\Form\Filter;
 
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 use Ecommit\JavascriptBundle\Form\Type\TokenInputEntitiesAjaxType;
+use Ecommit\UtilBundle\Util\Util;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -102,7 +103,11 @@ class FieldFilterTokenInputEntitiesAjax extends AbstractFieldFilter
     {
         $value = $formData->get($this->property);
         $parameterName = 'value_choice' . str_replace(' ', '', $this->property);
-        if (null === $value || '' === $value || !is_array($value) || array() === $value) {
+        if (null === $value || '' === $value || !is_array($value)) {
+            return $queryBuilder;
+        }
+        $value = Util::filterScalarValues($value);
+        if (0 === count($value)) {
             return $queryBuilder;
         }
 
