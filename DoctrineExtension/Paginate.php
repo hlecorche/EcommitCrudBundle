@@ -90,7 +90,7 @@ class Paginate
                 $doctrinePaginator = new Paginator($cloneQueryBuilder->getQuery());
                 $doctrinePaginator->setUseOutputWalkers(!$options['simplified_request']);
 
-                return $doctrinePaginator->count();
+                return (int) $doctrinePaginator->count();
             } elseif ('count_by_alias' === $options['behavior']) {
                 /** @var \Doctrine\ORM\QueryBuilder $countQueryBuilder */
                 $countQueryBuilder = clone $queryBuilder;
@@ -98,7 +98,7 @@ class Paginate
                 $countQueryBuilder->select(\sprintf('count(%s%s)', $distinct, $options['alias']));
                 $countQueryBuilder->resetDQLPart('orderBy');
 
-                return  $countQueryBuilder->getQuery()->getSingleScalarResult();
+                return  (int) $countQueryBuilder->getQuery()->getSingleScalarResult();
             } elseif ('count_by_sub_request' === $options['behavior']) {
                 /** @var \Doctrine\ORM\QueryBuilder $cloneQueryBuilder */
                 $cloneQueryBuilder = clone $queryBuilder;
@@ -115,7 +115,7 @@ class Paginate
                     $countQuery->setParameter($i, $parameter->getValue(), $parameter->getType());
                 }
 
-                return $countQuery->getSingleScalarResult();
+                return (int) $countQuery->getSingleScalarResult();
             }
         } else {
             if ('count_by_alias' === $options['behavior']) {
@@ -125,7 +125,7 @@ class Paginate
                 $countQueryBuilder->select(\sprintf('count(%s%s)', $distinct, $options['alias']));
                 $countQueryBuilder->resetQueryPart('orderBy');
 
-                return  $countQueryBuilder->execute()->fetchColumn(0);
+                return (int) $countQueryBuilder->execute()->fetchColumn(0);
             } elseif ('count_by_sub_request' === $options['behavior']) {
                 $queryBuilderCount = clone $queryBuilder;
                 $queryBuilderClone = clone $queryBuilder;
@@ -136,7 +136,7 @@ class Paginate
                 $queryBuilderCount->select('count(*)')
                     ->from('(' . $queryBuilderClone->getSql() . ')', 'mainquery');
 
-                return $queryBuilderCount->execute()->fetchColumn(0);
+                return (int) $queryBuilderCount->execute()->fetchColumn(0);
             }
         }
     }
