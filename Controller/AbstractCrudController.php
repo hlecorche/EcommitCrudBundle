@@ -32,7 +32,7 @@ abstract class AbstractCrudController extends Controller
     {
         $data = $this->prepareList();
 
-        return $this->render($this->getPathView('index'), \array_merge($data, array('crud' => $this->cm)));
+        return $this->render($this->getTemplateName('index'), \array_merge($data, array('crud' => $this->cm)));
     }
 
     protected function prepareList()
@@ -72,13 +72,29 @@ abstract class AbstractCrudController extends Controller
     }
 
     /**
+     * Returns template for action
+     *
+     * @param string $action Action
+     * @return string
+     */
+    protected function getTemplateName($action)
+    {
+        trigger_error('The "getTemplateName" must be overrided. This method will soon be abstract.', E_USER_DEPRECATED);
+
+        return $this->getPathView($action);
+    }
+
+    /**
      * Returns the path of the template given
      *
      * @param string $name Template name
      * @return string
+     * @deprecated Deprecated since version 2.4. Override getTemplateName method instead.
      */
     protected function getPathView($name)
     {
+        trigger_error('The "getPathView" method is deprecated since version 2.4. Override "getTemplateName" method instead.', E_USER_DEPRECATED);
+
         if (preg_match('/^(?P<vendor>\w+)\\\(?P<bundle>\w+)\\\Controller\\\(?P<controller>\w+)Controller$/', get_class($this), $matches)) {
             return sprintf('%s%s:%s:%s.html.twig', $matches['vendor'], $matches['bundle'], $matches['controller'], $name);
         } elseif (preg_match('/^(?P<vendor>\w+)\\\(?P<bundle>\w+)\\\Controller\\\(?P<dir>\w+)\\\(?P<controller>\w+)Controller$/', get_class($this), $matches)) {
@@ -100,7 +116,7 @@ abstract class AbstractCrudController extends Controller
         }
         $data = $this->prepareList();
 
-        return $this->render($this->getPathView('list'), \array_merge($data, array('crud' => $this->cm)));
+        return $this->render($this->getTemplateName('list'), \array_merge($data, array('crud' => $this->cm)));
     }
 
     public function autoAjaxSearchAction()
@@ -111,10 +127,10 @@ abstract class AbstractCrudController extends Controller
         }
         $data = $this->processSearch();
         $renderSearch = $this->renderView(
-            $this->getPathView('search'),
+            $this->getTemplateName('search'),
             \array_merge($data, array('crud' => $this->cm))
         );
-        $renderList = $this->renderView($this->getPathView('list'), \array_merge($data, array('crud' => $this->cm)));
+        $renderList = $this->renderView($this->getTemplateName('list'), \array_merge($data, array('crud' => $this->cm)));
 
         return $this->render(
             'EcommitCrudBundle:Crud:double_search.html.twig',
