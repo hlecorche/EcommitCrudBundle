@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "symfony/framework-bundle": "~2.4.0",
+        "symfony/framework-bundle": "~2.4",
         "doctrine/orm": "*",
         "ecommit/util-bundle": "1.5.*@dev",
         "ecommit/javascript-bundle": "1.5.*@dev"
