@@ -135,7 +135,7 @@ class QueryBuilderFilter
         } else {
             //Two filters
             self::addMultiFilter($queryBuilder, $filterSign, $filterValues, $sqlField, $paramName);
-            self::addMultiFilter($queryBuilder, $restrictSign, $restrictValues, $sqlField, $paramName);
+            self::addMultiFilter($queryBuilder, $restrictSign, $restrictValues, $sqlField, $paramName.'Restrict');
         }
 
         return $queryBuilder;
