@@ -112,7 +112,7 @@ class Crud
         FormFactory $formFactory,
         Request $request,
         Registry $registry,
-        UserInterface $user,
+        $user,
         array $templateConfiguration = array()
     ) {
         if (!\preg_match('/^[a-zA-Z0-9_]{1,50}$/', $sessionName)) {
@@ -389,6 +389,9 @@ class Crud
      */
     public function setPersistentSettings($value)
     {
+        if ($value && !($this->user instanceof UserInterface)) {
+            $value = false;
+        }
         $this->persistentSettings = $value;
 
         return $this;
