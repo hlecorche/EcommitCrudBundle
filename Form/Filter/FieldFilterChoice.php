@@ -11,6 +11,7 @@
 
 namespace Ecommit\CrudBundle\Form\Filter;
 
+use Ecommit\CrudBundle\DoctrineExtension\QueryBuilderFilter;
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 use Ecommit\UtilBundle\Util\Util;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -114,8 +115,7 @@ class FieldFilterChoice extends AbstractFieldFilter
             if ($this->options['min'] && count($value) < $this->options['min']) {
                 return $queryBuilder;
             }
-            $queryBuilder->andWhere($queryBuilder->expr()->in($aliasSearch, ':' . $parameterName))
-                ->setParameter($parameterName, $value);
+            QueryBuilderFilter::addMultiFilter($queryBuilder, QueryBuilderFilter::SELECT_IN, $value, $aliasSearch, $parameterName);
         } else {
             if (!is_scalar($value)) {
                 return $queryBuilder;
