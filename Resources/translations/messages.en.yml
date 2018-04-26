@@ -15,3 +15,5 @@ filter.choices.placeholder: All
 picker.add: Add
 picker.list: Select
 reset_display_settings: Reset display settings
+check_all: Check all
+uncheck_all: Uncheck all

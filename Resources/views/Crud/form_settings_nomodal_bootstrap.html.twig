@@ -9,6 +9,12 @@
     {{ ecommit_javascript_jquery_ajax_form(form, ajax_options)  }}
         {{ form_row(form.resultsPerPage) }}
         {{ form_row(form.displayedColumns) }}
+        <button type="button" class="btn btn-default btn-xs" onclick="selectAllColumnsCrudDisplaySettings_{{ suffix }}(true)">
+            {{ 'check_all'|trans }}
+        </button>
+        <button type="button" class="btn btn-default btn-xs" onclick="selectAllColumnsCrudDisplaySettings_{{ suffix }}(false)">
+            {{ 'uncheck_all'|trans }}
+        </button>
 
         {{ form_rest(form) }}
 
@@ -30,6 +36,12 @@
             return false;
        }
        $("#display_settings_{{ suffix }}").hide("slow");
+    }
+    function selectAllColumnsCrudDisplaySettings_{{ suffix }}(checked)
+    {
+        $('#display_settings_{{ suffix }} input:checkbox').each(function() {
+            $(this).prop('checked', checked);
+        });
     }
     function clickChangeSettings{{ suffix }}()
     {

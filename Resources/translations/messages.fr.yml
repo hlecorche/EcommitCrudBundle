@@ -15,3 +15,5 @@ filter.choices.placeholder: Tous
 picker.add: Ajouter
 picker.list: Sélectionner
 reset_display_settings: Réinitialiser paramètres par défaut
+check_all: Tout sélectionner
+uncheck_all: Tout désélectionner
