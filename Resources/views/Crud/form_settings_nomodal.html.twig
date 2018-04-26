@@ -11,6 +11,12 @@
          {% for choice, child in form.displayedColumns %}
                 {{ form_widget(child) }}  {{ form_label(child) }}<br />
          {% endfor %}
+        <button type="button" class="btn-crud-select-columns btn-crud-select-columns-check" onclick="selectAllColumnsCrudDisplaySettings_{{ suffix }}(true)">
+            {{ 'check_all'|trans }}
+        </button>
+        <button type="button" class="btn-crud-select-columns btn-crud-select-columns-uncheck" onclick="selectAllColumnsCrudDisplaySettings_{{ suffix }}(false)">
+            {{ 'uncheck_all'|trans }}
+        </button>
         {{ form_rest(form) }}
 
         <div style="text-align: center;">
@@ -29,6 +35,12 @@
             return false;
        }
        $("#display_settings_{{ suffix }}").hide("slow");
+    }
+    function selectAllColumnsCrudDisplaySettings_{{ suffix }}(checked)
+    {
+        $('#display_settings_{{ suffix }} input:checkbox').each(function() {
+            $(this).prop('checked', checked);
+        });
     }
     function clickChangeSettings{{ suffix }}()
     {
