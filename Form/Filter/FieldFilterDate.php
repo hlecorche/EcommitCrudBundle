@@ -13,8 +13,10 @@ namespace Ecommit\CrudBundle\Form\Filter;
 
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 use Ecommit\JavascriptBundle\Form\Type\JqueryDatePickerType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -34,6 +36,13 @@ class FieldFilterDate extends AbstractFieldFilter
         $resolver->setDefaults(
             array(
                 'type' => JqueryDatePickerType::class,
+                'with_time' => function (Options $options) {
+                    if (DateTimeType::class === $options['type']) {
+                        return true;
+                    }
+
+                    return false;
+                },
             )
         );
 
@@ -58,6 +67,7 @@ class FieldFilterDate extends AbstractFieldFilter
             'type',
             array(
                 DateType::class,
+                DateTimeType::class,
                 JqueryDatePickerType::class,
             )
         );
@@ -66,6 +76,10 @@ class FieldFilterDate extends AbstractFieldFilter
     protected function configureTypeOptions($typeOptions)
     {
         $typeOptions['input'] = 'datetime';
+
+        if (JqueryDatePickerType::class === $this->options['type'] && $this->options['with_time'] && empty($this->typeOptions['time_format'])) {
+            $typeOptions['time_format'] = 'H:i:s';
+        }
 
         return $typeOptions;
     }
@@ -102,7 +116,9 @@ class FieldFilterDate extends AbstractFieldFilter
             switch ($this->options['comparator']):
                 case FieldFilterDate::SMALLER_THAN:
                 case FieldFilterDate::GREATER_EQUAL:
-                    $value->setTime(0, 0, 0);
+                    if (!$this->options['with_time']) {
+                        $value->setTime(0, 0, 0);
+                    }
                     $value = $value->format('Y-m-d H:i:s');
                     $queryBuilder->andWhere(
                         sprintf('%s %s :%s', $aliasSearch, $this->options['comparator'], $parameterName)
@@ -111,7 +127,9 @@ class FieldFilterDate extends AbstractFieldFilter
                     break;
                 case FieldFilterDate::SMALLER_EQUAL:
                 case FieldFilterDate::GREATER_THAN:
-                    $value->setTime(23, 59, 59);
+                    if (!$this->options['with_time']) {
+                        $value->setTime(23, 59, 59);
+                    }
                     $value = $value->format('Y-m-d H:i:s');
                     $queryBuilder->andWhere(
                         sprintf('%s %s :%s', $aliasSearch, $this->options['comparator'], $parameterName)
@@ -121,8 +139,10 @@ class FieldFilterDate extends AbstractFieldFilter
                 default:
                     $valueDateInf = clone $value;
                     $valueDateSup = clone $value;
-                    $valueDateInf->setTime(0, 0, 0);
-                    $valueDateSup->setTime(23, 59, 59);
+                    if (!$this->options['with_time']) {
+                        $valueDateInf->setTime(0, 0, 0);
+                        $valueDateSup->setTime(23, 59, 59);
+                    }
                     $valueDateInf = $valueDateInf->format('Y-m-d H:i:s');
                     $valueDateSup = $valueDateSup->format('Y-m-d H:i:s');
                     $parameterNameInf = 'value_date_inf_' . str_replace(' ', '', $this->property);
