@@ -447,6 +447,7 @@ class CrudHelper
                 'escape' => true,
                 'template' => null,
                 'repeated_values_string' => null,
+                'repeated_values_add_title' => true,
             )
         );
         $options = $resolver->resolve($options);
@@ -478,6 +479,9 @@ class CrudHelper
 
             if (isset($this->lastValues[$column_id]) && $this->lastValues[$column_id] === $value) {
                 if ('' !== $value) {
+                    if ($options['repeated_values_add_title']) {
+                        $tdOptions['title'] = $value;
+                    }
                     $value = $options['repeated_values_string'];
                 }
             } else {
