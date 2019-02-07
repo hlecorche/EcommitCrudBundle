@@ -3,22 +3,23 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="ecommit_crud.factory" class="Ecommit\CrudBundle\Crud\CrudFactory">
-            <argument type="service" id="router"/>
-            <argument type="service" id="form.factory"/>
-            <argument type="service" id="request_stack"/>
-            <argument type="service" id="doctrine" on-invalid="null" />
-            <argument type="service" id="security.token_storage"/>
+        <service id="Ecommit\CrudBundle\Crud\CrudFactory" class="Ecommit\CrudBundle\Crud\CrudFactory" public="true">
+            <argument type="service" id="Symfony\Component\Routing\RouterInterface"/>
+            <argument type="service" id="Symfony\Component\Form\FormFactoryInterface"/>
+            <argument type="service" id="Symfony\Component\HttpFoundation\RequestStack"/>
+            <argument type="service" id="Symfony\Bridge\Doctrine\RegistryInterface" />
+            <argument type="service" id="Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface"/>
             <argument>%ecommit_crud.template_configuration%</argument>
         </service>
+        <service id="ecommit_crud.factory" alias="Ecommit\CrudBundle\Crud\CrudFactory" public="true" />
 
-        <service id="ecommit_crud.helper" class="Ecommit\CrudBundle\Helper\CrudHelper">
-            <argument type="service" id="ecommit_util.helper"/>
-            <argument type="service" id="ecommit_javascript.helper.jquery_helper"/>
-            <argument type="service" id="form.factory"/>
-            <argument type="service" id="router"/>
-            <argument type="service" id="translator"/>
-            <argument type="service" id="twig"/>
+        <service id="Ecommit\CrudBundle\Helper\CrudHelper" class="Ecommit\CrudBundle\Helper\CrudHelper" public="true">
+            <argument type="service" id="Ecommit\UtilBundle\Helper\UtilHelper"/>
+            <argument type="service" id="Ecommit\JavascriptBundle\Helper\JqueryHelper"/>
+            <argument type="service" id="Symfony\Component\Form\FormFactoryInterface"/>
+            <argument type="service" id="Symfony\Component\Routing\RouterInterface"/>
+            <argument type="service" id="Symfony\Contracts\Translation\TranslatorInterface"/>
+            <argument type="service" id="Twig\Environment"/>
             <argument type="service" id="ecommit_javascript.overlay"/>
             <argument type="collection">
                 <argument key="use_bootstrap">%ecommit_javascript.use_bootstrap%</argument>
@@ -26,14 +27,15 @@
                 <argument key="images">%ecommit_crud.images%</argument>
             </argument>
         </service>
+        <service id="ecommit_crud.helper" alias="Ecommit\CrudBundle\Helper\CrudHelper" public="true" />
 
-        <service id="ecommit_crud.twig.crud_extension" class="Ecommit\CrudBundle\Twig\CrudExtension">
-            <argument type="service" id="ecommit_crud.helper"/>
-            <argument type="service" id="twig"/>
+        <service id="Ecommit\CrudBundle\Twig\CrudExtension" class="Ecommit\CrudBundle\Twig\CrudExtension">
+            <argument type="service" id="Ecommit\CrudBundle\Helper\CrudHelper"/>
+            <argument type="service" id="Twig\Environment"/>
             <tag name="twig.extension"/>
         </service>
 
-        <service id="ecommit_crud.event_listener.mapping_entities" class="Ecommit\CrudBundle\EventListener\MappingEntities">
+        <service id="Ecommit\CrudBundle\EventListener\MappingEntities" class="Ecommit\CrudBundle\EventListener\MappingEntities">
             <tag name="doctrine.event_listener" event="loadClassMetadata" />
         </service>
     </services>

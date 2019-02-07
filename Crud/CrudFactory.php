@@ -70,10 +70,6 @@ class CrudFactory
      */
     public function create($sessionName)
     {
-        if (null === $this->registry) {
-            throw new \Exception('Doctrine is required.');
-        }
-
         return new Crud(
             $sessionName,
             $this->router,

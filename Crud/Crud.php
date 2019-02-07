@@ -450,7 +450,7 @@ class Crud
                 $this->displayResults = false;
             }
             $this->formSearcher->handleRequest($this->request);
-            if ($this->formSearcher->isValid()) {
+            if ($this->formSearcher->isSubmitted() && $this->formSearcher->isValid()) {
                 $this->displayResults = true;
                 $this->formSearcher->getData()->isSubmitted = true;
                 $this->changeFilterValues($this->formSearcher->getData());
