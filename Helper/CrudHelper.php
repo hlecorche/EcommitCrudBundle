@@ -17,9 +17,9 @@ use Ecommit\CrudBundle\Paginator\AbstractPaginator;
 use Ecommit\JavascriptBundle\Helper\JqueryHelper;
 use Ecommit\JavascriptBundle\Overlay\AbstractOverlay;
 use Ecommit\UtilBundle\Helper\UtilHelper;
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
-use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig_Environment;
 
@@ -36,12 +36,12 @@ class CrudHelper
     protected $javascriptManager;
 
     /**
-     * @var FormFactory
+     * @var FormFactoryInterface
      */
     protected $formFactory;
 
     /**
-     * @var Router
+     * @var RouterInterface
      */
     protected $router;
 
@@ -80,14 +80,14 @@ class CrudHelper
      *
      * @param UtilHelper $util
      * @param Manager $javascriptManager
-     * @param FormFactory $formFactory
+     * @param FormFactoryInterface $formFactory
      * @param bool $useBootstrap
      */
     public function __construct(
         UtilHelper $util,
         JqueryHelper $javascriptManager,
-        FormFactory $formFactory,
-        Router $router,
+        FormFactoryInterface $formFactory,
+        RouterInterface $router,
         TranslatorInterface $translator,
         Twig_Environment $templating,
         AbstractOverlay $overlay,

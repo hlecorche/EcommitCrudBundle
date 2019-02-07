@@ -11,20 +11,20 @@
 namespace Ecommit\CrudBundle\Crud;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
-use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class CrudFactory
 {
     /**
-     * @var Router
+     * @var RouterInterface
      */
     protected $router;
 
     /**
-     * @var FormFactory
+     * @var FormFactoryInterface
      */
     protected $formFactory;
 
@@ -49,8 +49,8 @@ class CrudFactory
     protected $templateConfiguration;
 
     public function __construct(
-        Router $router,
-        FormFactory $formFactory,
+        RouterInterface $router,
+        FormFactoryInterface $formFactory,
         RequestStack $requestStack,
         Registry $registry,
         TokenStorageInterface $tokenStorage,

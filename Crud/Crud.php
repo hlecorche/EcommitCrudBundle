@@ -16,12 +16,12 @@ use Ecommit\CrudBundle\DoctrineExtension\Paginate;
 use Ecommit\CrudBundle\Entity\UserCrudSettings;
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 use Ecommit\CrudBundle\Form\Type\FormSearchType;
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class Crud
@@ -71,12 +71,12 @@ class Crud
     protected $divIdList = 'crud_list';
 
     /**
-     * @var Router
+     * @var RouterInterface
      */
     protected $router;
 
     /**
-     * @var FormFactory
+     * @var FormFactoryInterface
      */
     protected $formFactory;
 
@@ -108,8 +108,8 @@ class Crud
      */
     public function __construct(
         $sessionName,
-        Router $router,
-        FormFactory $formFactory,
+        RouterInterface $router,
+        FormFactoryInterface $formFactory,
         Request $request,
         Registry $registry,
         $user,
