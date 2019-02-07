@@ -115,10 +115,10 @@ abstract class AbstractCrudController extends Controller
         //Legacy mode
         //Remove comments when this class will extend AbstractController (Contoller is deprecated and RequestStack service is private)
         //Change Controller to AbstractController breaks Backward Compatibility
-        /*$masterRequest = $this->get(RequestStack::class)->getMasterRequest();
-        if (!$masterRequest->isXmlHttpRequest()) {
-            throw new NotFoundHttpException('Ajax is required');
-        }*/
+        //$masterRequest = $this->get(RequestStack::class)->getMasterRequest();
+        //if (!$masterRequest->isXmlHttpRequest()) {
+        //    throw new NotFoundHttpException('Ajax is required');
+        //}
         $data = $this->prepareList();
 
         return $this->render($this->getTemplateName('list'), \array_merge($data, array('crud' => $this->cm)));
@@ -129,10 +129,10 @@ abstract class AbstractCrudController extends Controller
         //Legacy mode
         //Remove comments when this class will extend AbstractController (Contoller is deprecated and RequestStack service is private)
         //Change Controller to AbstractController breaks Backward Compatibility
-        /*$masterRequest = $this->get(RequestStack::class)->getMasterRequest();
-        if (!$masterRequest->isXmlHttpRequest()) {
-            throw new NotFoundHttpException('Ajax is required');
-        }*/
+        //$masterRequest = $this->get(RequestStack::class)->getMasterRequest();
+        //if (!$masterRequest->isXmlHttpRequest()) {
+        //    throw new NotFoundHttpException('Ajax is required');
+        //}
         $data = $this->processSearch();
         $renderSearch = $this->renderView(
             $this->getTemplateName('search'),
