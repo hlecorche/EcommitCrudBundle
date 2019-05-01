@@ -484,6 +484,9 @@ class Crud
      */
     protected function changePage($value)
     {
+        if (!is_scalar($value)) {
+            $value = 1;
+        }
         $value = \intval($value);
         if ($value > 1000000000000) {
             $value = 1;
@@ -767,8 +770,8 @@ class Crud
     {
         $oldValue = $this->sessionValues->sort;
         $availableColumns = $this->availableColumns;
-        if ((array_key_exists($value, $availableColumns) && $availableColumns[$value]->sortable)
-            || ($value == 'defaultPersonalizedSort' && $this->defaultPersonalizedSort)) {
+        if ((is_scalar($value) && array_key_exists($value, $availableColumns) && $availableColumns[$value]->sortable)
+            || (is_scalar($value) && $value == 'defaultPersonalizedSort' && $this->defaultPersonalizedSort)) {
             $this->sessionValues->sort = $value;
             $this->testIfDatabaseMustMeUpdated($oldValue, $value);
         } else {
@@ -785,7 +788,7 @@ class Crud
     protected function changeSense($value)
     {
         $oldValue = $this->sessionValues->sense;
-        if ($value == self::ASC || $value == self::DESC) {
+        if (is_scalar($value) && ($value == self::ASC || $value == self::DESC)) {
             $this->sessionValues->sense = $value;
             $this->testIfDatabaseMustMeUpdated($oldValue, $value);
         } else {
@@ -814,10 +817,10 @@ class Crud
         $displaySettingsFormName = sprintf('crud_display_settings_%s', $this->sessionName);
         if ($this->request->request->has($displaySettingsFormName)) {
             $displaySettings = $this->request->request->get($displaySettingsFormName);
-            if (isset($displaySettings['displayedColumns'])) {
+            if (is_array($displaySettings) && isset($displaySettings['displayedColumns'])) {
                 $this->changeColumnsDisplayed($displaySettings['displayedColumns']);
             }
-            if (isset($displaySettings['resultsPerPage'])) {
+            if (is_array($displaySettings) && isset($displaySettings['resultsPerPage'])) {
                 $this->changeNumberResultsDisplayed($displaySettings['resultsPerPage']);
             }
         }
