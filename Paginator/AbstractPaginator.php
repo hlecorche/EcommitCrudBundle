@@ -131,7 +131,7 @@ abstract class AbstractPaginator implements \IteratorAggregate, \Countable
     protected function initLastPage()
     {
         if ($this->getCountResults() > 0) {
-            $lastPage = \ceil($this->getCountResults() / $this->getMaxPerPage());
+            $lastPage = (int) \ceil($this->getCountResults() / $this->getMaxPerPage());
         } else {
             $lastPage = 1;
         }
