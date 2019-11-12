@@ -21,6 +21,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Markup;
 use Twig_Environment;
 
 class CrudHelper
@@ -473,6 +474,9 @@ class CrudHelper
 
         //Repeated values
         if (null !== $options['repeated_values_string']) {
+            if ($value instanceof Markup) {
+                $value = $value->__toString();
+            }
             if (null === $value) {
                 $value = '';
             }
