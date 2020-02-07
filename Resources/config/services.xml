@@ -7,7 +7,7 @@
             <argument type="service" id="Symfony\Component\Routing\RouterInterface"/>
             <argument type="service" id="Symfony\Component\Form\FormFactoryInterface"/>
             <argument type="service" id="Symfony\Component\HttpFoundation\RequestStack"/>
-            <argument type="service" id="Symfony\Bridge\Doctrine\RegistryInterface" />
+            <argument type="service" id="Doctrine\Persistence\ManagerRegistry" />
             <argument type="service" id="Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface"/>
             <argument>%ecommit_crud.template_configuration%</argument>
         </service>

@@ -136,7 +136,7 @@ trait CrudControllerTrait
         $renderList = $this->renderCrudView($this->getTemplateName('list'), \array_merge($data, array('crud' => $this->cm)));
 
         return $this->renderCrud(
-            'EcommitCrudBundle:Crud:double_search.html.twig',
+            '@EcommitCrud/Crud/double_search.html.twig',
             array(
                 'id_search' => $this->cm->getDivIdSearch(),
                 'id_list' => $this->cm->getDivIdList(),

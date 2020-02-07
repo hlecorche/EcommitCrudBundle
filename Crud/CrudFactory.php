@@ -10,7 +10,7 @@
 
 namespace Ecommit\CrudBundle\Crud;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
@@ -34,7 +34,7 @@ class CrudFactory
     protected $requestStack;
 
     /**
-     * @var Registry
+     * @var ManagerRegistry
      */
     protected $registry;
 
@@ -52,7 +52,7 @@ class CrudFactory
         RouterInterface $router,
         FormFactoryInterface $formFactory,
         RequestStack $requestStack,
-        Registry $registry,
+        ManagerRegistry $registry,
         TokenStorageInterface $tokenStorage,
         array $templateConfiguration
     ) {

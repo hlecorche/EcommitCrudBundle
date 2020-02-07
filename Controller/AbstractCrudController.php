@@ -11,9 +11,25 @@
 
 namespace Ecommit\CrudBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\ControllerTrait;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-abstract class AbstractCrudController extends Controller
+abstract class AbstractCrudController implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+    use ControllerTrait;
     use CrudControllerTrait;
+
+    /**
+     * Gets a container configuration parameter by its name.
+     *
+     * @return mixed
+     *
+     * @final
+     */
+    protected function getParameter(string $name)
+    {
+        return $this->container->getParameter($name);
+    }
 }

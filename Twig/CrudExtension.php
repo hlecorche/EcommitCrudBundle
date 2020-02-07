@@ -198,15 +198,15 @@ class CrudExtension extends Twig_Extension
             $templateName = $options['template'];
         } elseif ($options['modal']) {
             if ($options['use_bootstrap']) {
-                $templateName = 'EcommitCrudBundle:Crud:form_settings_modal_bootstrap.html.twig';
+                $templateName = '@EcommitCrud/Crud/form_settings_modal_bootstrap.html.twig';
             } else {
-                $templateName = 'EcommitCrudBundle:Crud:form_settings_modal.html.twig';
+                $templateName = '@EcommitCrud/Crud/form_settings_modal.html.twig';
             }
         } else {
             if ($options['use_bootstrap']) {
-                $templateName = 'EcommitCrudBundle:Crud:form_settings_nomodal_bootstrap.html.twig';
+                $templateName = '@EcommitCrud/Crud/form_settings_nomodal_bootstrap.html.twig';
             } else {
-                $templateName = 'EcommitCrudBundle:Crud:form_settings_nomodal.html.twig';
+                $templateName = '@EcommitCrud/Crud/form_settings_nomodal.html.twig';
             }
         }
 
