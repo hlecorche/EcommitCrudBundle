@@ -38,20 +38,6 @@ class DoctrineDBALPaginator extends AbstractDoctrinePaginator
     }
 
     /**
-     * Sets the QueryBuilder
-     *
-     * @param mixed $query
-     * @return DoctrineDBALPaginator
-     * @deprecated Deprecated since version 2.2. Use setQueryBuilder method instead.
-     */
-    public function setDbalQueryBuilder($query)
-    {
-        trigger_error('setDbalQueryBuilder is deprecated since 2.2 version. Use setQueryBuilder instead', E_USER_DEPRECATED);
-
-        return $this->setQueryBuilder($query);
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function getResults()

@@ -14,7 +14,6 @@ namespace Ecommit\CrudBundle\Form\Filter;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Ecommit\JavascriptBundle\Form\Type\EntityNormalizerTrait;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -36,17 +35,7 @@ class FieldFilterEntity extends FieldFilterChoice implements FieldFilterDoctrine
 
         $resolver->setDefaults(
             array(
-                'property' => null, // deprecated since 2.2, use "choice_label"
-                'choice_label' => function (Options $options) {
-                    // BC with the "property" option
-                    if ($options['property']) {
-                        trigger_error('The "property" option is deprecated since version 2.2. Use "choice_label" instead.', E_USER_DEPRECATED);
-
-                        return $options['property'];
-                    }
-
-                    return null;
-                },
+                'choice_label' => null,
                 'em' => null,
                 'query_builder' => null,
                 'identifier' => null,

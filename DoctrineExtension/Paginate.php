@@ -12,7 +12,6 @@
 namespace Ecommit\CrudBundle\DoctrineExtension;
 
 use Doctrine\ORM\NativeQuery;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -26,25 +25,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class Paginate
 {
     /**
-     * Returns total results (SQL function "count")
-     * 
-     * @param Query $query
-     * @param bool $simplifiedRequest  Use simplified request (not subrequest and not order by) or not
-     * @return int
-     * @deprecated Deprecated since version 2.4. Use countQueryBuilder or Doctrine\ORM\Tools\Pagination\Paginator::count method instead.
-     */
-    static public function count(Query $query, $simplifiedRequest = true)
-    {
-        trigger_error('Paginate::count is deprecated since 2.4 version. Use countQueryBuilder or Doctrine\ORM\Tools\Pagination\Paginator::count method instead.', E_USER_DEPRECATED);
-
-        $doctrinePaginator = new Paginator($query);
-        $doctrinePaginator->setUseOutputWalkers(!$simplifiedRequest);
-
-        return $doctrinePaginator->count();
-    }
-
-    /**
-     * @param \Doctrine\ORM\QueryBuilde|\Doctrine\DBAL\Query\QueryBuilder $queryBuilder
+     * @param \Doctrine\ORM\QueryBuilder|\Doctrine\DBAL\Query\QueryBuilder $queryBuilder
      * @param array $options
      * @return int
      * @throws \Exception

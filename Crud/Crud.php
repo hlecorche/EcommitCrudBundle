@@ -51,7 +51,6 @@ class Crud
     protected $defaultFormSearcherData = null;
 
     protected $queryBuilder = null;
-    protected $useDbal = false; //Deprecated. Not used
     protected $persistentSettings = false;
     protected $updateDatabase = false;
     protected $paginator = null;
@@ -363,21 +362,6 @@ class Crud
     public function setBuildPaginator($value)
     {
         $this->buildPaginator = $value;
-
-        return $this;
-    }
-
-    /*
-     * Use (or not) DBAL
-     * 
-     * @param bool $value
-     * @deprecated Deprecated since version 2.3.
-     */
-    public function setUseDbal($value)
-    {
-        trigger_error('setUseDbal is deprecated since 2.3 version.', E_USER_DEPRECATED);
-
-        $this->useDbal = $value;
 
         return $this;
     }

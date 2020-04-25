@@ -673,7 +673,7 @@ class CrudHelper
      * Returns modal form tag
      *
      * @param string $modalId Modal id
-     * @param FormView|string $form The form or the url. Url is deprecated since 2.2 version
+     * @param FormView|string $form The form or the url.
      * @param array $ajaxOptions Ajax options
      * @param array $htmlOptions Html options
      * @return string

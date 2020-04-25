@@ -80,36 +80,7 @@ trait CrudControllerTrait
      * @param string $action Action
      * @return string
      */
-    protected function getTemplateName($action)
-    {
-        trigger_error('The "getTemplateName" must be overrided. This method will soon be abstract.', E_USER_DEPRECATED);
-
-        return $this->getPathView($action);
-    }
-
-    /**
-     * Returns the path of the template given
-     *
-     * @param string $name Template name
-     * @return string
-     * @deprecated Deprecated since version 2.4. Override getTemplateName method instead.
-     */
-    protected function getPathView($name)
-    {
-        trigger_error('The "getPathView" method is deprecated since version 2.4. Override "getTemplateName" method instead.', E_USER_DEPRECATED);
-
-        if (preg_match('/^(?P<vendor>\w+)\\\(?P<bundle>\w+)\\\Controller\\\(?P<controller>\w+)Controller$/', get_class($this), $matches)) {
-            return sprintf('%s%s:%s:%s.html.twig', $matches['vendor'], $matches['bundle'], $matches['controller'], $name);
-        } elseif (preg_match('/^(?P<vendor>\w+)\\\(?P<bundle>\w+)\\\Controller\\\(?P<dir>\w+)\\\(?P<controller>\w+)Controller$/', get_class($this), $matches)) {
-            return sprintf('%s%s:%s/%s:%s.html.twig', $matches['vendor'], $matches['bundle'], $matches['dir'], $matches['controller'], $name);
-        } elseif (preg_match('/^AppBundle\\\Controller\\\(?P<controller>\w+)Controller$/', get_class($this), $matches)) {
-            return sprintf('AppBundle:%s:%s.html.twig', $matches['controller'], $name);
-        } elseif (preg_match('/^AppBundle\\\Controller\\\(?P<dir>\w+)\\\(?P<controller>\w+)Controller$/', get_class($this), $matches)) {
-            return sprintf('AppBundle:%s/%s:%s.html.twig', $matches['dir'], $matches['controller'], $name);
-        }
-
-        new \Exception('getPathView: Bad structure');
-    }
+    abstract protected function getTemplateName($action);
 
     public function autoAjaxListAction()
     {
