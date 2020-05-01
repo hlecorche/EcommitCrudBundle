@@ -1,5 +1,9 @@
 .php_cs.cache
 .phpunit.result.cache
 composer.lock
+/node_modules/
+/tests/App/public/build/
 /tests/App/var/
 /vendor/
+yarn-error.log
+yarn.lock

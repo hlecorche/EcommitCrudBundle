@@ -1,5 +1,5 @@
-{% set ajax_options = ajax_options|merge({ 'before': 'if(processCrudDisplaySettings_'~suffix~'() == false) { return false;}' }) %}
-{% set reset_ajax_options = ajax_options|merge({ 'before': 'resetDisplaySettings'~suffix~'();' }) %}
+{% set ajax_options = ajax_options|merge({ 'on_before_send': '/arg/if(processCrudDisplaySettings_'~suffix~'() == false) { arg.stop = true;}' }) %}
+{% set reset_ajax_options = ajax_options|merge({ 'on_before_send': 'resetDisplaySettings'~suffix~'();' }) %}
 {% set modalId = 'display_settings_' ~suffix %}
 
 {% macro contentDisplaySettings(vars) %}
@@ -9,7 +9,7 @@
         <h4 class="modal-title">{% trans %}Display Settings{% endtrans %}</h4>
     </div>
 
-    {{ ecommit_javascript_jquery_ajax_form(vars.form, vars.ajax_options)  }}
+    {{ form_start_ajax(vars.form, {'ajax_options': vars.ajax_options}) }}
     <div class="modal-body">
         {{ form_row(vars.form.resultsPerPage) }}
         {{ form_row(vars.form.displayedColumns) }}
@@ -24,7 +24,9 @@
     </div>
 
     <div class="modal-footer">
-        {{ ecommit_javascript_jquery_ajax_button('<span class="glyphicon glyphicon-fire"></span>' ~ 'reset_display_settings'|trans, vars.reset_settings_url, vars.reset_ajax_options, {'class': 'raz-bootstrap btn btn-default btn-sm'}) }}
+        <button class="ec-crud-ajax-click-auto raz-bootstrap btn btn-default btn-sm"{{ ajax_attributes({url: vars.reset_settings_url}|merge(vars.reset_ajax_options)) }}>
+            <span class="glyphicon glyphicon-fire"></span> {% trans %}reset_display_settings{% endtrans %}
+        </button>
         <button type="submit" class="save-bootstrap btn btn-success btn-sm">
             <span class="glyphicon glyphicon-floppy-disk"></span> {% trans %}Save{% endtrans %}
         </button>

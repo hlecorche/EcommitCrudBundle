@@ -2,10 +2,12 @@
     <head>
         <title>{% block title %}{% endblock %}</title>
         <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
+        {{ encore_entry_link_tags('app') }}
         {% block stylesheets %}{% endblock %}
-        {% block javascripts %}{% endblock %}
     </head>
     <body>
         {% block content %}{% endblock %}
+        {{ encore_entry_script_tags('app') }}
+        {% block javascripts %}{% endblock %}
     </body>
 </html>

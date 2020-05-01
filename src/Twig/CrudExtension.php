@@ -16,6 +16,8 @@ namespace Ecommit\CrudBundle\Twig;
 use Ecommit\CrudBundle\Crud\Crud;
 use Ecommit\CrudBundle\Helper\CrudHelper;
 use Ecommit\CrudBundle\Paginator\AbstractPaginator;
+use Symfony\Component\Form\FormRendererInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Twig\Environment;
 use Twig\Extension\AbstractExtension;
@@ -34,12 +36,21 @@ class CrudExtension extends AbstractExtension
     protected $templating;
 
     /**
+     * @var FormRendererInterface
+     */
+    protected $formRenderer;
+
+    protected $theme;
+
+    /**
      * Constructor.
      */
-    public function __construct(CrudHelper $crudHelper, Environment $templating)
+    public function __construct(CrudHelper $crudHelper, Environment $templating, FormRendererInterface $formRenderer, string $theme)
     {
         $this->crudHelper = $crudHelper;
         $this->templating = $templating;
+        $this->formRenderer = $formRenderer;
+        $this->theme = $theme;
     }
 
     /**
@@ -109,6 +120,19 @@ class CrudExtension extends AbstractExtension
                 'crud_form_modal',
                 [$this, 'formModal'],
                 ['is_safe' => ['all']]
+            ),
+            new TwigFunction(
+                'form_start_ajax',
+                [$this, 'formStartAjax'],
+                ['is_safe' => ['html']]
+            ),
+            new TwigFunction(
+                'ajax_attributes',
+                [$this, 'ajaxAttributes'],
+                [
+                    'needs_environment' => true,
+                    'is_safe' => ['html'],
+                ]
             ),
         ];
     }
@@ -188,7 +212,7 @@ class CrudExtension extends AbstractExtension
         $options = $resolver->resolve($options);
 
         if (!isset($ajaxOptions['update'])) {
-            $ajaxOptions['update'] = $crud->getDivIdList();
+            $ajaxOptions['update'] = '#'.$crud->getDivIdList();
         }
 
         $form = $this->crudHelper->getFormDisplaySettings($crud);
@@ -275,5 +299,96 @@ class CrudExtension extends AbstractExtension
     public function formModal($modalId, $form, $ajaxOptions = [], $htmlOptions = [])
     {
         return $this->crudHelper->formModal($modalId, $form, $ajaxOptions, $htmlOptions);
+    }
+
+    public function formStartAjax(FormView $formView, array $options = []): string
+    {
+        $autoClass = 'ec-crud-ajax-form-auto';
+        if (isset($options['auto_class']) && null !== isset($options['auto_class'])) {
+            $autoClass = $options['auto_class'];
+            unset($options['auto_class']);
+        }
+        if (isset($options['attr']['class'])) {
+            $options['attr']['class'] = sprintf('%s %s', $autoClass, $options['attr']['class']);
+        } else {
+            $options['attr']['class'] = $autoClass;
+        }
+
+        if (isset($options['ajax_options'])) {
+            $this->validateAjaxOptions($options['ajax_options']);
+            $options['attr'] = array_merge(
+                $options['attr'],
+                $this->getAjaxAttributes($options['ajax_options'])
+            );
+            unset($options['ajax_options']);
+        }
+
+        return $this->formRenderer->renderBlock($formView, 'form_start', $options);
+    }
+
+    public function ajaxAttributes(Environment $environment, array $ajaxOptions): string
+    {
+        $this->validateAjaxOptions($ajaxOptions);
+        $attributes = $this->getAjaxAttributes($ajaxOptions);
+        if (0 === \count($attributes)) {
+            return '';
+        }
+
+        return $this->renderBlock($environment, $this->theme, 'attributes', [
+            'attr' => $attributes,
+        ]);
+    }
+
+    protected function validateAjaxOptions(array $options, array $requiredOptions = []): array
+    {
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults([
+            'url' => null,
+            'update' => null,
+            'update_mode' => null,
+            'on_before_send' => null,
+            'on_success' => null,
+            'on_error' => null,
+            'on_complete' => null,
+            'data_type' => null,
+            'method' => null,
+            'data' => null,
+            'cache' => null,
+            'options' => null,
+        ]);
+        $resolver->setRequired($requiredOptions);
+
+        return $resolver->resolve($options);
+    }
+
+    protected function getAjaxAttributes(array $options): array
+    {
+        $attributes = [];
+        foreach ($options as $optionName => $optionValue) {
+            if (null === $optionValue) {
+                continue;
+            }
+
+            if (\is_bool($optionValue)) {
+                $optionValue = ($optionValue) ? 'true' : 'false';
+            } elseif (\is_array($optionValue)) {
+                $optionValue = json_encode($optionValue);
+            }
+
+            $optionName = str_replace('_', '-', $optionName);
+            $attributes['data-ec-crud-ajax-'.$optionName] = (string) $optionValue;
+        }
+
+        return $attributes;
+    }
+
+    protected function renderBlock(Environment $environment, string $templateName, string $blockName, array $parameters = []): ?string
+    {
+        $template = $environment->load($templateName);
+
+        ob_start();
+        $template->displayBlock($blockName, $parameters);
+
+        return ob_get_clean();
     }
 }

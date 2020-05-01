@@ -8,12 +8,27 @@ env:
     - DEPENDENCIES="high"
     - DEPENDENCIES="low"
 
+cache:
+    yarn: true
+
 addons:
     firefox: latest
 
+services:
+    - xvfb
+
+before_install:
+    - sudo rm -rf ~/.nvm && curl -sL "https://deb.nodesource.com/setup_13.x" | sudo -E bash -
+    - sudo apt-get install -y nodejs
+    - sudo npm install -g yarn
+
 install:
     - if [ "$DEPENDENCIES" = "low" ]; then composer update --prefer-lowest --prefer-stable; else composer install; fi;
+    - yarn install
+    - yarn encore dev
 
 script:
     - php vendor/phpunit/phpunit/phpunit
+    - ./node_modules/.bin/karma start --single-run
     - php vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --diff --dry-run -v
+    - ./node_modules/.bin/eslint src/Resources/public/js/* tests/Resources/public/js/*
