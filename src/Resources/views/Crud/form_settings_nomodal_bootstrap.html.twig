@@ -1,12 +1,12 @@
 {% set reset_ajax_options = ajax_options %}
-{% set ajax_options = ajax_options|merge({ 'before': 'if(processCrudDisplaySettings'~suffix~'() == false) { return false;}' }) %}
+{% set ajax_options = ajax_options|merge({ 'on_before_send': '/arg/if(processCrudDisplaySettings'~suffix~'() == false) { arg.stop = true;}' }) %}
 {% form_theme form 'bootstrap_3_layout.html.twig' %}
 
 <div id="display_settings_{{ suffix }}" class="display_settings_nomodal_bootstrap" style="display: none;">
     <h4>{% trans %}Display Settings{% endtrans %}</h4>
 
 
-    {{ ecommit_javascript_jquery_ajax_form(form, ajax_options)  }}
+    {{ form_start_ajax(form, {'ajax_options': ajax_options}) }}
         {{ form_row(form.resultsPerPage) }}
         {{ form_row(form.displayedColumns) }}
         <button type="button" class="btn btn-default btn-xs" onclick="selectAllColumnsCrudDisplaySettings_{{ suffix }}(true)">
@@ -22,7 +22,9 @@
             <button type="submit" class="save-bootstrap btn btn-success btn-sm">
                 <span class="glyphicon glyphicon-floppy-disk"></span> {% trans %}Save{% endtrans %}
             </button>
-            {{ ecommit_javascript_jquery_ajax_button('<span class="glyphicon glyphicon-fire"></span>' ~ 'reset_display_settings'|trans, reset_settings_url, reset_ajax_options, {'class': 'raz-bootstrap btn btn-default btn-sm'}) }}
+            <button class="ec-crud-ajax-click-auto raz-bootstrap btn btn-default btn-sm"{{ ajax_attributes({url: reset_settings_url}|merge(reset_ajax_options)) }}>
+                <span class="glyphicon glyphicon-fire"></span> {% trans %}reset_display_settings{% endtrans %}
+            </button>
         </div>
     </form>
 </div>

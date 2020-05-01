@@ -1,0 +1,2 @@
+ecommit_crud:
+    theme: '@EcommitCrud/Theme/base.html.twig'

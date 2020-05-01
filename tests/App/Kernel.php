@@ -27,6 +27,7 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\RouteCollectionBuilder;
+use Symfony\WebpackEncoreBundle\WebpackEncoreBundle;
 
 class Kernel extends BaseKernel implements CompilerPassInterface
 {
@@ -37,6 +38,8 @@ class Kernel extends BaseKernel implements CompilerPassInterface
         $loader->load($this->getProjectDir().'/config/framework.yaml');
         $loader->load($this->getProjectDir().'/config/doctrine.yaml');
         $loader->load($this->getProjectDir().'/config/security.yaml');
+        $loader->load($this->getProjectDir().'/config/webpack_encore.yaml');
+        $loader->load($this->getProjectDir().'/config/ecommit_crud.yaml');
         $loader->load($this->getProjectDir().'/config/services.yaml');
     }
 
@@ -56,6 +59,7 @@ class Kernel extends BaseKernel implements CompilerPassInterface
             new DoctrineFixturesBundle(),
             new FrameworkBundle(),
             new SecurityBundle(),
+            new WebpackEncoreBundle(),
             new EcommitCrudBundle(),
             new EcommitJavascriptBundle(),
             new EcommitUtilBundle(),

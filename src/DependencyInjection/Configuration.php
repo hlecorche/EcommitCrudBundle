@@ -34,6 +34,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->scalarNode('theme')->isRequired()->end()
                 ->arrayNode('template_configuration')
                     ->treatNullLike([])
                     ->prototype('variable')

@@ -235,7 +235,7 @@ class TestCrudControllerTest extends PantherTestCase
         $button = $client->getCrawler()->filterXPath('//button[contains(., "Display Settings")]');
         $button->first()->click();
 
-        $button = $client->getCrawler()->filterXPath('//form[@name="crud_display_settings_user"]/descendant::button[contains(text(), "Reset display settings")]');
+        $button = $client->getCrawler()->filterXPath('//form[@name="crud_display_settings_user"]/descendant::button[contains(., "Reset display settings")]');
         $button->first()->click();
         $this->waitForAjax($client);
 

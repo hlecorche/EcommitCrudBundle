@@ -1,0 +1,6 @@
+{% block attributes %}
+    {%- for attrName, attrValue in attr -%}
+        {{- " " -}}
+        {{- attrName }}="{{ attrValue }}"
+    {%- endfor -%}
+{% endblock %}
