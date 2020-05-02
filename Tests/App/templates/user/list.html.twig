@@ -1,0 +1,29 @@
+<div>
+    <table class="result">
+        <thead>
+        <tr>
+            {{ crud_th('username', crud) }}
+            {{ crud_th('firstName', crud) }}
+            {{ crud_th('lastName', crud) }}
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in crud.paginator %}
+            <tr data-username="{{ user.username }}">
+                {{ crud_td('username', crud, user.username|lower) }}
+                {{ crud_td('firstName', crud, user.firstName|capitalize) }}
+                {{ crud_td('lastName', crud, user.lastName|capitalize) }}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="info-pagination">
+    {% trans with {'%first%': crud.paginator.firstIndice, '%last%' : crud.paginator.lastIndice} %}Results %first%-%last%{% endtrans %}  -
+    {% trans with {'%page%': crud.paginator.page, '%lastPage%' : crud.paginator.lastPage} %}Page %page%/%lastPage%{% endtrans %}
+</div>
+
+{{ crud_paginator_links(crud) }}
+
+{{ crud_display_settings(crud, {modal: false}) }}

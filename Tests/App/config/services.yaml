@@ -1,0 +1,14 @@
+parameters:
+    locale: 'en'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Ecommit\CrudBundle\Tests\App\DataFixtures\:
+        resource: '../DataFixtures'
+
+    Ecommit\CrudBundle\Tests\App\Controller\:
+        resource: '../Controller'
+        tags: ['controller.service_arguments']

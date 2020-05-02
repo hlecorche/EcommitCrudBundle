@@ -1,0 +1,22 @@
+doctrine:
+    dbal:
+        connections:
+            default:
+                url: "sqlite:///%kernel.project_dir%/var/app.db"
+                logging: false
+
+    orm:
+        auto_generate_proxy_classes: false
+        entity_managers:
+            default:
+                connection: default
+                auto_mapping: true
+                mappings:
+                    App:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/Entity'
+                        prefix: 'Ecommit\CrudBundle\Tests\App\Entity'
+                naming_strategy: doctrine.orm.naming_strategy.underscore
+        resolve_target_entities:
+            Ecommit\CrudBundle\Entity\UserCrudInterface: Ecommit\CrudBundle\Tests\App\Entity\TestUser

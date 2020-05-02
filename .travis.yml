@@ -1,0 +1,18 @@
+language: php
+php:
+    - 7.2
+    - 7.3
+    - 7.4
+
+env:
+    - DEPENDENCIES="high"
+    - DEPENDENCIES="low"
+
+addons:
+    firefox: latest
+
+install:
+    - if [ "$DEPENDENCIES" = "low" ]; then composer update --prefer-lowest --prefer-stable; else composer install; fi;
+
+script:
+    - php vendor/phpunit/phpunit/phpunit

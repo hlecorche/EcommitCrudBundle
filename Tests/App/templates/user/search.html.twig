@@ -1,0 +1,12 @@
+{{ crud_search_form(crud, {}, {'class': 'form-inline'}) }}
+    {{ form_row(crud.searcherform.username) }}
+    {{ form_row(crud.searcherform.firstName) }}
+    {{ form_row(crud.searcherform.lastName) }}
+
+    <div>
+        <button type="submit">
+            {{ 'Search'|trans }}
+        </button>
+        {{ crud_search_reset(crud) }}
+    </div>
+</form>
