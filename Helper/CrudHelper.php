@@ -418,7 +418,7 @@ class CrudHelper
 
         //Case n°3: We can sort on this column, and the sorting is active on her at present
         $image_src = ($session_values->sense == Crud::ASC) ? $image_up : $image_down;
-        $image_alt = ($session_values->sense == Crud::ASC) ? 'V' : '^';
+        $image_alt = ($session_values->sense == Crud::ASC) ? '^' : 'V';
         $new_sense = ($session_values->sense == Crud::ASC) ? Crud::DESC : Crud::ASC;
         $image = $this->util->tag('img', array('src' => $image_src, 'alt' => $image_alt));
         $link = $this->listePrivateLink($label, $crud->getUrl(array('sense' => $new_sense)), array(), $ajaxOptions);
