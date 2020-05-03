@@ -292,10 +292,10 @@ class CrudControllerTest extends PantherTestCase
 
         switch ($imageSort->getAttribute('alt')) {
             case '^':
-                $sense = Crud::DESC;
+                $sense = Crud::ASC;
                 break;
             case 'V':
-                $sense = Crud::ASC;
+                $sense = Crud::DESC;
                 break;
             default:
                 throw new \Exception('Bad sense');
