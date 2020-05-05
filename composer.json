@@ -11,6 +11,7 @@
     ],
     "require": {
         "php": "^7.2",
+        "ext-mbstring": "*",
         "doctrine/common": "*",
         "doctrine/doctrine-bundle": "^1.12.3|^2.0.3",
         "doctrine/orm": "^2.6.3",
