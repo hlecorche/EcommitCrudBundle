@@ -17,11 +17,11 @@ use Ecommit\CrudBundle\Crud\Crud;
 use Ecommit\CrudBundle\Helper\CrudHelper;
 use Ecommit\CrudBundle\Paginator\AbstractPaginator;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Twig_Environment;
-use Twig_Extension;
-use Twig_SimpleFunction;
+use Twig\Environment;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class CrudExtension extends Twig_Extension
+class CrudExtension extends AbstractExtension
 {
     /**
      * @var CrudHelper
@@ -29,14 +29,14 @@ class CrudExtension extends Twig_Extension
     protected $crudHelper;
 
     /**
-     * @var Twig_Environment
+     * @var Environment
      */
     protected $templating;
 
     /**
      * Constructor.
      */
-    public function __construct(CrudHelper $crudHelper, Twig_Environment $templating)
+    public function __construct(CrudHelper $crudHelper, Environment $templating)
     {
         $this->crudHelper = $crudHelper;
         $this->templating = $templating;
@@ -60,52 +60,52 @@ class CrudExtension extends Twig_Extension
     public function getFunctions()
     {
         return [
-            new Twig_SimpleFunction(
+            new TwigFunction(
                 'paginator_links',
                 [$this, 'paginatorLinks'],
                 ['is_safe' => ['all']]
             ),
-            new Twig_SimpleFunction(
+            new TwigFunction(
                 'crud_paginator_links',
                 [$this, 'crudPaginatorLinks'],
                 ['is_safe' => ['all']]
             ),
-            new Twig_SimpleFunction(
+            new TwigFunction(
                 'crud_th',
                 [$this, 'th'],
                 ['is_safe' => ['all']]
             ),
-            new Twig_SimpleFunction(
+            new TwigFunction(
                 'crud_td',
                 [$this, 'td'],
                 ['is_safe' => ['all']]
             ),
-            new Twig_SimpleFunction(
+            new TwigFunction(
                 'crud_display_settings',
                 [$this, 'displaySettings'],
                 ['is_safe' => ['all']]
             ),
-            new Twig_SimpleFunction(
+            new TwigFunction(
                 'crud_search_form',
                 [$this, 'searchForm'],
                 ['is_safe' => ['all']]
             ),
-            new Twig_SimpleFunction(
+            new TwigFunction(
                 'crud_search_reset',
                 [$this, 'searchReset'],
                 ['is_safe' => ['all']]
             ),
-            new Twig_SimpleFunction(
+            new TwigFunction(
                 'crud_declare_modal',
                 [$this, 'declareModal'],
                 ['is_safe' => ['all']]
             ),
-            new Twig_SimpleFunction(
+            new TwigFunction(
                 'crud_remote_modal',
                 [$this, 'remoteModal'],
                 ['is_safe' => ['all']]
             ),
-            new Twig_SimpleFunction(
+            new TwigFunction(
                 'crud_form_modal',
                 [$this, 'formModal'],
                 ['is_safe' => ['all']]
