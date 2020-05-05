@@ -1,5 +1,5 @@
 .php_cs.cache
 .phpunit.result.cache
 composer.lock
-Tests/App/var/
-vendor/
+/tests/App/var/
+/vendor/

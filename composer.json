@@ -41,7 +41,10 @@
         "symfony/panther": "^0.7.1"
     },
     "autoload": {
-        "psr-4": { "Ecommit\\CrudBundle\\": "" }
+        "psr-4": { "Ecommit\\CrudBundle\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "Ecommit\\CrudBundle\\Tests\\": "tests/" }
     },
     "config": {
         "sort-packages": true
