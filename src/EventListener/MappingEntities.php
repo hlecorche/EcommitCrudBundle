@@ -1,5 +1,8 @@
 <?php
-/**
+
+declare(strict_types=1);
+
+/*
  * This file is part of the EcommitCrudBundle package.
  *
  * (c) E-commit <contact@e-commit.fr>
@@ -17,7 +20,7 @@ class MappingEntities
 {
     protected $isLoad = false;
 
-    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
+    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs): void
     {
         $metadata = $eventArgs->getClassMetadata();
 
@@ -36,22 +39,22 @@ class MappingEntities
         }
     }
 
-    protected function mappUserCrudSettings(ClassMetadataInfo $userCrudSettingsMetadata, ClassMetadataInfo $userMetadata)
+    protected function mappUserCrudSettings(ClassMetadataInfo $userCrudSettingsMetadata, ClassMetadataInfo $userMetadata): void
     {
         $this->isLoad = true;
 
         $userCrudSettingsMetadata->setAssociationOverride(
             'user',
-            array(
+            [
                 'targetEntity' => $userMetadata->getName(),
                 'fieldName' => 'user',
                 'id' => true,
-                'joinColumns' => array(array(
+                'joinColumns' => [[
                     'name' => 'user_id',
                     'referencedColumnName' => $userMetadata->getSingleIdentifierColumnName(),
                     'onDelete' => 'CASCADE',
-                ))
-            )
+                ]],
+            ]
         );
     }
-} 
+}

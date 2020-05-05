@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -19,22 +21,22 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class FieldFilterBoolean extends AbstractFieldFilter
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
-            array(
+            [
                 'value_true' => 1,
                 'value_false' => 0,
                 'not_null_is_true' => false,
                 'null_is_false' => true,
-            )
+            ]
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function configureTypeOptions($typeOptions)
     {
@@ -48,7 +50,7 @@ class FieldFilterBoolean extends AbstractFieldFilter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addField(FormBuilder $formBuilder)
     {
@@ -58,7 +60,7 @@ class FieldFilterBoolean extends AbstractFieldFilter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function changeQuery($queryBuilder, AbstractFormSearcher $formData, $aliasSearch)
     {
@@ -67,10 +69,10 @@ class FieldFilterBoolean extends AbstractFieldFilter
             return $queryBuilder;
         }
 
-        if ($value == 'T') {
-            $parameterName = 'value_true' . str_replace(' ', '', $this->property);
+        if ('T' == $value) {
+            $parameterName = 'value_true'.str_replace(' ', '', $this->property);
             if ($this->options['not_null_is_true']) {
-                $parameterNameFalse = 'value_false' . str_replace(' ', '', $this->property);
+                $parameterNameFalse = 'value_false'.str_replace(' ', '', $this->property);
                 $queryBuilder->andWhere(
                     sprintf(
                         '(%s = :%s OR (%s IS NOT NULL AND %s != :%s))',
@@ -84,14 +86,14 @@ class FieldFilterBoolean extends AbstractFieldFilter
                     ->setParameter($parameterName, $this->options['value_true'])
                     ->setParameter($parameterNameFalse, $this->options['value_false']);
             } else {
-                $queryBuilder->andWhere(sprintf('%s = :%s',$aliasSearch, $parameterName))
+                $queryBuilder->andWhere(sprintf('%s = :%s', $aliasSearch, $parameterName))
                     ->setParameter($parameterName, $this->options['value_true']);
             }
 
             return $queryBuilder;
-        } elseif ($value == 'F') {
-            $parameterName = 'value_false' . str_replace(' ', '', $this->property);
-            if (is_null($this->options['value_false'])) {
+        } elseif ('F' == $value) {
+            $parameterName = 'value_false'.str_replace(' ', '', $this->property);
+            if (null === $this->options['value_false']) {
                 $queryBuilder->andWhere(sprintf('%s IS NULL', $aliasSearch));
             } elseif ($this->options['null_is_false']) {
                 $queryBuilder->andWhere(
@@ -109,16 +111,16 @@ class FieldFilterBoolean extends AbstractFieldFilter
             }
 
             return $queryBuilder;
-        } else {
-            return $queryBuilder;
         }
+
+        return $queryBuilder;
     }
 
     public static function getChoices()
     {
-        return array(
+        return [
             'filter.true' => 'T',
             'filter.false' => 'F',
-        );
+        ];
     }
 }

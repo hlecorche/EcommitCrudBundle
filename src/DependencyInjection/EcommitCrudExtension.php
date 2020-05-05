@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -11,14 +13,13 @@
 
 namespace Ecommit\CrudBundle\DependencyInjection;
 
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class EcommitCrudExtension extends Extension 
+class EcommitCrudExtension extends Extension
 {
-    
     /**
      * Loads a specific configuration.
      *
@@ -27,15 +28,15 @@ class EcommitCrudExtension extends Extension
      *
      * @throws \InvalidArgumentException When provided tag is not defined in this extension
      */
-    public function load(array $config, ContainerBuilder $container) 
+    public function load(array $config, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $config);
 
-        $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
         $container->setParameter('ecommit_crud.template_configuration', $config['template_configuration']);
-        $container->setParameter('ecommit_crud.images', array('th_image_up' => $config['images']['th_image_up'], 'th_image_down' => $config['images']['th_image_down']));
+        $container->setParameter('ecommit_crud.images', ['th_image_up' => $config['images']['th_image_up'], 'th_image_down' => $config['images']['th_image_down']]);
     }
 }

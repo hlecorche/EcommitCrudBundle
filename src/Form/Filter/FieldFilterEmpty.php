@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -18,7 +20,7 @@ use Symfony\Component\Form\FormBuilder;
 class FieldFilterEmpty extends AbstractFieldFilter
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function configureTypeOptions($typeOptions)
     {
@@ -28,7 +30,7 @@ class FieldFilterEmpty extends AbstractFieldFilter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addField(FormBuilder $formBuilder)
     {
@@ -38,7 +40,7 @@ class FieldFilterEmpty extends AbstractFieldFilter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function changeQuery($queryBuilder, AbstractFormSearcher $formData, $aliasSearch)
     {
@@ -47,7 +49,7 @@ class FieldFilterEmpty extends AbstractFieldFilter
             return $queryBuilder;
         }
 
-        if ($value == 1) {
+        if (1 == $value) {
             $queryBuilder->andWhere(
                 sprintf('(%s IS NULL OR %s = \'\')', $aliasSearch, $aliasSearch)
             );

@@ -1,5 +1,8 @@
 <?php
-/**
+
+declare(strict_types=1);
+
+/*
  * This file is part of the EcommitCrudBundle package.
  *
  * (c) E-commit <contact@e-commit.fr>
@@ -28,12 +31,12 @@ class RestQueryBuilder implements QueryBuilderInterface
     /**
      * @var array
      */
-    protected $queryParameters = array();
+    protected $queryParameters = [];
 
     /**
      * @var array
      */
-    protected $formParameters = array();
+    protected $formParameters = [];
 
     /**
      * @var string
@@ -53,15 +56,16 @@ class RestQueryBuilder implements QueryBuilderInterface
     /**
      * @var array
      */
-    protected $orders = array();
+    protected $orders = [];
 
     /**
      * RestQueryBuilder constructor.
+     *
      * @param string $url
      * @param string $method
-     * @param array $defaultParameters Array of RestQueryBuilderParameter objects
+     * @param array  $defaultParameters Array of RestQueryBuilderParameter objects
      */
-    public function __construct($url, $method, $defaultParameters = array())
+    public function __construct($url, $method, $defaultParameters = [])
     {
         $this->url = $url;
         $this->method = $method;
@@ -71,7 +75,6 @@ class RestQueryBuilder implements QueryBuilderInterface
     }
 
     /**
-     * @param \Closure $orderBuilder
      * @return $this
      */
     public function setOrderBuilder(\Closure $orderBuilder)
@@ -82,7 +85,6 @@ class RestQueryBuilder implements QueryBuilderInterface
     }
 
     /**
-     * @param \Closure $paginationBuilder
      * @return $this
      */
     public function setPaginationBuilder(\Closure $paginationBuilder)
@@ -96,8 +98,10 @@ class RestQueryBuilder implements QueryBuilderInterface
      * @param string $parameter
      * @param string $value
      * @param string $method
-     * @return $this
+     *
      * @throws \Exception
+     *
+     * @return $this
      */
     public function addParameter(QueryBuilderParameterInterface $parameter)
     {
@@ -125,6 +129,7 @@ class RestQueryBuilder implements QueryBuilderInterface
     /**
      * @param string $sort
      * @param string $sense
+     *
      * @return $this
      */
     public function addOrderBy($sort, $sense)
@@ -137,29 +142,32 @@ class RestQueryBuilder implements QueryBuilderInterface
     /**
      * @param string $sort
      * @param string $sense
+     *
      * @return $this
      */
     public function orderBy($sort, $sense)
     {
-        $this->orders = array();
+        $this->orders = [];
         $this->addOrderBy($sort, $sense);
 
         return $this;
     }
 
     /**
-     * @param int $page
-     * @param int $resultsPerPage
+     * @param int   $page
+     * @param int   $resultsPerPage
      * @param array $options
-     * @return mixed|\Psr\Http\Message\ResponseInterface
+     *
      * @throws \Exception
+     *
+     * @return mixed|\Psr\Http\Message\ResponseInterface
      */
-    public function getResponse($page, $resultsPerPage, $options = array())
+    public function getResponse($page, $resultsPerPage, $options = [])
     {
         $client = new \GuzzleHttp\Client();
 
         //Add paginator parameters
-        if  ($this->paginationBuilder && $this->paginationBuilder instanceof \Closure) {
+        if ($this->paginationBuilder && $this->paginationBuilder instanceof \Closure) {
             $parameters = $this->paginationBuilder->__invoke($page, $resultsPerPage);
             foreach ($parameters as $parameter) {
                 $this->addParameter($parameter);
@@ -167,7 +175,7 @@ class RestQueryBuilder implements QueryBuilderInterface
         }
 
         //Add sort parameters
-        if  (count($this->orders) > 0 && $this->orderBuilder && $this->orderBuilder instanceof \Closure) {
+        if (\count($this->orders) > 0 && $this->orderBuilder && $this->orderBuilder instanceof \Closure) {
             $parameters = $this->orderBuilder->__invoke($this->orders);
             foreach ($parameters as $parameter) {
                 $this->addParameter($parameter);

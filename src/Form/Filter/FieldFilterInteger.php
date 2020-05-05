@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -18,37 +20,37 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FieldFilterInteger extends AbstractFieldFilter
 {
-    const GREATER_THAN = '>';
-    const GREATER_EQUAL = '>=';
-    const SMALLER_THAN = '<';
-    const SMALLER_EQUAL = '<=';
-    const EQUAL = '=';
+    public const GREATER_THAN = '>';
+    public const GREATER_EQUAL = '>=';
+    public const SMALLER_THAN = '<';
+    public const SMALLER_EQUAL = '<=';
+    public const EQUAL = '=';
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(
-            array(
+            [
                 'comparator',
-            )
+            ]
         );
 
         $resolver->setAllowedValues(
             'comparator',
-            array(
+            [
                 self::EQUAL,
                 self::GREATER_EQUAL,
                 self::GREATER_THAN,
                 self::SMALLER_EQUAL,
                 self::SMALLER_THAN,
-            )
+            ]
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addField(FormBuilder $formBuilder)
     {
@@ -58,13 +60,13 @@ class FieldFilterInteger extends AbstractFieldFilter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function changeQuery($queryBuilder, AbstractFormSearcher $formData, $aliasSearch)
     {
         $value = $formData->get($this->property);
-        if (!is_null($value) && is_numeric($value)) { //Important: Is_null but not is_empty
-            $parameterName = 'value_integer_' . str_replace(' ', '', $this->property);
+        if (null !== $value && is_numeric($value)) { //Important: Is_null but not is_empty
+            $parameterName = 'value_integer_'.str_replace(' ', '', $this->property);
             $queryBuilder->andWhere(
                 sprintf('%s %s :%s', $aliasSearch, $this->options['comparator'], $parameterName)
             )

@@ -1,5 +1,8 @@
 <?php
-/**
+
+declare(strict_types=1);
+
+/*
  * This file is part of the EcommitCrudBundle package.
  *
  * (c) E-commit <contact@e-commit.fr>
@@ -14,7 +17,7 @@ abstract class AbstractDoctrinePaginator extends AbstractPaginator
 {
     protected $query = null;
     protected $manualCountResults = null;
-    protected $countOptions = array();
+    protected $countOptions = [];
 
     /**
      * @return string
@@ -23,9 +26,9 @@ abstract class AbstractDoctrinePaginator extends AbstractPaginator
 
     abstract protected function initPaginator();
 
-    public function init()
+    public function init(): void
     {
-        if (is_null($this->query)) {
+        if (null === $this->query) {
             throw new \Exception('QueryBuilder must be defined.');
         }
 
@@ -43,7 +46,7 @@ abstract class AbstractDoctrinePaginator extends AbstractPaginator
     }
 
     /**
-     * Returns QueryBuilder
+     * Returns QueryBuilder.
      *
      * @return mixed
      */
@@ -53,9 +56,10 @@ abstract class AbstractDoctrinePaginator extends AbstractPaginator
     }
 
     /**
-     * Sets the QueryBuilder
+     * Sets the QueryBuilder.
      *
      * @param mixed $query
+     *
      * @return AbstractDoctrinePaginator
      */
     public function setQueryBuilder($query)
@@ -70,9 +74,9 @@ abstract class AbstractDoctrinePaginator extends AbstractPaginator
     }
 
     /**
-     * Returns manual total results
+     * Returns manual total results.
      *
-     * @return Int
+     * @return int
      */
     public function getManualCountResults()
     {
@@ -80,9 +84,10 @@ abstract class AbstractDoctrinePaginator extends AbstractPaginator
     }
 
     /**
-     * Sets manual total results
+     * Sets manual total results.
      *
-     * @param Int $manualCountResults
+     * @param int $manualCountResults
+     *
      * @return AbstractDoctrinePaginator
      */
     public function setManualCountResults($manualCountResults)
@@ -93,7 +98,7 @@ abstract class AbstractDoctrinePaginator extends AbstractPaginator
     }
 
     /**
-     * Returns count options
+     * Returns count options.
      *
      * @return array
      */
@@ -103,9 +108,8 @@ abstract class AbstractDoctrinePaginator extends AbstractPaginator
     }
 
     /**
-     * Sets count options
+     * Sets count options.
      *
-     * @param array $countOptions
      * @return AbstractDoctrinePaginator
      */
     public function setCountOptions(array $countOptions)

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -18,25 +20,25 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class FormSearchType extends AbstractType
 {
     /**
-     * {@inheritDoc} 
+     * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {  
-    }
-    
-    /**
-     * {@inheritDoc} 
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $resolver->setDefaults(array(
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
             'data_class' => 'Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher',
             'csrf_protection' => false,
-        ));
+        ]);
     }
-    
+
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getBlockPrefix()
     {

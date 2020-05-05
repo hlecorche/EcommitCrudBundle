@@ -37,6 +37,7 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",
+        "friendsofphp/php-cs-fixer": "^2.16.1",
         "phpunit/phpunit": "^8.4",
         "symfony/panther": "^0.7.1"
     },

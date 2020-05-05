@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -17,7 +19,7 @@ use Ecommit\CrudBundle\Tests\App\Entity\TestUser;
 
 class TestUserFixtures extends Fixture
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $dataSet = [
             ['Eve', 'Reste'],

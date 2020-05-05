@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -16,7 +18,7 @@ use Ecommit\CrudBundle\DoctrineExtension\Paginate;
 class DoctrineDBALPaginator extends AbstractDoctrinePaginator
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function getQueryBuilderClass()
     {
@@ -24,12 +26,12 @@ class DoctrineDBALPaginator extends AbstractDoctrinePaginator
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function initPaginator()
+    public function initPaginator(): void
     {
         //Calculation of the number of lines
-        if (is_null($this->manualCountResults)) {
+        if (null === $this->manualCountResults) {
             $count = Paginate::countQueryBuilder($this->query, $this->countOptions);
             $this->setCountResults($count);
         } else {
@@ -38,11 +40,11 @@ class DoctrineDBALPaginator extends AbstractDoctrinePaginator
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getResults()
     {
-        if (is_null($this->results)) {
+        if (null === $this->results) {
             $results = $this->query->execute()->fetchAll();
             $this->results = new \ArrayIterator($results);
         }

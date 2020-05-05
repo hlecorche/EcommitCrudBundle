@@ -1,5 +1,8 @@
 <?php
-/**
+
+declare(strict_types=1);
+
+/*
  * This file is part of the EcommitCrudBundle package.
  *
  * (c) E-commit <contact@e-commit.fr>
@@ -24,8 +27,5 @@ interface QueryBuilderInterface
      */
     public function orderBy($sort, $sense);
 
-    /**
-     * @param QueryBuilderParameterInterface $parameter
-     */
     public function addParameter(QueryBuilderParameterInterface $parameter);
 }

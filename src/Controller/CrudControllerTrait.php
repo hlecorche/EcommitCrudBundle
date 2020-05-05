@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -24,6 +26,7 @@ trait CrudControllerTrait
 
     /**
      * @param $sessionName
+     *
      * @return Crud
      */
     protected function createCrud($sessionName)
@@ -35,7 +38,7 @@ trait CrudControllerTrait
     {
         $data = $this->prepareList();
 
-        return $this->renderCrud($this->getTemplateName('index'), \array_merge($data, array('crud' => $this->cm)));
+        return $this->renderCrud($this->getTemplateName('index'), array_merge($data, ['crud' => $this->cm]));
     }
 
     protected function prepareList()
@@ -51,33 +54,33 @@ trait CrudControllerTrait
     }
 
     /**
-     * Configures and returns the CRUD
+     * Configures and returns the CRUD.
      *
      * @return Crud
      */
     abstract protected function configCrud();
 
     /**
-     *
      * @return array
      */
     protected function addDataAfterBuildQuery()
     {
-        return array();
+        return [];
     }
 
-    protected function beforeBuildQuery()
+    protected function beforeBuildQuery(): void
     {
     }
 
-    protected function afterBuildQuery()
+    protected function afterBuildQuery(): void
     {
     }
 
     /**
-     * Returns template for action
+     * Returns template for action.
      *
      * @param string $action Action
+     *
      * @return string
      */
     abstract protected function getTemplateName($action);
@@ -90,7 +93,7 @@ trait CrudControllerTrait
         }
         $data = $this->prepareList();
 
-        return $this->renderCrud($this->getTemplateName('list'), \array_merge($data, array('crud' => $this->cm)));
+        return $this->renderCrud($this->getTemplateName('list'), array_merge($data, ['crud' => $this->cm]));
     }
 
     public function autoAjaxSearchAction()
@@ -102,18 +105,18 @@ trait CrudControllerTrait
         $data = $this->processSearch();
         $renderSearch = $this->renderCrudView(
             $this->getTemplateName('search'),
-            \array_merge($data, array('crud' => $this->cm))
+            array_merge($data, ['crud' => $this->cm])
         );
-        $renderList = $this->renderCrudView($this->getTemplateName('list'), \array_merge($data, array('crud' => $this->cm)));
+        $renderList = $this->renderCrudView($this->getTemplateName('list'), array_merge($data, ['crud' => $this->cm]));
 
         return $this->renderCrud(
             '@EcommitCrud/Crud/double_search.html.twig',
-            array(
+            [
                 'id_search' => $this->cm->getDivIdSearch(),
                 'id_list' => $this->cm->getDivIdList(),
                 'render_search' => $renderSearch,
-                'render_list' => $renderList
-            )
+                'render_list' => $renderList,
+            ]
         );
     }
 

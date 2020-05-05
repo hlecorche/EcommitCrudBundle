@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -17,7 +19,7 @@ use Symfony\Component\Form\FormBuilder;
 class FieldFilterNumber extends FieldFilterInteger
 {
     /**
-     * {@inheritDoc} 
+     * {@inheritdoc}
      */
     public function addField(FormBuilder $formBuilder)
     {

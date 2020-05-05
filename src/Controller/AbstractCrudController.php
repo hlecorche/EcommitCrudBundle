@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -12,7 +14,6 @@
 namespace Ecommit\CrudBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\ControllerTrait;
 
 abstract class AbstractCrudController extends AbstractController
 {

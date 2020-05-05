@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -17,42 +19,42 @@ class CrudSession
 {
     /**
      * Search's object (used by "setData" inside the form). Used to
-     * save the data of the search form
+     * save the data of the search form.
      *
      * @var AbstractFormSearcher
      */
     public $formSearcherData = null;
 
     /**
-     * Number of results, in one page
+     * Number of results, in one page.
      *
      * @var int
      */
     public $resultsPerPage = null;
 
     /**
-     * Displayed colums
+     * Displayed colums.
      *
      * @var type
      */
-    public $displayedColumns = array();
+    public $displayedColumns = [];
 
     /**
-     * Sortable: Sort (Column id)
+     * Sortable: Sort (Column id).
      *
      * @var type
      */
     public $sort = null;
 
     /**
-     * Sortable: Sens (ASC / DESC)
+     * Sortable: Sens (ASC / DESC).
      *
      * @var type
      */
     public $sense = null;
 
     /**
-     * Page number
+     * Page number.
      *
      * @var int
      */

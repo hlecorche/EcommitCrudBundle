@@ -1,5 +1,8 @@
 <?php
-/**
+
+declare(strict_types=1);
+
+/*
  * This file is part of the EcommitCrudBundle package.
  *
  * (c) E-commit <contact@e-commit.fr>
@@ -16,11 +19,11 @@ use Symfony\Component\Form\FormBuilder;
 class FieldFilterSelect2Country extends FieldFilterChoice
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addField(FormBuilder $formBuilder)
     {
-        $formBuilder->add($this->property, Select2CountryType::class , $this->typeOptions);
+        $formBuilder->add($this->property, Select2CountryType::class, $this->typeOptions);
 
         return $formBuilder;
     }

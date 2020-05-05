@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -19,55 +21,55 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class DisplaySettingsType extends AbstractType
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         //Field "resultsPerPage"
         $builder->add(
             'resultsPerPage',
             ChoiceType::class,
-            array(
+            [
                 'choices' => array_flip($options['resultsPerPageChoices']),
                 'label' => 'Number of results per page',
                 'choice_translation_domain' => false,
-            )
+            ]
         );
 
         //Field "displayedColumns"
         $builder->add(
             'displayedColumns',
             ChoiceType::class,
-            array(
+            [
                 'choices' => array_flip($options['columnsChoices']),
                 'multiple' => true,
                 'expanded' => true,
-                'label' => 'Columns to be shown'
-            )
+                'label' => 'Columns to be shown',
+            ]
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
-            array(
+            [
                 'csrf_protection' => false,
-            )
+            ]
         );
 
         $resolver->setRequired(
-            array(
+            [
                 'resultsPerPageChoices',
                 'columnsChoices',
-            )
+            ]
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getBlockPrefix()
     {

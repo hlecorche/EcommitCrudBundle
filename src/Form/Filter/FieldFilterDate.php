@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -22,19 +24,19 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class FieldFilterDate extends AbstractFieldFilter
 {
-    const GREATER_THAN = '>';
-    const GREATER_EQUAL = '>=';
-    const SMALLER_THAN = '<';
-    const SMALLER_EQUAL = '<=';
-    const EQUAL = '=';
+    public const GREATER_THAN = '>';
+    public const GREATER_EQUAL = '>=';
+    public const SMALLER_THAN = '<';
+    public const SMALLER_EQUAL = '<=';
+    public const EQUAL = '=';
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
-            array(
+            [
                 'type' => JqueryDatePickerType::class,
                 'with_time' => function (Options $options) {
                     if (DateTimeType::class === $options['type']) {
@@ -43,33 +45,33 @@ class FieldFilterDate extends AbstractFieldFilter
 
                     return false;
                 },
-            )
+            ]
         );
 
         $resolver->setRequired(
-            array(
+            [
                 'comparator',
-            )
+            ]
         );
 
         $resolver->setAllowedValues(
             'comparator',
-            array(
+            [
                 self::EQUAL,
                 self::GREATER_EQUAL,
                 self::GREATER_THAN,
                 self::SMALLER_EQUAL,
                 self::SMALLER_THAN,
-            )
+            ]
         );
 
         $resolver->setAllowedValues(
             'type',
-            array(
+            [
                 DateType::class,
                 DateTimeType::class,
                 JqueryDatePickerType::class,
-            )
+            ]
         );
     }
 
@@ -85,7 +87,7 @@ class FieldFilterDate extends AbstractFieldFilter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addField(FormBuilder $formBuilder)
     {
@@ -95,59 +97,59 @@ class FieldFilterDate extends AbstractFieldFilter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function getAutoConstraints()
     {
-        return array(
+        return [
             new Assert\Date(),
-        );
+        ];
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function changeQuery($queryBuilder, AbstractFormSearcher $formData, $aliasSearch)
     {
         $value = $formData->get($this->property);
         if (!empty($value) && $value instanceof \DateTime) {
-            $parameterName = 'value_date_' . str_replace(' ', '', $this->property);
+            $parameterName = 'value_date_'.str_replace(' ', '', $this->property);
 
             switch ($this->options['comparator']):
-                case FieldFilterDate::SMALLER_THAN:
-                case FieldFilterDate::GREATER_EQUAL:
+                case self::SMALLER_THAN:
+                case self::GREATER_EQUAL:
                     if (!$this->options['with_time']) {
                         $value->setTime(0, 0, 0);
                     }
-                    $value = $value->format('Y-m-d H:i:s');
-                    $queryBuilder->andWhere(
+            $value = $value->format('Y-m-d H:i:s');
+            $queryBuilder->andWhere(
                         sprintf('%s %s :%s', $aliasSearch, $this->options['comparator'], $parameterName)
                     )
                         ->setParameter($parameterName, $value);
-                    break;
-                case FieldFilterDate::SMALLER_EQUAL:
-                case FieldFilterDate::GREATER_THAN:
+            break;
+            case self::SMALLER_EQUAL:
+                case self::GREATER_THAN:
                     if (!$this->options['with_time']) {
                         $value->setTime(23, 59, 59);
                     }
-                    $value = $value->format('Y-m-d H:i:s');
-                    $queryBuilder->andWhere(
+            $value = $value->format('Y-m-d H:i:s');
+            $queryBuilder->andWhere(
                         sprintf('%s %s :%s', $aliasSearch, $this->options['comparator'], $parameterName)
                     )
                         ->setParameter($parameterName, $value);
-                    break;
-                default:
+            break;
+            default:
                     $valueDateInf = clone $value;
-                    $valueDateSup = clone $value;
-                    if (!$this->options['with_time']) {
-                        $valueDateInf->setTime(0, 0, 0);
-                        $valueDateSup->setTime(23, 59, 59);
-                    }
-                    $valueDateInf = $valueDateInf->format('Y-m-d H:i:s');
-                    $valueDateSup = $valueDateSup->format('Y-m-d H:i:s');
-                    $parameterNameInf = 'value_date_inf_' . str_replace(' ', '', $this->property);
-                    $parameterNameSup = 'value_date_sup_' . str_replace(' ', '', $this->property);
-                    $queryBuilder->andWhere(
+            $valueDateSup = clone $value;
+            if (!$this->options['with_time']) {
+                $valueDateInf->setTime(0, 0, 0);
+                $valueDateSup->setTime(23, 59, 59);
+            }
+            $valueDateInf = $valueDateInf->format('Y-m-d H:i:s');
+            $valueDateSup = $valueDateSup->format('Y-m-d H:i:s');
+            $parameterNameInf = 'value_date_inf_'.str_replace(' ', '', $this->property);
+            $parameterNameSup = 'value_date_sup_'.str_replace(' ', '', $this->property);
+            $queryBuilder->andWhere(
                         sprintf(
                             '%s >= :%s AND %s <= :%s',
                             $aliasSearch,
@@ -158,7 +160,7 @@ class FieldFilterDate extends AbstractFieldFilter
                     )
                         ->setParameter($parameterNameInf, $valueDateInf)
                         ->setParameter($parameterNameSup, $valueDateSup);
-                    break;
+            break;
             endswitch;
         }
 

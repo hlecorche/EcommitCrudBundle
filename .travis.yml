@@ -16,3 +16,4 @@ install:
 
 script:
     - php vendor/phpunit/phpunit/phpunit
+    - php vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --diff --dry-run -v

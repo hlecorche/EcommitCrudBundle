@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -16,7 +18,7 @@ use Symfony\Component\Panther\Client;
 use Symfony\Component\Panther\DomCrawler\Crawler;
 use Symfony\Component\Panther\PantherTestCase;
 
-class CrudControllerTest extends PantherTestCase
+class TestCrudControllerTest extends PantherTestCase
 {
     public static function setUpBeforeClass(): void
     {
@@ -285,7 +287,7 @@ class CrudControllerTest extends PantherTestCase
     protected function getSort(Crawler $crawler): array
     {
         $imageSort = $crawler->filterXPath('//table[@class="result"]/thead/tr/th/img');
-        if (0 === count($imageSort)) {
+        if (0 === \count($imageSort)) {
             return [];
         }
         $imageSort = $imageSort->first();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -20,7 +22,7 @@ class DoctrineORMPaginator extends AbstractDoctrinePaginator
     protected $fetchJoinCollection = false;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function getQueryBuilderClass()
     {
@@ -28,12 +30,12 @@ class DoctrineORMPaginator extends AbstractDoctrinePaginator
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function initPaginator()
+    public function initPaginator(): void
     {
         //Calculation of the number of lines
-        if (is_null($this->manualCountResults)) {
+        if (null === $this->manualCountResults) {
             $countOptions = $this->countOptions;
             if (!isset($countOptions['behavior'])) {
                 $countOptions['behavior'] = Paginate::getDefaultCountBehavior($this->query);
@@ -50,7 +52,7 @@ class DoctrineORMPaginator extends AbstractDoctrinePaginator
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isSimplifiedRequest()
     {
@@ -58,8 +60,10 @@ class DoctrineORMPaginator extends AbstractDoctrinePaginator
     }
 
     /**
-     * Use simplified request (not subrequest and not order by) or not when count results
-     * @param boolean $simplifiedRequest
+     * Use simplified request (not subrequest and not order by) or not when count results.
+     *
+     * @param bool $simplifiedRequest
+     *
      * @return DoctrineORMPaginator
      */
     public function setSimplifiedRequest($simplifiedRequest)
@@ -70,7 +74,7 @@ class DoctrineORMPaginator extends AbstractDoctrinePaginator
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isFetchJoinCollection()
     {
@@ -79,8 +83,10 @@ class DoctrineORMPaginator extends AbstractDoctrinePaginator
 
     /**
      * Set to true when fetch join a to-many collection
-     * In that case 3 instead of the 2 queries described are executed
-     * @param boolean $fetchJoinCollection
+     * In that case 3 instead of the 2 queries described are executed.
+     *
+     * @param bool $fetchJoinCollection
+     *
      * @return DoctrineORMPaginator
      */
     public function setFetchJoinCollection($fetchJoinCollection)
@@ -91,11 +97,11 @@ class DoctrineORMPaginator extends AbstractDoctrinePaginator
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getResults()
     {
-        if (is_null($this->results)) {
+        if (null === $this->results) {
             $query = $this->query->getQuery();
             $paginator = new Paginator($query, $this->fetchJoinCollection);
             $paginator->setUseOutputWalkers(!$this->simplifiedRequest);

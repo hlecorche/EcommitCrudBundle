@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -20,22 +22,22 @@ use Symfony\Component\Validator\Constraints as Assert;
 class FieldFilterText extends AbstractFieldFilter
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
-            array(
+            [
                 'must_begin' => false,
                 'must_end' => false,
                 'min_length' => null,
                 'max_length' => 255,
-            )
+            ]
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addField(FormBuilder $formBuilder)
     {
@@ -45,27 +47,27 @@ class FieldFilterText extends AbstractFieldFilter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function getAutoConstraints()
     {
-        return array(
+        return [
             new Assert\Length(
-                array(
+                [
                     'min' => $this->options['min_length'],
                     'max' => $this->options['max_length'],
-                )
+                ]
             ),
-        );
+        ];
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function changeQuery($queryBuilder, AbstractFormSearcher $formData, $aliasSearch)
     {
         $value = $formData->get($this->property);
-        $parameterName = 'value_text_' . str_replace(' ', '', $this->property);
+        $parameterName = 'value_text_'.str_replace(' ', '', $this->property);
         if (null === $value || '' === $value || !is_scalar($value)) {
             return $queryBuilder;
         }
@@ -77,9 +79,9 @@ class FieldFilterText extends AbstractFieldFilter
             $after = ($this->options['must_begin']) ? '' : '%';
             $before = ($this->options['must_end']) ? '' : '%';
             $value = addcslashes($value, '%_');
-            $like = $after . $value . $before;
+            $like = $after.$value.$before;
             $queryBuilder->andWhere(
-                $queryBuilder->expr()->like($aliasSearch, ':' . $parameterName)
+                $queryBuilder->expr()->like($aliasSearch, ':'.$parameterName)
             )
                 ->setParameter($parameterName, $like);
         }

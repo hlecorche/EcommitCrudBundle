@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -16,5 +18,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 interface FieldFilterDoctrineInterface
 {
     public function getRegistry();
+
     public function setRegistry(ManagerRegistry $registry);
 }

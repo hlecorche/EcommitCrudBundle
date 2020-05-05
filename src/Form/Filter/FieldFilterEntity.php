@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -27,25 +29,25 @@ class FieldFilterEntity extends FieldFilterChoice implements FieldFilterDoctrine
     protected $registry;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
         $resolver->setDefaults(
-            array(
+            [
                 'choice_label' => null,
                 'em' => null,
                 'query_builder' => null,
                 'identifier' => null,
-            )
+            ]
         );
 
         $resolver->setRequired(
-            array(
+            [
                 'class',
-            )
+            ]
         );
 
         $resolver->setNormalizer('em', $this->getEmNormalizer($this->registry));
@@ -60,7 +62,7 @@ class FieldFilterEntity extends FieldFilterChoice implements FieldFilterDoctrine
         $queryBuilderLoader = new ORMQueryBuilderLoader($this->options['query_builder']);
 
         $accessor = PropertyAccess::createPropertyAccessor();
-        $choices = array();
+        $choices = [];
         foreach ($queryBuilderLoader->getEntities() as $entity) {
             $id = $accessor->getValue($entity, $this->options['identifier']);
             $choices[$this->extractLabel($entity)] = $id;
@@ -75,8 +77,10 @@ class FieldFilterEntity extends FieldFilterChoice implements FieldFilterDoctrine
     }
 
     /**
-     * Extract property that should be used for displaying the entities as text in the HTML element
+     * Extract property that should be used for displaying the entities as text in the HTML element.
+     *
      * @param object $object
+     *
      * @throws \Exception
      */
     protected function extractLabel($object)
@@ -86,10 +90,9 @@ class FieldFilterEntity extends FieldFilterChoice implements FieldFilterDoctrine
 
             return $accessor->getValue($object, $this->options['choice_label']);
         } elseif (method_exists($object, '__toString')) {
-            return (string)$object;
-        } else {
-            throw new \Exception('"choice_label" option or "__toString" method must be defined"');
+            return (string) $object;
         }
+        throw new \Exception('"choice_label" option or "__toString" method must be defined"');
     }
 
     public function getRegistry()
@@ -97,7 +100,7 @@ class FieldFilterEntity extends FieldFilterChoice implements FieldFilterDoctrine
         return $this->registry;
     }
 
-    public function setRegistry(ManagerRegistry $registry)
+    public function setRegistry(ManagerRegistry $registry): void
     {
         $this->registry = $registry;
     }

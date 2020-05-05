@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -22,35 +24,35 @@ use Symfony\Component\Validator\Constraints as Assert;
 class FieldFilterChoice extends AbstractFieldFilter
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    protected function configureCommonOptions(OptionsResolver $resolver)
+    protected function configureCommonOptions(OptionsResolver $resolver): void
     {
         parent::configureCommonOptions($resolver);
 
         $resolver->setDefaults(
-            array(
+            [
                 'multiple' => false,
                 'min' => null,
                 'max' => 99,
-            )
+            ]
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
-            array(
+            [
                 'choices' => null,
-            )
+            ]
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function configureTypeOptions($typeOptions)
     {
@@ -63,9 +65,8 @@ class FieldFilterChoice extends AbstractFieldFilter
         return $typeOptions;
     }
 
-
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addField(FormBuilder $formBuilder)
     {
@@ -75,44 +76,44 @@ class FieldFilterChoice extends AbstractFieldFilter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function getAutoConstraints()
     {
         if ($this->options['multiple']) {
-            return array(
+            return [
                 new Assert\Count(
-                    array(
+                    [
                         'min' => $this->options['min'],
                         'max' => $this->options['max'],
-                    )
+                    ]
                 ),
-            );
-        } else {
-            return array();
+            ];
         }
+
+        return [];
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function changeQuery($queryBuilder, AbstractFormSearcher $formData, $aliasSearch)
     {
         $value = $formData->get($this->property);
-        $parameterName = 'value_choice' . str_replace(' ', '', $this->property);
-        if (null === $value || '' === $value || array() === $value) {
+        $parameterName = 'value_choice'.str_replace(' ', '', $this->property);
+        if (null === $value || '' === $value || [] === $value) {
             return $queryBuilder;
         }
 
         if ($this->options['multiple']) {
-            if (!is_array($value)) {
-                $value = array($value);
+            if (!\is_array($value)) {
+                $value = [$value];
             }
             $value = Util::filterScalarValues($value);
-            if (count($value) > $this->options['max'] || 0 === count($value)) {
+            if (\count($value) > $this->options['max'] || 0 === \count($value)) {
                 return $queryBuilder;
             }
-            if ($this->options['min'] && count($value) < $this->options['min']) {
+            if ($this->options['min'] && \count($value) < $this->options['min']) {
                 return $queryBuilder;
             }
             QueryBuilderFilter::addMultiFilter($queryBuilder, QueryBuilderFilter::SELECT_IN, $value, $aliasSearch, $parameterName);

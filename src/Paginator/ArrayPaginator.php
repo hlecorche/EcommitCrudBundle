@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -13,20 +15,19 @@ namespace Ecommit\CrudBundle\Paginator;
 
 class ArrayPaginator extends AbstractPaginator
 {
-
     protected $initialObjects = null;
     protected $manualCountResults = null;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function init()
+    public function init(): void
     {
-        if ($this->initialObjects === null) {
+        if (null === $this->initialObjects) {
             throw new \Exception('Results are required');
         }
 
-        if (is_null($this->manualCountResults)) {
+        if (null === $this->manualCountResults) {
             $this->setCountResults(\count($this->initialObjects));
             $this->initLastPage();
 
@@ -48,16 +49,17 @@ class ArrayPaginator extends AbstractPaginator
     }
 
     /**
-     * Set an array of results
+     * Set an array of results.
      *
      * @param array|ArrayIterator $results
+     *
      * @return ArrayPaginator
      */
     public function setData($results)
     {
         if ($results instanceof \ArrayIterator) {
             $this->initialObjects = $results->getArrayCopy();
-        } elseif (is_array($results)) {
+        } elseif (\is_array($results)) {
             $this->initialObjects = $results;
         } else {
             throw new \Exception('Results must be an array');
@@ -67,10 +69,10 @@ class ArrayPaginator extends AbstractPaginator
     }
 
     /**
-     * Set an array of results without slice
+     * Set an array of results without slice.
      *
      * @param array|ArrayIterator $results
-     * @param Int $manualCountResults
+     * @param int                 $manualCountResults
      */
     public function setDataWithoutSlice($results, $manualCountResults)
     {
@@ -81,7 +83,7 @@ class ArrayPaginator extends AbstractPaginator
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getResults()
     {

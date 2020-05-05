@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -28,24 +30,25 @@ abstract class AbstractFormSearcher
      */
     protected $accessor;
 
-    protected $commonOptions = array();
+    protected $commonOptions = [];
 
     public $isSubmitted = false;
 
     /**
-     * Declares fields
+     * Declares fields.
      *
      * @return array
      */
     public function configureFieldsFilter()
     {
-        return array();
+        return [];
     }
 
     /**
-     * Gets field value
+     * Gets field value.
      *
      * @param string $field Field Name
+     *
      * @return mixed
      */
     public function get($field)
@@ -63,9 +66,9 @@ abstract class AbstractFormSearcher
      * Clears this objet
      * Used before storing this object in session
      * By default, If one property is not public and it doesn't begin
-     * by "field", it will be deleted
+     * by "field", it will be deleted.
      */
-    public function clear()
+    public function clear(): void
     {
         unset($this->fieldFilters);
         unset($this->accessor);
@@ -76,27 +79,27 @@ abstract class AbstractFormSearcher
      * Sub method of "clear" method
      * Remove properties if they are not fields
      * If one property is not public and it doesn't begin
-     * by "field", it will be deleted
+     * by "field", it will be deleted.
      */
-    protected function clearExceptFields()
+    protected function clearExceptFields(): void
     {
         foreach ($this as $key => $value) {
             $variable = new \ReflectionProperty($this, $key);
-            if (!$variable->isPublic() && !\preg_match('/^field/', $key)) {
+            if (!$variable->isPublic() && !preg_match('/^field/', $key)) {
                 unset($this->$key);
             }
         }
     }
 
     /**
-     * Returns fields
+     * Returns fields.
      *
      * @return array
      */
     public function getFieldsFilter($registry = null)
     {
         if (!$this->fieldFilters) {
-            $this->fieldFilters = array();
+            $this->fieldFilters = [];
             foreach ($this->configureFieldsFilter() as $field) {
                 $this->fieldFilters[] = $field;
                 if (!empty($registry) && $field instanceof \Ecommit\CrudBundle\Form\Filter\FieldFilterDoctrineInterface) {
@@ -110,19 +113,16 @@ abstract class AbstractFormSearcher
     }
 
     /**
-     * Sets fields
-     *
-     * @param array $filters
+     * Sets fields.
      */
-    public function setFieldsFilter(array $filters)
+    public function setFieldsFilter(array $filters): void
     {
         $this->fieldFilters = $filters;
     }
 
     /**
-     * Changes the form (global change)
+     * Changes the form (global change).
      *
-     * @param \Symfony\Component\Form\FormBuilderInterface $formBuilder
      * @return \Symfony\Component\Form\FormBuilderInterface
      */
     public function globalBuildForm(FormBuilderInterface $formBuilder)
@@ -131,9 +131,10 @@ abstract class AbstractFormSearcher
     }
 
     /**
-     * Changes the query (global change)
+     * Changes the query (global change).
      *
      * @param QueryBuilder $queryBuilder
+     *
      * @return QueryBuilder
      */
     public function globalChangeQuery($queryBuilder)
@@ -142,7 +143,8 @@ abstract class AbstractFormSearcher
     }
 
     /**
-     * Returns true if auto validation is enabled
+     * Returns true if auto validation is enabled.
+     *
      * @return bool
      */
     public function automaticValidationIsEnabled()
@@ -151,7 +153,8 @@ abstract class AbstractFormSearcher
     }
 
     /**
-     * Returns true if labels are displayed in errors messages
+     * Returns true if labels are displayed in errors messages.
+     *
      * @return bool
      */
     public function displayLabelInErrors()
@@ -159,12 +162,12 @@ abstract class AbstractFormSearcher
         return false;
     }
 
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    public static function loadValidatorMetadata(ClassMetadata $metadata): void
     {
         $metadata->addConstraint(new Callback('validateFormSearcher'));
     }
 
-    public static function validateFormSearcher($value, ExecutionContextInterface $context)
+    public static function validateFormSearcher($value, ExecutionContextInterface $context): void
     {
         if ($value->automaticValidationIsEnabled()) {
             foreach ($value->getFieldsFilter() as $field) {
@@ -181,6 +184,7 @@ abstract class AbstractFormSearcher
         if (!isset($this->accessor) || !$this->accessor) {
             $this->accessor = PropertyAccess::createPropertyAccessor();
         }
+
         return $this->accessor;
     }
 
@@ -195,7 +199,7 @@ abstract class AbstractFormSearcher
     /**
      * @param array $commonOptions
      */
-    public function setCommonOptions($commonOptions)
+    public function setCommonOptions($commonOptions): void
     {
         $this->commonOptions = $commonOptions;
     }

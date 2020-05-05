@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -13,7 +15,6 @@ namespace Ecommit\CrudBundle\Paginator;
 
 abstract class AbstractPaginator implements \IteratorAggregate, \Countable
 {
-
     protected $page = 1;
     protected $maxPerPage = 1;
     protected $lastPage = 1;
@@ -23,8 +24,9 @@ abstract class AbstractPaginator implements \IteratorAggregate, \Countable
     /**
      * Constructor.
      *
-     * @param string $class The model class
-     * @param integer $maxPerPage Number of records to display per page
+     * @param string $class      The model class
+     * @param int    $maxPerPage Number of records to display per page
+     *
      * @return AbstractPaginator
      */
     public function __construct($maxPerPage = 10)
@@ -49,7 +51,7 @@ abstract class AbstractPaginator implements \IteratorAggregate, \Countable
     /**
      * Returns true if the current query requires pagination.
      *
-     * @return boolean
+     * @return bool
      */
     public function haveToPaginate()
     {
@@ -59,11 +61,11 @@ abstract class AbstractPaginator implements \IteratorAggregate, \Countable
     /**
      * Returns the first index on the current page.
      *
-     * @return integer
+     * @return int
      */
     public function getFirstIndice()
     {
-        if ($this->getCountResults() == 0) {
+        if (0 == $this->getCountResults()) {
             return 0;
         }
 
@@ -73,21 +75,21 @@ abstract class AbstractPaginator implements \IteratorAggregate, \Countable
     /**
      * Returns the last index on the current page.
      *
-     * @return integer
+     * @return int
      */
     public function getLastIndice()
     {
         if ($this->page * $this->maxPerPage >= $this->countResults) {
             return $this->countResults;
-        } else {
-            return $this->page * $this->maxPerPage;
         }
+
+        return $this->page * $this->maxPerPage;
     }
 
     /**
      * Returns the number of results.
      *
-     * @return integer
+     * @return int
      */
     public function getCountResults()
     {
@@ -97,9 +99,9 @@ abstract class AbstractPaginator implements \IteratorAggregate, \Countable
     /**
      * Sets the number of results.
      *
-     * @param integer $nb
+     * @param int $nb
      */
-    protected function setCountResults($nb)
+    protected function setCountResults($nb): void
     {
         $this->countResults = $nb;
     }
@@ -107,7 +109,7 @@ abstract class AbstractPaginator implements \IteratorAggregate, \Countable
     /**
      * Returns the first page number.
      *
-     * @return integer
+     * @return int
      */
     public function getFirstPage()
     {
@@ -117,7 +119,7 @@ abstract class AbstractPaginator implements \IteratorAggregate, \Countable
     /**
      * Returns the last page number.
      *
-     * @return integer
+     * @return int
      */
     public function getLastPage()
     {
@@ -126,12 +128,11 @@ abstract class AbstractPaginator implements \IteratorAggregate, \Countable
 
     /**
      * Init the last page number.
-     *
      */
-    protected function initLastPage()
+    protected function initLastPage(): void
     {
         if ($this->getCountResults() > 0) {
-            $lastPage = (int) \ceil($this->getCountResults() / $this->getMaxPerPage());
+            $lastPage = (int) ceil($this->getCountResults() / $this->getMaxPerPage());
         } else {
             $lastPage = 1;
         }
@@ -145,7 +146,7 @@ abstract class AbstractPaginator implements \IteratorAggregate, \Countable
     /**
      * Returns the current page.
      *
-     * @return integer
+     * @return int
      */
     public function getPage()
     {
@@ -155,7 +156,7 @@ abstract class AbstractPaginator implements \IteratorAggregate, \Countable
     /**
      * Returns the next page.
      *
-     * @return integer
+     * @return int
      */
     public function getNextPage()
     {
@@ -165,7 +166,7 @@ abstract class AbstractPaginator implements \IteratorAggregate, \Countable
     /**
      * Returns the previous page.
      *
-     * @return integer
+     * @return int
      */
     public function getPreviousPage()
     {
@@ -175,12 +176,13 @@ abstract class AbstractPaginator implements \IteratorAggregate, \Countable
     /**
      * Sets the current page.
      *
-     * @param integer $page
+     * @param int $page
+     *
      * @return AbstractPaginator
      */
     public function setPage($page)
     {
-        $this->page = intval($page);
+        $this->page = (int) $page;
 
         if ($this->page <= 0) {
             $this->page = 1;
@@ -192,7 +194,7 @@ abstract class AbstractPaginator implements \IteratorAggregate, \Countable
     /**
      * Returns the maximum number of results per page.
      *
-     * @return integer
+     * @return int
      */
     public function getMaxPerPage()
     {
@@ -202,12 +204,13 @@ abstract class AbstractPaginator implements \IteratorAggregate, \Countable
     /**
      * Sets the maximum number of results per page.
      *
-     * @param integer $max
+     * @param int $max
+     *
      * @return AbstractPaginator
      */
     public function setMaxPerPage($max)
     {
-        $max = intval($max);
+        $max = (int) $max;
 
         if ($max <= 0) {
             throw new \Exception('Max results value must be positive');
@@ -220,7 +223,7 @@ abstract class AbstractPaginator implements \IteratorAggregate, \Countable
     /**
      * Returns true if on the first page.
      *
-     * @return boolean
+     * @return bool
      */
     public function isFirstPage()
     {
@@ -230,7 +233,7 @@ abstract class AbstractPaginator implements \IteratorAggregate, \Countable
     /**
      * Returns true if on the last page.
      *
-     * @return boolean
+     * @return bool
      */
     public function isLastPage()
     {
@@ -240,7 +243,7 @@ abstract class AbstractPaginator implements \IteratorAggregate, \Countable
     /**
      * Returns true if the properties used for iteration have been initialized.
      *
-     * @return boolean
+     * @return bool
      */
     protected function isIteratorInitialized()
     {

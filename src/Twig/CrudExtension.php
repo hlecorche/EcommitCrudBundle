@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -31,11 +33,8 @@ class CrudExtension extends Twig_Extension
      */
     protected $templating;
 
-
     /**
-     * Constructor
-     *
-     * @param CrudHelper $crudHelper
+     * Constructor.
      */
     public function __construct(CrudHelper $crudHelper, Twig_Environment $templating)
     {
@@ -60,129 +59,129 @@ class CrudExtension extends Twig_Extension
      */
     public function getFunctions()
     {
-        return array(
+        return [
             new Twig_SimpleFunction(
                 'paginator_links',
-                array($this, 'paginatorLinks'),
-                array('is_safe' => array('all'))
+                [$this, 'paginatorLinks'],
+                ['is_safe' => ['all']]
             ),
             new Twig_SimpleFunction(
                 'crud_paginator_links',
-                array($this, 'crudPaginatorLinks'),
-                array('is_safe' => array('all'))
+                [$this, 'crudPaginatorLinks'],
+                ['is_safe' => ['all']]
             ),
             new Twig_SimpleFunction(
                 'crud_th',
-                array($this, 'th'),
-                array('is_safe' => array('all'))
+                [$this, 'th'],
+                ['is_safe' => ['all']]
             ),
             new Twig_SimpleFunction(
                 'crud_td',
-                array($this, 'td'),
-                array('is_safe' => array('all'))
+                [$this, 'td'],
+                ['is_safe' => ['all']]
             ),
             new Twig_SimpleFunction(
                 'crud_display_settings',
-                array($this, 'displaySettings'),
-                array('is_safe' => array('all'))
+                [$this, 'displaySettings'],
+                ['is_safe' => ['all']]
             ),
             new Twig_SimpleFunction(
                 'crud_search_form',
-                array($this, 'searchForm'),
-                array('is_safe' => array('all'))
+                [$this, 'searchForm'],
+                ['is_safe' => ['all']]
             ),
             new Twig_SimpleFunction(
                 'crud_search_reset',
-                array($this, 'searchReset'),
-                array('is_safe' => array('all'))
+                [$this, 'searchReset'],
+                ['is_safe' => ['all']]
             ),
             new Twig_SimpleFunction(
                 'crud_declare_modal',
-                array($this, 'declareModal'),
-                array('is_safe' => array('all'))
+                [$this, 'declareModal'],
+                ['is_safe' => ['all']]
             ),
             new Twig_SimpleFunction(
                 'crud_remote_modal',
-                array($this, 'remoteModal'),
-                array('is_safe' => array('all'))
+                [$this, 'remoteModal'],
+                ['is_safe' => ['all']]
             ),
             new Twig_SimpleFunction(
                 'crud_form_modal',
-                array($this, 'formModal'),
-                array('is_safe' => array('all'))
+                [$this, 'formModal'],
+                ['is_safe' => ['all']]
             ),
-        );
+        ];
     }
 
     /**
-     * Twig function: "paginator_links"
+     * Twig function: "paginator_links".
      *
      * @see CrudHelper:paginatorLinks
      */
     public function paginatorLinks(
         AbstractPaginator $paginator,
         $routeName,
-        $routeParams = array(),
-        $options = array()
+        $routeParams = [],
+        $options = []
     ) {
         return $this->crudHelper->paginatorLinks($paginator, $routeName, $routeParams, $options);
     }
 
     /**
-     * Twig function: "crud_paginator_links"
+     * Twig function: "crud_paginator_links".
      *
      * @see CrudHelper:crudPaginatorLinks
      */
-    public function crudPaginatorLinks(Crud $crud, $options = array(), $ajaxOptions = array())
+    public function crudPaginatorLinks(Crud $crud, $options = [], $ajaxOptions = [])
     {
         return $this->crudHelper->crudPaginatorLinks($crud, $options, $ajaxOptions);
     }
 
     /**
-     * Twig function: "crud_th"
+     * Twig function: "crud_th".
      *
      * @see CrudHelper:th
      */
-    public function th($columnId, Crud $crud, $options = array(), $thOptions = array(), $ajaxOptions = array())
+    public function th($columnId, Crud $crud, $options = [], $thOptions = [], $ajaxOptions = [])
     {
         return $this->crudHelper->th($columnId, $crud, $options, $thOptions, $ajaxOptions);
     }
 
     /**
-     * Twig function: "crud_td"
+     * Twig function: "crud_td".
      *
      * @see CrudHelper:td
      */
-    public function td($columnId, Crud $crud, $value, $options = array(), $tdOptions = array())
+    public function td($columnId, Crud $crud, $value, $options = [], $tdOptions = [])
     {
         return $this->crudHelper->td($columnId, $crud, $value, $options, $tdOptions);
     }
 
     /**
-     * Twig function: "crud_display_config"
+     * Twig function: "crud_display_config".
      *
-     * @param Crud $crud
-     * @param array $options Options :
-     *        * modal:  Include (or not) inside a modal. Default: true
-     *        * image_url: Url image (button)
-     *        * use_bootstrap: Use Bootstrap or not
-     *        * modal_close_div_class: Close Div CSS Class
-     *        * template: Template used. If null, default template is used
+     * @param array $options     Options :
+     *                           * modal:  Include (or not) inside a modal. Default: true
+     *                           * image_url: Url image (button)
+     *                           * use_bootstrap: Use Bootstrap or not
+     *                           * modal_close_div_class: Close Div CSS Class
+     *                           * template: Template used. If null, default template is used
      * @param array $ajaxOptions Ajax options
+     *
      * @return string
      */
-    public function displaySettings(Crud $crud, $options = array(), $ajaxOptions = array())
+    public function displaySettings(Crud $crud, $options = [], $ajaxOptions = [])
     {
         $options = array_merge($crud->getTemplateConfiguration('crud_display_settings'), $options);
         $resolver = new OptionsResolver();
         $resolver->setDefaults(
-            array(
+            [
                 'modal' => true,
                 'image_url' => '/bundles/ecommitcrud/images/i16/list.png',
                 'use_bootstrap' => $this->crudHelper->useBootstrap(),
                 'modal_close_div_class' => 'overlay-close',
                 'template' => null,
-            )
+            ]
         );
         $resolver->setAllowedTypes('modal', 'bool');
         $resolver->setAllowedTypes('use_bootstrap', 'bool');
@@ -212,10 +211,10 @@ class CrudExtension extends Twig_Extension
 
         return $this->templating->render(
             $templateName,
-            array(
+            [
                 'form' => $form,
                 'url' => $crud->getUrl(),
-                'reset_settings_url' => $crud->getUrl(array('razsettings' => 1)),
+                'reset_settings_url' => $crud->getUrl(['razsettings' => 1]),
                 'ajax_options' => $ajaxOptions,
                 'image_url' => $options['image_url'],
                 'suffix' => $crud->getSessionName(),
@@ -224,56 +223,56 @@ class CrudExtension extends Twig_Extension
                 'overlay_service' => $this->crudHelper->getOverlayService(),
                 'display_button' => $crud->getDisplayResults(),
                 'div_id_list' => $crud->getDivIdList(),
-            )
+            ]
         );
     }
 
     /**
-     * Twig function: "crud_search_form"
+     * Twig function: "crud_search_form".
      *
      * @see CrudHelper:searchFormTag
      */
-    public function searchForm(Crud $crud, $ajaxOptions = array(), $htmlOptions = array())
+    public function searchForm(Crud $crud, $ajaxOptions = [], $htmlOptions = [])
     {
         return $this->crudHelper->searchFormTag($crud, $ajaxOptions, $htmlOptions);
     }
 
     /**
-     * Twig function: "crud_search_reset"
+     * Twig function: "crud_search_reset".
      *
      * @see CrudHelper:searchResetButton
      */
-    public function searchReset(Crud $crud, $options = array(), $ajaxOptions = array(), $htmlOptions = array())
+    public function searchReset(Crud $crud, $options = [], $ajaxOptions = [], $htmlOptions = [])
     {
         return $this->crudHelper->searchResetButton($crud, $options, $ajaxOptions, $htmlOptions);
     }
 
     /**
-     * Twig function: "crud_declare_modal"
+     * Twig function: "crud_declare_modal".
      *
      * @see CrudHelper:declareModal
      */
-    public function declareModal($modalId, $options = array())
+    public function declareModal($modalId, $options = [])
     {
         return $this->crudHelper->declareModal($modalId, $options);
     }
 
     /**
-     * Twig function: "crud_remote_modal"
+     * Twig function: "crud_remote_modal".
      *
      * @see CrudHelper:remoteModal
      */
-    public function remoteModal($modalId, $url, $options = array(), $ajaxOptions = array())
+    public function remoteModal($modalId, $url, $options = [], $ajaxOptions = [])
     {
         return $this->crudHelper->remoteModal($modalId, $url, $options, $ajaxOptions);
     }
 
     /**
-     * Twig function: "crud_form_modal"
+     * Twig function: "crud_form_modal".
      *
      * @see CrudHelper:formModal
      */
-    public function formModal($modalId, $form, $ajaxOptions = array(), $htmlOptions = array())
+    public function formModal($modalId, $form, $ajaxOptions = [], $htmlOptions = [])
     {
         return $this->crudHelper->formModal($modalId, $form, $ajaxOptions, $htmlOptions);
     }

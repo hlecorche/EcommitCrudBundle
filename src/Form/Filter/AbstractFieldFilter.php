@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -25,12 +27,12 @@ abstract class AbstractFieldFilter
     protected $isInitiated = false;
 
     /**
-     * @param string $columnId Column id
-     * @param string $property Field Name (search form)
-     * @param array $options Options
-     * @param array $typeOptions Type options
+     * @param string $columnId    Column id
+     * @param string $property    Field Name (search form)
+     * @param array  $options     Options
+     * @param array  $typeOptions Type options
      */
-    public function __construct($columnId, $property, $options = array(), $typeOptions = array())
+    public function __construct($columnId, $property, $options = [], $typeOptions = [])
     {
         $this->columnId = $columnId;
         $this->property = $property;
@@ -42,7 +44,7 @@ abstract class AbstractFieldFilter
         $this->typeOptions = $typeOptions;
     }
 
-    public function init()
+    public function init(): void
     {
         if ($this->isInitiated) {
             return;
@@ -60,27 +62,22 @@ abstract class AbstractFieldFilter
         $this->isInitiated = true;
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    protected function configureCommonOptions(OptionsResolver $resolver)
+    protected function configureCommonOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
-            array(
+            [
                 'validate' => true,
-            )
+            ]
         );
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
     }
 
     /**
      * @param array $typeOptions
+     *
      * @return array
      */
     protected function configureTypeOptions($typeOptions)
@@ -89,33 +86,34 @@ abstract class AbstractFieldFilter
     }
 
     /**
-     * Adds the field into the form
-     * @param FormBuilder $formBuilder
+     * Adds the field into the form.
+     *
      * @return FormBuilder
      */
     abstract public function addField(FormBuilder $formBuilder);
 
     /**
-     * Changes the query
+     * Changes the query.
+     *
      * @param QueryBuilder $queryBuilder
-     * @param AbstractFormSearcher $formData
-     * @param string $aliasSearch
+     * @param string       $aliasSearch
+     *
      * @return QueryBuilder
      */
     abstract public function changeQuery($queryBuilder, AbstractFormSearcher $formData, $aliasSearch);
 
     /**
-     * Add auto validation
+     * Add auto validation.
+     *
      * @param $value
-     * @param ExecutionContextInterface $context
      */
-    public function autoValidate(AbstractFormSearcher $value, ExecutionContextInterface $context)
+    public function autoValidate(AbstractFormSearcher $value, ExecutionContextInterface $context): void
     {
         if (!$this->options['validate']) {
             return;
         }
         $autoConstraints = $this->getAutoConstraints();
-        if (count($autoConstraints) == 0) {
+        if (0 == \count($autoConstraints)) {
             return;
         }
         $context->getValidator()
@@ -125,16 +123,17 @@ abstract class AbstractFieldFilter
     }
 
     /**
-     * Gets auto constraints list
+     * Gets auto constraints list.
+     *
      * @return array
      */
     protected function getAutoConstraints()
     {
-        return array();
+        return [];
     }
 
     /**
-     * Returns the column id associated at this object
+     * Returns the column id associated at this object.
      *
      * @return string
      */
@@ -144,7 +143,7 @@ abstract class AbstractFieldFilter
     }
 
     /**
-     * Returns the property associated at this object
+     * Returns the property associated at this object.
      *
      * @return string
      */
@@ -155,9 +154,9 @@ abstract class AbstractFieldFilter
 
     /**
      * @param string $label
-     * @param bool $displayLabelInErrors
+     * @param bool   $displayLabelInErrors
      */
-    public function setLabel($label, $displayLabelInErrors = false)
+    public function setLabel($label, $displayLabelInErrors = false): void
     {
         if (!empty($label) && !isset($this->typeOptions['label'])) {
             $this->typeOptions['label'] = $label;

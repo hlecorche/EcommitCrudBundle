@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the EcommitCrudBundle package.
  *
@@ -16,14 +18,14 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
- * This is the class that validates and merges configuration from your config files
+ * This is the class that validates and merges configuration from your config files.
  *
  * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html#cookbook-bundles-extension-config-class}
  */
 class Configuration implements ConfigurationInterface
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getConfigTreeBuilder()
     {
@@ -33,7 +35,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('template_configuration')
-                    ->treatNullLike(array())
+                    ->treatNullLike([])
                     ->prototype('variable')
                     ->end()
                     ->validate()
@@ -60,4 +62,3 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 }
-

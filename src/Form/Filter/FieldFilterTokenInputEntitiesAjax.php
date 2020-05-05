@@ -1,5 +1,8 @@
 <?php
-/**
+
+declare(strict_types=1);
+
+/*
  * This file is part of the EcommitCrudBundle package.
  *
  * (c) E-commit <contact@e-commit.fr>
@@ -20,12 +23,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 class FieldFilterTokenInputEntitiesAjax extends AbstractFieldFilter
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
-            array(
+            [
                 'em' => null,
                 'query_builder' => null,
                 'choice_label' => null,
@@ -35,23 +38,23 @@ class FieldFilterTokenInputEntitiesAjax extends AbstractFieldFilter
                 'route_params' => null,
                 'min' => null,
                 'max' => 99,
-            )
+            ]
         );
 
         $resolver->setRequired(
-            array(
+            [
                 'class',
-            )
+            ]
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function configureTypeOptions($typeOptions)
     {
         foreach ($this->options as $optionName => $optionValue) {
-            if (!empty($optionValue) && !in_array($optionName, array('validate', 'min'))) {
+            if (!empty($optionValue) && !\in_array($optionName, ['validate', 'min'])) {
                 $typeOptions[$optionName] = $optionValue;
             }
         }
@@ -61,7 +64,7 @@ class FieldFilterTokenInputEntitiesAjax extends AbstractFieldFilter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addField(FormBuilder $formBuilder)
     {
@@ -71,42 +74,43 @@ class FieldFilterTokenInputEntitiesAjax extends AbstractFieldFilter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function getAutoConstraints()
     {
-        return array(
+        return [
             new Assert\Count(
-                array(
+                [
                     'min' => $this->options['min'],
                     'max' => $this->options['max'],
-                )
+                ]
             ),
-        );
+        ];
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function changeQuery($queryBuilder, AbstractFormSearcher $formData, $aliasSearch)
     {
         $value = $formData->get($this->property);
-        $parameterName = 'value_choice' . str_replace(' ', '', $this->property);
-        if (null === $value || '' === $value || !is_array($value)) {
+        $parameterName = 'value_choice'.str_replace(' ', '', $this->property);
+        if (null === $value || '' === $value || !\is_array($value)) {
             return $queryBuilder;
         }
         $value = Util::filterScalarValues($value);
-        if (0 === count($value)) {
+        if (0 === \count($value)) {
             return $queryBuilder;
         }
 
-        if (count($value) > $this->options['max']) {
+        if (\count($value) > $this->options['max']) {
             return $queryBuilder;
         }
-        if ($this->options['min'] && count($value) < $this->options['min']) {
+        if ($this->options['min'] && \count($value) < $this->options['min']) {
             return $queryBuilder;
         }
-        return $queryBuilder->andWhere($queryBuilder->expr()->in($aliasSearch, ':' . $parameterName))
+
+        return $queryBuilder->andWhere($queryBuilder->expr()->in($aliasSearch, ':'.$parameterName))
             ->setParameter($parameterName, $value);
     }
 }

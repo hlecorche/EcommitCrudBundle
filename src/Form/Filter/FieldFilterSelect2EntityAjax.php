@@ -1,5 +1,8 @@
 <?php
-/**
+
+declare(strict_types=1);
+
+/*
  * This file is part of the EcommitCrudBundle package.
  *
  * (c) E-commit <contact@e-commit.fr>
@@ -17,12 +20,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class FieldFilterSelect2EntityAjax extends FieldFilterChoice
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
-            array(
+            [
                 'em' => null,
                 'query_builder' => null,
                 'choice_label' => null,
@@ -30,23 +33,23 @@ class FieldFilterSelect2EntityAjax extends FieldFilterChoice
                 'url' => null, //Required in FormType if route_name is empty
                 'route_name' => null,
                 'route_params' => null,
-            )
+            ]
         );
 
         $resolver->setRequired(
-            array(
+            [
                 'class',
-            )
+            ]
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function configureTypeOptions($typeOptions)
     {
         foreach ($this->options as $optionName => $optionValue) {
-            if (!empty($optionValue) && !in_array($optionName, array('validate', 'min'))) {
+            if (!empty($optionValue) && !\in_array($optionName, ['validate', 'min'])) {
                 $typeOptions[$optionName] = $optionValue;
             }
         }
@@ -56,7 +59,7 @@ class FieldFilterSelect2EntityAjax extends FieldFilterChoice
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addField(FormBuilder $formBuilder)
     {
