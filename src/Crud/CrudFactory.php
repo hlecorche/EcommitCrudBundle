@@ -73,7 +73,7 @@ class CrudFactory
             $this->formFactory,
             $this->requestStack->getCurrentRequest(),
             $this->registry,
-            $this->tokenStorage->getToken()->getUser(),
+            $this->tokenStorage->getToken()->getUser()
         );
     }
 }
