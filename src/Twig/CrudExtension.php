@@ -31,11 +31,6 @@ class CrudExtension extends AbstractExtension
     protected $crudHelper;
 
     /**
-     * @var Environment
-     */
-    protected $templating;
-
-    /**
      * @var FormRendererInterface
      */
     protected $formRenderer;
@@ -45,10 +40,9 @@ class CrudExtension extends AbstractExtension
     /**
      * Constructor.
      */
-    public function __construct(CrudHelper $crudHelper, Environment $templating, FormRendererInterface $formRenderer, string $theme)
+    public function __construct(CrudHelper $crudHelper, FormRendererInterface $formRenderer, string $theme)
     {
         $this->crudHelper = $crudHelper;
-        $this->templating = $templating;
         $this->formRenderer = $formRenderer;
         $this->theme = $theme;
     }
@@ -94,7 +88,10 @@ class CrudExtension extends AbstractExtension
             new TwigFunction(
                 'crud_display_settings',
                 [$this, 'displaySettings'],
-                ['is_safe' => ['all']]
+                [
+                    'needs_environment' => true,
+                    'is_safe' => ['all'],
+                ]
             ),
             new TwigFunction(
                 'crud_search_form',
@@ -194,7 +191,7 @@ class CrudExtension extends AbstractExtension
      *
      * @return string
      */
-    public function displaySettings(Crud $crud, $options = [], $ajaxOptions = [])
+    public function displaySettings(Environment $environment, Crud $crud, $options = [], $ajaxOptions = [])
     {
         $options = array_merge($crud->getTemplateConfiguration('crud_display_settings'), $options);
         $resolver = new OptionsResolver();
@@ -233,7 +230,7 @@ class CrudExtension extends AbstractExtension
             }
         }
 
-        return $this->templating->render(
+        return $environment->render(
             $templateName,
             [
                 'form' => $form,
