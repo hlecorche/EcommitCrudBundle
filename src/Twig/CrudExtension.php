@@ -193,7 +193,6 @@ class CrudExtension extends AbstractExtension
      */
     public function displaySettings(Environment $environment, Crud $crud, $options = [], $ajaxOptions = [])
     {
-        $options = array_merge($crud->getTemplateConfiguration('crud_display_settings'), $options);
         $resolver = new OptionsResolver();
         $resolver->setDefaults(
             [

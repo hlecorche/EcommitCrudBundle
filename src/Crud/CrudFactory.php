@@ -46,25 +46,18 @@ class CrudFactory
      */
     protected $tokenStorage;
 
-    /**
-     * @var array
-     */
-    protected $templateConfiguration;
-
     public function __construct(
         RouterInterface $router,
         FormFactoryInterface $formFactory,
         RequestStack $requestStack,
         ManagerRegistry $registry,
-        TokenStorageInterface $tokenStorage,
-        array $templateConfiguration
+        TokenStorageInterface $tokenStorage
     ) {
         $this->router = $router;
         $this->formFactory = $formFactory;
         $this->requestStack = $requestStack;
         $this->registry = $registry;
         $this->tokenStorage = $tokenStorage;
-        $this->templateConfiguration = $templateConfiguration;
     }
 
     /**
@@ -81,7 +74,6 @@ class CrudFactory
             $this->requestStack->getCurrentRequest(),
             $this->registry,
             $this->tokenStorage->getToken()->getUser(),
-            $this->templateConfiguration
         );
     }
 }

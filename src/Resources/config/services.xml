@@ -9,7 +9,6 @@
             <argument type="service" id="Symfony\Component\HttpFoundation\RequestStack"/>
             <argument type="service" id="Doctrine\Persistence\ManagerRegistry" />
             <argument type="service" id="Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface"/>
-            <argument>%ecommit_crud.template_configuration%</argument>
         </service>
         <service id="ecommit_crud.factory" alias="Ecommit\CrudBundle\Crud\CrudFactory" public="true" />
 
@@ -23,7 +22,6 @@
             <argument type="service" id="ecommit_javascript.overlay"/>
             <argument type="collection">
                 <argument key="use_bootstrap">%ecommit_javascript.use_bootstrap%</argument>
-                <argument key="template_configuration">%ecommit_crud.template_configuration%</argument>
                 <argument key="images">%ecommit_crud.images%</argument>
             </argument>
         </service>

@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Ecommit\CrudBundle\DependencyInjection;
 
-use Ecommit\CrudBundle\Crud\Crud;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -35,21 +34,6 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('theme')->isRequired()->end()
-                ->arrayNode('template_configuration')
-                    ->treatNullLike([])
-                    ->prototype('variable')
-                    ->end()
-                    ->validate()
-                        ->ifTrue(function ($v) {
-                            foreach ($v as $functionName => $value) {
-                                if (!Crud::validateConfigureTemplateFunctionName($functionName)) {
-                                    return true;
-                                }
-                            }
-                        })
-                        ->thenInvalid('Function name in template_configuration is invalid.')
-                    ->end()
-                ->end()
                 ->arrayNode('images')
                     ->addDefaultsIfNotSet()
                     ->children()
