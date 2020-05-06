@@ -17,6 +17,8 @@ addons:
 before_install:
     - sudo rm -rf ~/.nvm - curl -sL "https://deb.nodesource.com/setup_13.x" | sudo -E bash -
     - sudo apt-get install -y nodejs
+    - curl -o- -L https://yarnpkg.com/install.sh | bash
+    - export PATH="$HOME/.yarn/bin:$PATH"
 
 install:
     - if [ "$DEPENDENCIES" = "low" ]; then composer update --prefer-lowest --prefer-stable; else composer install; fi;
