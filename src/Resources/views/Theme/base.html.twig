@@ -1,3 +1,89 @@
+{# paginator_links / crud_paginator_links #}
+
+{% block paginator_links %}
+{% spaceless %}
+    {% if paginator.haveToPaginate %}
+        {% set ul_attr = ul_attr|merge({class: (ul_attr.class|default('') ~ ' ec-crud-pagination')|trim}) %}
+        <nav{% with { attr: nav_attr } %}{{ block('attributes', template_name) }}{% endwith %}>
+        <ul{% with { attr: ul_attr } %}{{ block('attributes', template_name) }}{% endwith %}>
+                {{ block('paginator_links_content', template_name) }}
+            </ul>
+        </nav>
+    {% endif %}
+{% endspaceless %}
+{% endblock %}
+
+{% block paginator_links_content %}
+    {% with { page: pages.first } %}{{ block('paginator_links_first_page', template_name) }}{% endwith %}
+    {% with { page: pages.previous } %}{{ block('paginator_links_previous_page', template_name) }}{% endwith %}
+    {% for page in pages.before_current %}
+        {{ block('paginator_links_other_page', template_name) }}
+    {% endfor %}
+    {% with { page: pages.current } %}{{ block('paginator_links_current_page', template_name) }}{% endwith %}
+    {% for page in pages.after_current %}
+        {{ block('paginator_links_other_page', template_name) }}
+    {% endfor %}
+    {% with { page: pages.next } %}{{ block('paginator_links_next_page', template_name) }}{% endwith %}
+    {% with { page: pages.last } %}{{ block('paginator_links_last_page', template_name) }}{% endwith %}
+{% endblock %}
+
+{% block paginator_links_first_page %}
+    {% set li_attr_child = li_attr.first_page|merge({class: (li_attr.first_page.class|default('') ~ ' first')|trim}) %}
+    {% set a_attr_child = a_attr.first_page %}
+    {% set page_label = '«' %}
+    {{ block('paginator_links_page', template_name) }}
+{% endblock %}
+
+{% block paginator_links_previous_page %}
+    {% set li_attr_child = li_attr.previous_page|merge({class: (li_attr.previous_page.class|default('') ~ ' previous')|trim}) %}
+    {% set a_attr_child = a_attr.previous_page %}
+    {% set page_label = '‹' %}
+    {{ block('paginator_links_page', template_name) }}
+{% endblock %}
+
+{% block paginator_links_current_page %}
+    {% set li_attr_child = li_attr.current_page|merge({class: (li_attr.current_page.class|default('') ~ ' current')|trim}) %}
+    {% set a_attr_child = a_attr.current_page %}
+    {% set page_label = page %}
+    {{ block('paginator_links_page', template_name) }}
+{% endblock %}
+
+{% block paginator_links_next_page %}
+    {% set li_attr_child = li_attr.next_page|merge({class: (li_attr.next_page.class|default('') ~ ' next')|trim}) %}
+    {% set a_attr_child = a_attr.next_page %}
+    {% set page_label = '›' %}
+    {{ block('paginator_links_page', template_name) }}
+{% endblock %}
+
+{% block paginator_links_last_page %}
+    {% set li_attr_child = li_attr.last_page|merge({class: (li_attr.last_page.class|default('') ~ ' last')|trim}) %}
+    {% set a_attr_child = a_attr.last_page %}
+    {% set page_label = '»' %}
+    {{ block('paginator_links_page', template_name) }}
+{% endblock %}
+
+{% block paginator_links_other_page %}
+    {% set li_attr_child = li_attr.other_page %}
+    {% set a_attr_child = a_attr.other_page %}
+    {% set page_label = page %}
+    {{ block('paginator_links_page', template_name) }}
+{% endblock %}
+
+{% block paginator_links_page %}
+    {% if page %}
+        {% set li_attr_child = li_attr_child|default([]) %}
+        {% set a_attr_child = a_attr_child|default([]) %}
+        {% if ajax_options is not null %}
+            {% set a_attr_child = a_attr_child|merge({class: (a_attr_child.class|default('') ~ ' ec-crud-ajax-link-auto')|trim}) %}
+        {% endif %}
+        <li{% with { attr: li_attr_child } %}{{ block('attributes', template_name) }}{% endwith %}>
+            <a href="{{ path(route_name, route_params|merge({(attribute_page): page})) }}"{% with { attr: a_attr_child } %}{{ block('attributes', template_name) }}{% endwith %}{% if ajax_options is not null %}{{ ajax_attributes(ajax_options) }}{% endif %}>{{ page_label }}</a>
+        </li>
+    {% endif %}
+{% endblock %}
+
+{# Attributes #}
+
 {% block attributes %}
     {%- for attrName, attrValue in attr -%}
         {{- " " -}}

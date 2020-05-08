@@ -37,9 +37,6 @@ class CrudExtension extends AbstractExtension
 
     protected $theme;
 
-    /**
-     * Constructor.
-     */
     public function __construct(CrudHelper $crudHelper, FormRendererInterface $formRenderer, string $theme)
     {
         $this->crudHelper = $crudHelper;
@@ -47,33 +44,29 @@ class CrudExtension extends AbstractExtension
         $this->theme = $theme;
     }
 
-    /**
-     * Returns the name of the extension.
-     *
-     * @return string The extension name
-     */
     public function getName()
     {
         return 'ecommit_crud_crud_extension';
     }
 
-    /**
-     * Returns a list of global functions to add to the existing list.
-     *
-     * @return array An array of global functions
-     */
     public function getFunctions()
     {
         return [
             new TwigFunction(
                 'paginator_links',
                 [$this, 'paginatorLinks'],
-                ['is_safe' => ['all']]
+                [
+                    'needs_environment' => true,
+                    'is_safe' => ['html'],
+                ]
             ),
             new TwigFunction(
                 'crud_paginator_links',
                 [$this, 'crudPaginatorLinks'],
-                ['is_safe' => ['all']]
+                [
+                    'needs_environment' => true,
+                    'is_safe' => ['html'],
+                ]
             ),
             new TwigFunction(
                 'crud_th',
@@ -135,27 +128,122 @@ class CrudExtension extends AbstractExtension
     }
 
     /**
-     * Twig function: "paginator_links".
+     * Returns links paginator.
      *
-     * @see CrudHelper:paginatorLinks
+     * @param string $routeName   Route name
+     * @param array  $routeParams Route parameters
+     * @param array  $options     Options:
+     *                            * ajax_options: Ajax Options. If null, Ajax is not used. Default: null
+     *                            * attribute_page: Attribute inside url. Default: page
+     *                            * type: Type of links paginator: elastic (all links) or sliding. Default: sliding
+     *                            * max_pages_before: Max links before current page (only if sliding type is used). Default: 3
+     *                            * max_pages_after: Max links after current page (only if sliding type is used). Default: 3
+     *                            * nav_attr: "nav" CSS attributes
+     *                            * ul_attr: "ul" CSS attributes
+     *                            * li_attr: "li" CSS attributes for each page type (sub arrays: first_page, previous_page, current_page, next_page, last_page, other_page)
+     *                            * a_attr: "a" CSS attributes for each page type (sub arrays: first_page, previous_page, current_page, next_page, last_page, other_page)
+     *                            * render: Template used for generation. If null, default template is used
      */
-    public function paginatorLinks(
-        AbstractPaginator $paginator,
-        $routeName,
-        $routeParams = [],
-        $options = []
-    ) {
-        return $this->crudHelper->paginatorLinks($paginator, $routeName, $routeParams, $options);
+    public function paginatorLinks(Environment $environment, AbstractPaginator $paginator, string $routeName, array $routeParams = [], array $options = []): string
+    {
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults([
+            'ajax_options' => null,
+            'attribute_page' => 'page',
+            'type' => 'sliding',
+            'max_pages_before' => 3,
+            'max_pages_after' => 3,
+            'nav_attr' => [],
+            'ul_attr' => [],
+            'li_attr' => function (OptionsResolver $liResolver): void {
+                $liResolver->setDefaults([
+                    'first_page' => [],
+                    'previous_page' => [],
+                    'current_page' => [],
+                    'next_page' => [],
+                    'last_page' => [],
+                    'other_page' => [],
+                ]);
+                foreach (['first_page', 'previous_page', 'current_page', 'next_page', 'last_page', 'other_page'] as $option) {
+                    $liResolver->setAllowedTypes($option, 'array');
+                }
+            },
+            'a_attr' => function (OptionsResolver $aResolver): void {
+                $aResolver->setDefaults([
+                    'first_page' => [],
+                    'previous_page' => [],
+                    'current_page' => [],
+                    'next_page' => [],
+                    'last_page' => [],
+                    'other_page' => [],
+                ]);
+                foreach (['first_page', 'previous_page', 'current_page', 'next_page', 'last_page', 'other_page'] as $option) {
+                    $aResolver->setAllowedTypes($option, 'array');
+                }
+            },
+            'render' => null,
+        ]);
+        $resolver->setAllowedTypes('ajax_options', ['null', 'array']);
+        $resolver->setAllowedTypes('max_pages_before', 'int');
+        $resolver->setAllowedTypes('max_pages_after', 'int');
+        $resolver->setAllowedValues('type', ['sliding', 'elastic']);
+        $options = $resolver->resolve($options);
+
+        if ($options['render']) {
+            return $environment->render($options['render'], [
+                'paginator' => $paginator,
+                'routeName' => $routeName,
+                'routeParams' => $routeParams,
+                'options' => $options,
+            ]);
+        }
+
+        $pages = [
+            'first' => (1 !== $paginator->getPage()) ? 1 : null,
+            'previous' => (1 !== $paginator->getPage()) ? $paginator->getPreviousPage() : null,
+            'before_current' => [],
+            'current' => $paginator->getPage(),
+            'after_current' => [],
+            'next' => ($paginator->getPage() !== $paginator->getLastPage()) ? $paginator->getNextPage() : null,
+            'last' => ($paginator->getPage() !== $paginator->getLastPage()) ? $paginator->getLastPage() : null,
+        ];
+
+        //Pages before the current page
+        $limit = ('sliding' == $options['type']) ? $paginator->getPage() - $options['max_pages_before'] : 1;
+        for ($page = $limit; $page < $paginator->getPage(); ++$page) {
+            if ($page <= $paginator->getLastPage() && $page >= $paginator->getFirstPage()) {
+                $pages['before_current'][] = $page;
+            }
+        }
+
+        //Pages after the current page
+        $limit = ('sliding' == $options['type']) ? $paginator->getPage() + $options['max_pages_after'] : $paginator->getLastPage();
+        for ($page = $paginator->getPage() + 1; $page <= $limit; ++$page) {
+            if ($page <= $paginator->getLastPage() && $page >= $paginator->getFirstPage()) {
+                $pages['after_current'][] = $page;
+            }
+        }
+
+        return $this->renderBlock($environment, $this->theme, 'paginator_links', array_merge($options, [
+            'paginator' => $paginator,
+            'pages' => $pages,
+            'route_name' => $routeName,
+            'route_params' => $routeParams,
+        ]));
     }
 
     /**
-     * Twig function: "crud_paginator_links".
+     * Returns CRUD links paginator.
      *
-     * @see CrudHelper:crudPaginatorLinks
+     * @see CrudExtension::paginatorLinks()
      */
-    public function crudPaginatorLinks(Crud $crud, $options = [], $ajaxOptions = [])
+    public function crudPaginatorLinks(Environment $environment, Crud $crud, array $options = []): string
     {
-        return $this->crudHelper->crudPaginatorLinks($crud, $options, $ajaxOptions);
+        if (!isset($options['ajax_options']['update'])) {
+            $options['ajax_options']['update'] = '#'.$crud->getDivIdList();
+        }
+
+        return $this->paginatorLinks($environment, $crud->getPaginator(), $crud->getRouteName(), $crud->getRouteParams(), $options);
     }
 
     /**
@@ -383,7 +471,7 @@ class CrudExtension extends AbstractExtension
         $template = $environment->load($templateName);
 
         ob_start();
-        $template->displayBlock($blockName, $parameters);
+        $template->displayBlock($blockName, array_merge(['template_name' => $templateName], $parameters));
 
         return ob_get_clean();
     }

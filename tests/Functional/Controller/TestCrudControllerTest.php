@@ -135,7 +135,7 @@ class TestCrudControllerTest extends PantherTestCase
      */
     public function testChangePage(Client $client): Client
     {
-        $page = $client->getCrawler()->filterXPath('//ul[@class="pagination"]/li/a[text()="2"]');
+        $page = $client->getCrawler()->filterXPath('//ul[@class="ec-crud-pagination"]/li/a[text()="2"]');
         $page->first()->click();
         $this->waitForAjax($client);
 
