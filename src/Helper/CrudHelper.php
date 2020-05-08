@@ -276,7 +276,7 @@ class CrudHelper
 
         //XSS protection
         if ($options['escape']) {
-            $value = htmlentities($value, ENT_QUOTES, 'UTF-8');
+            $value = htmlentities((string) $value, ENT_QUOTES, 'UTF-8');
         }
 
         return $this->util->tag('td', $tdOptions, $value);
