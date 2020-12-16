@@ -82,7 +82,7 @@ class Paginate
                 $countQueryBuilder->select(sprintf('count(%s%s)', $distinct, $options['alias']));
                 $countQueryBuilder->resetDQLPart('orderBy');
 
-                return  (int) $countQueryBuilder->getQuery()->getSingleScalarResult();
+                return (int) $countQueryBuilder->getQuery()->getSingleScalarResult();
             } elseif ('count_by_sub_request' === $options['behavior']) {
                 /** @var \Doctrine\ORM\QueryBuilder $cloneQueryBuilder */
                 $cloneQueryBuilder = clone $queryBuilder;

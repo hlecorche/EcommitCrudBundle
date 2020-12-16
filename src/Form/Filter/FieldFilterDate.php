@@ -115,41 +115,41 @@ class FieldFilterDate extends AbstractFieldFilter
         if (!empty($value) && $value instanceof \DateTime) {
             $parameterName = 'value_date_'.str_replace(' ', '', $this->property);
 
-            switch ($this->options['comparator']):
+            switch ($this->options['comparator']) {
                 case self::SMALLER_THAN:
                 case self::GREATER_EQUAL:
                     if (!$this->options['with_time']) {
                         $value->setTime(0, 0, 0);
                     }
-            $value = $value->format('Y-m-d H:i:s');
-            $queryBuilder->andWhere(
+                    $value = $value->format('Y-m-d H:i:s');
+                    $queryBuilder->andWhere(
                         sprintf('%s %s :%s', $aliasSearch, $this->options['comparator'], $parameterName)
                     )
                         ->setParameter($parameterName, $value);
-            break;
-            case self::SMALLER_EQUAL:
+                    break;
+                case self::SMALLER_EQUAL:
                 case self::GREATER_THAN:
                     if (!$this->options['with_time']) {
                         $value->setTime(23, 59, 59);
                     }
-            $value = $value->format('Y-m-d H:i:s');
-            $queryBuilder->andWhere(
+                    $value = $value->format('Y-m-d H:i:s');
+                    $queryBuilder->andWhere(
                         sprintf('%s %s :%s', $aliasSearch, $this->options['comparator'], $parameterName)
                     )
                         ->setParameter($parameterName, $value);
-            break;
-            default:
+                    break;
+                default:
                     $valueDateInf = clone $value;
-            $valueDateSup = clone $value;
-            if (!$this->options['with_time']) {
-                $valueDateInf->setTime(0, 0, 0);
-                $valueDateSup->setTime(23, 59, 59);
-            }
-            $valueDateInf = $valueDateInf->format('Y-m-d H:i:s');
-            $valueDateSup = $valueDateSup->format('Y-m-d H:i:s');
-            $parameterNameInf = 'value_date_inf_'.str_replace(' ', '', $this->property);
-            $parameterNameSup = 'value_date_sup_'.str_replace(' ', '', $this->property);
-            $queryBuilder->andWhere(
+                    $valueDateSup = clone $value;
+                    if (!$this->options['with_time']) {
+                        $valueDateInf->setTime(0, 0, 0);
+                        $valueDateSup->setTime(23, 59, 59);
+                    }
+                    $valueDateInf = $valueDateInf->format('Y-m-d H:i:s');
+                    $valueDateSup = $valueDateSup->format('Y-m-d H:i:s');
+                    $parameterNameInf = 'value_date_inf_'.str_replace(' ', '', $this->property);
+                    $parameterNameSup = 'value_date_sup_'.str_replace(' ', '', $this->property);
+                    $queryBuilder->andWhere(
                         sprintf(
                             '%s >= :%s AND %s <= :%s',
                             $aliasSearch,
@@ -160,8 +160,8 @@ class FieldFilterDate extends AbstractFieldFilter
                     )
                         ->setParameter($parameterNameInf, $valueDateInf)
                         ->setParameter($parameterNameSup, $valueDateSup);
-            break;
-            endswitch;
+                    break;
+            }
         }
 
         return $queryBuilder;
