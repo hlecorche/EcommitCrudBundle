@@ -589,3 +589,45 @@ describe('Test Ajax.form', function () {
         $(document).off('ec-crud-ajax-form-auto-before', '#formToTest');
     });
 });
+
+describe('Test Ajax.updateDom', function () {
+    beforeEach(function () {
+        $('body').append('<div id="container" class="html-test"><div class="content">X</div></div>');
+    });
+
+    afterEach(function () {
+        $('.html-test').remove();
+    });
+
+    it('Update with "update" mode', function () {
+        testUpdateDom('update', '<div class="content">OK</div>');
+    });
+
+    it('Update with "before" mode', function () {
+        testUpdateDom('before', 'OK<div class="content">X</div>');
+    });
+
+    it('Update with "after" mode', function () {
+        testUpdateDom('after', '<div class="content">X</div>OK');
+    });
+
+    it('Update with "prepend" mode', function () {
+        testUpdateDom('prepend', '<div class="content">OKX</div>');
+    });
+
+    it('Update with "append" mode', function () {
+        testUpdateDom('append', '<div class="content">XOK</div>');
+    });
+
+    function testUpdateDom (updateMode, expected) {
+        ajax.updateDom('#container .content', updateMode, 'OK');
+        expect($('#container').html()).toEqual(expected);
+    }
+
+    it('Update with bad mode', function () {
+        spyOn(window.console, 'error');
+        ajax.updateDom('#container .content', 'badMode', 'OK');
+        expect(window.console.error).toHaveBeenCalledWith('Bad updateMode: badMode');
+        expect($('#container').html()).toEqual('<div class="content">X</div>');
+    });
+});

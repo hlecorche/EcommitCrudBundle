@@ -85,7 +85,7 @@ export function sendRequest (options) {
         callbacksSuccess.push({
             priority: 10,
             callback: function (args) {
-                updateDomWithResponse(options.update, options.updateMode, args.data);
+                updateDom(options.update, options.updateMode, args.data);
             }
         })
     }
@@ -166,25 +166,25 @@ export function sendForm (form, options) {
     sendRequest(options);
 }
 
-function updateDomWithResponse (update, updateMode, data) {
+export function updateDom (element, updateMode, data) {
     if (updateMode === 'update') {
-        $(update).html(data);
+        $(element).html(data);
 
         return;
     } else if (updateMode === 'before') {
-        $(update).before(data);
+        $(element).before(data);
 
         return;
     } else if (updateMode === 'after') {
-        $(update).after(data);
+        $(element).after(data);
 
         return;
     } else if (updateMode === 'prepend') {
-        $(update).prepend(data);
+        $(element).prepend(data);
 
         return;
     } else if (updateMode === 'append') {
-        $(update).append(data);
+        $(element).append(data);
 
         return;
     }
