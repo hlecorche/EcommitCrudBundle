@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Ecommit\CrudBundle\Form\Filter;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 interface FieldFilterDoctrineInterface
 {
