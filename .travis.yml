@@ -3,6 +3,7 @@ php:
     - 7.2
     - 7.3
     - 7.4
+    - 8.0
 
 env:
     - DEPENDENCIES="high"
@@ -30,5 +31,5 @@ install:
 script:
     - php vendor/phpunit/phpunit/phpunit
     - ./node_modules/.bin/karma start --single-run
-    - php vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --diff --dry-run -v
+    - export PHP_CS_FIXER_IGNORE_ENV=1 && php vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --diff --dry-run -v
     - ./node_modules/.bin/eslint src/Resources/public/js/* tests/Resources/public/js/*
