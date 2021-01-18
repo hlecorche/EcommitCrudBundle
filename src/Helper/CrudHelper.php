@@ -180,7 +180,7 @@ class CrudHelper
         //I18N label
         $label = $this->translator->trans($label);
         //XSS protection
-        $label = htmlentities($label, ENT_QUOTES, 'UTF-8');
+        $label = htmlentities($label, \ENT_QUOTES, 'UTF-8');
 
         //Case n°1: We cannot sort this column, we just show the label
         if (!$column->sortable) {
@@ -276,7 +276,7 @@ class CrudHelper
 
         //XSS protection
         if ($options['escape']) {
-            $value = htmlentities((string) $value, ENT_QUOTES, 'UTF-8');
+            $value = htmlentities((string) $value, \ENT_QUOTES, 'UTF-8');
         }
 
         return $this->util->tag('td', $tdOptions, $value);
