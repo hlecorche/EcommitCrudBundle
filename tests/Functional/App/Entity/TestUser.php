@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Ecommit\CrudBundle\Tests\App\Entity;
+namespace Ecommit\CrudBundle\Tests\Functional\App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Ecommit\CrudBundle\Entity\UserCrudInterface;

@@ -1,0 +1,11 @@
+user_list:
+    path: /user
+    controller: Ecommit\CrudBundle\Tests\Functional\App\Controller\UserController::listAction
+
+user_ajax_list:
+    path: /user/ajax-list
+    controller: Ecommit\CrudBundle\Tests\Functional\App\Controller\UserController::ajaxListAction
+
+user_ajax_search:
+    path: /user/ajax-search
+    controller: Ecommit\CrudBundle\Tests\Functional\App\Controller\UserController::ajaxSearchAction

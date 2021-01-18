@@ -11,11 +11,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-require __DIR__.'/App/config/bootstrap.php';
+require __DIR__.'/Functional/App/config/bootstrap.php';
 
 function bootstrap(): void
 {
-    $kernel = new \Ecommit\CrudBundle\Tests\App\Kernel('test', true);
+    $kernel = new \Ecommit\CrudBundle\Tests\Functional\App\Kernel('test', true);
     $kernel->boot();
 
     $application = new \Symfony\Bundle\FrameworkBundle\Console\Application($kernel);

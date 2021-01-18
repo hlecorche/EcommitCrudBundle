@@ -8,7 +8,7 @@ module.exports = function (outputPath) {
     Encore
         .setOutputPath(outputPath)
         .setPublicPath('/build')
-        .addEntry('app', './tests/App/assets/js/app.js')
+        .addEntry('app', './tests/Functional/App/assets/js/app.js')
         .splitEntryChunks()
         .enableSingleRuntimeChunk()
         .cleanupOutputBeforeBuild()

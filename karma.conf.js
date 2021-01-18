@@ -3,7 +3,7 @@ const Encore = require('@symfony/webpack-encore');
 Encore.configureRuntimeEnvironment('dev');
 
 const encoreConfig = require('./webpack-encore-config');
-const webpackConfig = encoreConfig('tests/App/var/karma/build').getWebpackConfig();
+const webpackConfig = encoreConfig('tests/Functional/App/var/karma/build').getWebpackConfig();
 
 delete webpackConfig.entry;
 delete webpackConfig.optimization.runtimeChunk;

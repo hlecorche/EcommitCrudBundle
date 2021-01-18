@@ -11,11 +11,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Ecommit\CrudBundle\Tests\App\DataFixtures;
+namespace Ecommit\CrudBundle\Tests\Functional\App\DataFixtures;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Ecommit\CrudBundle\Tests\App\Entity\TestUser;
+use Ecommit\CrudBundle\Tests\Functional\App\Entity\TestUser;
 
 class TestUserFixtures extends Fixture
 {

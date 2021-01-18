@@ -11,7 +11,7 @@ COMMENT;
 
 $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__)
-    ->exclude('tests/App/var')
+    ->exclude('tests/Functional/App/var')
 ;
 
 return PhpCsFixer\Config::create()

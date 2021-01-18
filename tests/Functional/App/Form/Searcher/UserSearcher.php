@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Ecommit\CrudBundle\Tests\App\Form\Searcher;
+namespace Ecommit\CrudBundle\Tests\Functional\App\Form\Searcher;
 
 use Ecommit\CrudBundle\Form\Filter as Filter;
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;

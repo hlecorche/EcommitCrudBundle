@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-use Ecommit\CrudBundle\Tests\App\Kernel;
+use Ecommit\CrudBundle\Tests\Functional\App\Kernel;
 use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;
 

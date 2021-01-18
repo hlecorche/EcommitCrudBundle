@@ -11,12 +11,12 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Ecommit\CrudBundle\Tests\App\Controller;
+namespace Ecommit\CrudBundle\Tests\Functional\App\Controller;
 
 use Ecommit\CrudBundle\Controller\AbstractCrudController;
 use Ecommit\CrudBundle\Crud\Crud;
-use Ecommit\CrudBundle\Tests\App\Entity\TestUser;
-use Ecommit\CrudBundle\Tests\App\Form\Searcher\UserSearcher;
+use Ecommit\CrudBundle\Tests\Functional\App\Entity\TestUser;
+use Ecommit\CrudBundle\Tests\Functional\App\Form\Searcher\UserSearcher;
 
 class UserController extends AbstractCrudController
 {

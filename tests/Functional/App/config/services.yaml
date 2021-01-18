@@ -6,9 +6,9 @@ services:
         autowire: true
         autoconfigure: true
 
-    Ecommit\CrudBundle\Tests\App\DataFixtures\:
+    Ecommit\CrudBundle\Tests\Functional\App\DataFixtures\:
         resource: '../DataFixtures'
 
-    Ecommit\CrudBundle\Tests\App\Controller\:
+    Ecommit\CrudBundle\Tests\Functional\App\Controller\:
         resource: '../Controller'
         tags: ['controller.service_arguments']

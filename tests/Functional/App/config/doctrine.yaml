@@ -16,7 +16,7 @@ doctrine:
                         is_bundle: false
                         type: annotation
                         dir: '%kernel.project_dir%/Entity'
-                        prefix: 'Ecommit\CrudBundle\Tests\App\Entity'
+                        prefix: 'Ecommit\CrudBundle\Tests\Functional\App\Entity'
                 naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         resolve_target_entities:
-            Ecommit\CrudBundle\Entity\UserCrudInterface: Ecommit\CrudBundle\Tests\App\Entity\TestUser
+            Ecommit\CrudBundle\Entity\UserCrudInterface: Ecommit\CrudBundle\Tests\Functional\App\Entity\TestUser
