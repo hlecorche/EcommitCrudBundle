@@ -98,6 +98,7 @@ jobs:
             -   name: Install dependencies
                 run: |
                     composer update --no-interaction --no-progress ${{ matrix.composer-flags }}
+                    vendor/bin/bdi detect drivers
                     yarn install
                     yarn encore dev
 

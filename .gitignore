@@ -1,6 +1,7 @@
 .php_cs.cache
 .phpunit.result.cache
 composer.lock
+/drivers/
 /node_modules/
 /tests/Functional/App/public/build/
 /tests/Functional/App/var/
