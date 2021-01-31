@@ -27,10 +27,12 @@ class MappingEntities
 
         $className = $metadata->getName();
         if (!$this->isLoad && is_subclass_of($className, 'Ecommit\CrudBundle\Entity\UserCrudInterface')) {
+            $this->isLoad = true;
             $userCrudSettingsMetadata = $eventArgs->getEntityManager()->getMetadataFactory()->getMetadataFor('Ecommit\CrudBundle\Entity\UserCrudSettings');
             $this->mappUserCrudSettings($userCrudSettingsMetadata, $metadata);
         }
         if (!$this->isLoad && 'Ecommit\CrudBundle\Entity\UserCrudSettings' === $className) {
+            $this->isLoad = true;
             $userMetadata = $eventArgs->getEntityManager()->getMetadataFactory()->getMetadataFor('Ecommit\CrudBundle\Entity\UserCrudInterface');
             $this->mappUserCrudSettings($metadata, $userMetadata);
         }
@@ -38,8 +40,6 @@ class MappingEntities
 
     protected function mappUserCrudSettings(ClassMetadataInfo $userCrudSettingsMetadata, ClassMetadataInfo $userMetadata)
     {
-        $this->isLoad = true;
-
         $userCrudSettingsMetadata->setAssociationOverride(
             'user',
             array(
