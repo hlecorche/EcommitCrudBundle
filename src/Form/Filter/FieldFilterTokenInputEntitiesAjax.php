@@ -15,7 +15,7 @@ namespace Ecommit\CrudBundle\Form\Filter;
 
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
 use Ecommit\JavascriptBundle\Form\Type\TokenInputEntitiesAjaxType;
-use Ecommit\UtilBundle\Util\Util;
+use Ecommit\ScalarValues\ScalarValues;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -98,7 +98,7 @@ class FieldFilterTokenInputEntitiesAjax extends AbstractFieldFilter
         if (null === $value || '' === $value || !\is_array($value)) {
             return $queryBuilder;
         }
-        $value = Util::filterScalarValues($value);
+        $value = ScalarValues::filterScalarValues($value);
         if (0 === \count($value)) {
             return $queryBuilder;
         }
