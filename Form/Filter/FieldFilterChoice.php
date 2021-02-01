@@ -13,7 +13,7 @@ namespace Ecommit\CrudBundle\Form\Filter;
 
 use Ecommit\CrudBundle\DoctrineExtension\QueryBuilderFilter;
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
-use Ecommit\UtilBundle\Util\Util;
+use Ecommit\ScalarValues\ScalarValues;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -108,7 +108,7 @@ class FieldFilterChoice extends AbstractFieldFilter
             if (!is_array($value)) {
                 $value = array($value);
             }
-            $value = Util::filterScalarValues($value);
+            $value = ScalarValues::filterScalarValues($value);
             if (count($value) > $this->options['max'] || 0 === count($value)) {
                 return $queryBuilder;
             }
