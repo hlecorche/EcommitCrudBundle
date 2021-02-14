@@ -82,6 +82,81 @@
     {% endif %}
 {% endblock %}
 
+{# th #}
+
+{% block th %}
+{% spaceless %}
+    {% if not column.sortable %}
+        {{ block('th_not_sortable', template_name) }}
+    {% elseif crud.sessionValues.sort != column.id %}
+        {{ block('th_sortable_not_active', template_name) }}
+    {% elseif crud.sessionValues.sense == constant('Ecommit\\CrudBundle\\Crud\\Crud::DESC') %}
+        {{ block('th_sortable_active_desc', template_name) }}
+    {% else %}
+        {{ block('th_sortable_active_asc', template_name) }}
+    {% endif %}
+{% endspaceless %}
+{% endblock %}
+
+{% block th_not_sortable %}
+    {% set th_attr = th_attr.not_sortable|merge({class: (th_attr.not_sortable.class|default('') ~ ' ec-crud-th ec-crud-th-not-sortable')|trim}) %}
+    <th{% with { attr: th_attr } %}{{ block('attributes', template_name) }}{% endwith %}>{{ label|trans }}</th>
+{% endblock %}
+
+{% block th_sortable_not_active %}
+    {% set th_attr = th_attr.sortable_not_active|merge({class: (th_attr.sortable_not_active.class|default('') ~ ' ec-crud-th ec-crud-th-sortable-not-active')|trim}) %}
+    {% set a_attr = a_attr.sortable_not_active %}
+    {% if ajax_options is not null %}
+        {% set a_attr = a_attr|merge({class: (a_attr.class|default('') ~ ' ec-crud-ajax-link-auto')|trim}) %}
+    {% endif %}
+    <th{% with { attr: th_attr } %}{{ block('attributes', template_name) }}{% endwith %}>
+        <a href="{{ path(crud.routeName, crud.routeParams|merge({('sort'): column.id})) }}"{% with { attr: a_attr } %}{{ block('attributes', template_name) }}{% endwith %}{% if ajax_options is not null %}{{ ajax_attributes(ajax_options) }}{% endif %}>{{ label|trans }}</a>
+    </th>
+{% endblock %}
+
+{% block th_sortable_active_asc %}
+    {% set th_attr = th_attr.sortable_active_asc|merge({class: (th_attr.sortable_active_asc.class|default('') ~ ' ec-crud-th ec-crud-th-sortable-active-asc')|trim}) %}
+    {% set a_attr = a_attr.sortable_active_asc %}
+    {% set newSense = constant('Ecommit\\CrudBundle\\Crud\\Crud::DESC') %}
+    {% set iconName = 'asc' %}
+    {{ block('th_sortable_active', template_name) }}
+{% endblock %}
+
+{% block th_sortable_active_desc %}
+    {% set th_attr = th_attr.sortable_active_desc|merge({class: (th_attr.sortable_active_desc.class|default('') ~ ' ec-crud-th ec-crud-th-sortable-active-desc')|trim}) %}
+    {% set a_attr = a_attr.sortable_active_desc %}
+    {% set newSense = constant('Ecommit\\CrudBundle\\Crud\\Crud::ASC') %}
+    {% set iconName = 'desc' %}
+    {{ block('th_sortable_active', template_name) }}
+{% endblock %}
+
+{% block th_sortable_active %}
+    {% if ajax_options is not null %}
+        {% set a_attr = a_attr|merge({class: (a_attr.class|default('') ~ ' ec-crud-ajax-link-auto')|trim}) %}
+    {% endif %}
+    <th{% with { attr: th_attr } %}{{ block('attributes', template_name) }}{% endwith %}>
+        <a href="{{ path(crud.routeName, crud.routeParams|merge({('sort'): column.id, 'sense': newSense})) }}"{% with { attr: a_attr } %}{{ block('attributes', template_name) }}{% endwith %}{% if ajax_options is not null %}{{ ajax_attributes(ajax_options) }}{% endif %}>
+            {{- label|trans }} {{ crud_icon(iconName) -}}
+        </a>
+    </th>
+{% endblock %}
+
+{# td #}
+
+{% block td %}
+{% spaceless %}
+    {% if repeatedValue %}
+        {% if td_attr.title is not defined %}
+            {% set td_attr = td_attr|merge({title: value}) %}
+        {% endif %}
+        {% set value = options.repeated_values_string %}
+    {% endif %}
+    <td{% with { attr: td_attr } %}{{ block('attributes', template_name) }}{% endwith %}>
+        {{- (options.escape) ? value : value|raw -}}
+    </td>
+{% endspaceless %}
+{% endblock %}
+
 {# Attributes #}
 
 {% block attributes %}

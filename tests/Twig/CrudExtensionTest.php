@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Ecommit\CrudBundle\Tests\Twig;
 
 use Ecommit\CrudBundle\Crud\Crud;
+use Ecommit\CrudBundle\Crud\CrudColumn;
+use Ecommit\CrudBundle\Crud\CrudSession;
 use Ecommit\CrudBundle\Paginator\ArrayPaginator;
 use Ecommit\CrudBundle\Twig\CrudExtension;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -23,6 +25,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 use Twig\Environment;
+use Twig\Markup;
 
 class CrudExtensionTest extends KernelTestCase
 {
@@ -410,6 +413,296 @@ class CrudExtensionTest extends KernelTestCase
         ]);
 
         $this->assertSame($expected, $result);
+    }
+
+    public function testThColumnNotDisplayed(): void
+    {
+        $html = $this->crudExtension->th($this->environment, 'column4', $this->createCrud());
+        $this->assertSame('', $html);
+    }
+
+    public function testThColumnNotSortable(): void
+    {
+        $html = $this->crudExtension->th($this->environment, 'column3', $this->createCrud());
+        $this->assertSame('<th class="ec-crud-th ec-crud-th-not-sortable">label3</th>', $html);
+    }
+
+    public function testThColumnSortableNotActive(): void
+    {
+        $html = $this->crudExtension->th($this->environment, 'column2', $this->createCrud());
+        $this->assertSame('<th class="ec-crud-th ec-crud-th-sortable-not-active"><a href="/user?sort=column2" class="ec-crud-ajax-link-auto" data-ec-crud-ajax-update="#myId">label2</a></th>', $html);
+    }
+
+    public function testThColumnSortableActiveAsc(): void
+    {
+        $html = $this->crudExtension->th($this->environment, 'column1', $this->createCrud());
+        $this->assertSame('<th class="ec-crud-th ec-crud-th-sortable-active-asc"><a href="/user?sort=column1&amp;sense=DESC" class="ec-crud-ajax-link-auto" data-ec-crud-ajax-update="#myId">label1 <i>^</i></a></th>', $html);
+    }
+
+    public function testThColumnSortableActiveDesc(): void
+    {
+        $html = $this->crudExtension->th($this->environment, 'column1', $this->createCrud('column1', CRUD::DESC));
+        $this->assertSame('<th class="ec-crud-th ec-crud-th-sortable-active-desc"><a href="/user?sort=column1&amp;sense=ASC" class="ec-crud-ajax-link-auto" data-ec-crud-ajax-update="#myId">label1 <i>v</i></a></th>', $html);
+    }
+
+    public function testThWithAjaxOptions(): void
+    {
+        $html = $this->crudExtension->th($this->environment, 'column2', $this->createCrud(), [
+            'ajax_options' => [
+                'update' => '#div2',
+            ],
+        ]);
+        $this->assertSame('<th class="ec-crud-th ec-crud-th-sortable-not-active"><a href="/user?sort=column2" class="ec-crud-ajax-link-auto" data-ec-crud-ajax-update="#div2">label2</a></th>', $html);
+    }
+
+    public function testThWithLabel(): void
+    {
+        $html = $this->crudExtension->th($this->environment, 'column2', $this->createCrud(), [
+            'label' => 'My label',
+        ]);
+        $this->assertSame('<th class="ec-crud-th ec-crud-th-sortable-not-active"><a href="/user?sort=column2" class="ec-crud-ajax-link-auto" data-ec-crud-ajax-update="#myId">My label</a></th>', $html);
+    }
+
+    /**
+     * @dataProvider getTestThWithAttrOptionsProvider
+     */
+    public function testThWithAttrOptions(string $columnId, string $sort, string $sense, string $expected): void
+    {
+        $html = $this->crudExtension->th($this->environment, $columnId, $this->createCrud($sort, $sense), [
+            'th_attr' => [
+                'not_sortable' => ['class' => 'a', 'data-a' => 'val'],
+                'sortable_active_asc' => ['class' => 'b', 'data-b' => 'val'],
+                'sortable_active_desc' => ['class' => 'c', 'data-c' => 'val'],
+                'sortable_not_active' => ['class' => 'd', 'data-d' => 'val'],
+            ],
+            'a_attr' => [
+                'sortable_active_asc' => ['class' => 'e', 'data-e' => 'val'],
+                'sortable_active_desc' => ['class' => 'f', 'data-f' => 'val'],
+                'sortable_not_active' => ['class' => 'g', 'data-g' => 'val'],
+            ],
+        ]);
+
+        $this->assertSame($expected, $html);
+    }
+
+    public function getTestThWithAttrOptionsProvider(): array
+    {
+        return [
+            ['column3', 'column1', Crud::ASC, '<th class="a ec-crud-th ec-crud-th-not-sortable" data-a="val">label3</th>'],
+            ['column1', 'column1', Crud::ASC, '<th class="b ec-crud-th ec-crud-th-sortable-active-asc" data-b="val"><a href="/user?sort=column1&amp;sense=DESC" class="e ec-crud-ajax-link-auto" data-e="val" data-ec-crud-ajax-update="#myId">label1 <i>^</i></a></th>'],
+            ['column1', 'column1', Crud::DESC, '<th class="c ec-crud-th ec-crud-th-sortable-active-desc" data-c="val"><a href="/user?sort=column1&amp;sense=ASC" class="f ec-crud-ajax-link-auto" data-f="val" data-ec-crud-ajax-update="#myId">label1 <i>v</i></a></th>'],
+            ['column2', 'column1', Crud::ASC, '<th class="d ec-crud-th ec-crud-th-sortable-not-active" data-d="val"><a href="/user?sort=column2" class="g ec-crud-ajax-link-auto" data-g="val" data-ec-crud-ajax-update="#myId">label2</a></th>'],
+        ];
+    }
+
+    public function testThWithRenderOption(): void
+    {
+        $html = $this->crudExtension->th($this->environment, 'column1', $this->createCrud(), [
+            'render' => 'render.html.twig',
+        ]);
+
+        $this->assertRegExp('/OK/', $html);
+    }
+
+    public function testThWithBadOptions(): void
+    {
+        $this->expectException(UndefinedOptionsException::class);
+        $this->crudExtension->th($this->environment, 'column1', $this->createCrud(), [
+            'bad_option' => 'bad',
+        ]);
+    }
+
+    public function testTdColumnNotDisplayed(): void
+    {
+        $html = $this->crudExtension->td($this->environment, 'column4', $this->createCrud(), 'value4');
+        $this->assertSame('', $html);
+    }
+
+    public function testTdWithEscape(): void
+    {
+        $html = $this->crudExtension->td($this->environment, 'column1', $this->createCrud(), 'value1 é&');
+        $this->assertSame('<td>value1 é&amp;</td>', $html);
+    }
+
+    public function testTdWithoutEscape(): void
+    {
+        $html = $this->crudExtension->td($this->environment, 'column1', $this->createCrud(), 'value1 é&', [
+            'escape' => false,
+        ]);
+        $this->assertSame('<td>value1 é&</td>', $html);
+    }
+
+    public function testRepeatedValuesStringFirst(): CrudExtension
+    {
+        $html = $this->crudExtension->td($this->environment, 'column1', $this->createCrud(), 'value1', [
+            'repeated_values_string' => '"',
+        ]);
+        $this->assertSame('<td>value1</td>', $html);
+
+        return $this->crudExtension;
+    }
+
+    /**
+     * @depends testRepeatedValuesStringFirst
+     */
+    public function testRepeatedValuesStringRepeat(CrudExtension $crudExtension): CrudExtension
+    {
+        $html = $crudExtension->td($this->environment, 'column1', $this->createCrud(), 'value1', [
+            'repeated_values_string' => 'Bis',
+        ]);
+        $this->assertSame('<td title="value1">Bis</td>', $html);
+
+        return $crudExtension;
+    }
+
+    /**
+     * @depends testRepeatedValuesStringRepeat
+     */
+    public function testRepeatedValuesStringOtherColumn(CrudExtension $crudExtension): CrudExtension
+    {
+        $html = $crudExtension->td($this->environment, 'column2', $this->createCrud(), 'value1', [
+            'repeated_values_string' => 'Bis',
+        ]);
+        $this->assertSame('<td>value1</td>', $html);
+
+        return $crudExtension;
+    }
+
+    /**
+     * @depends testRepeatedValuesStringOtherColumn
+     */
+    public function testRepeatedValuesStringOtherColumnRepeat(CrudExtension $crudExtension): CrudExtension
+    {
+        $html = $crudExtension->td($this->environment, 'column2', $this->createCrud(), 'value1', [
+            'repeated_values_string' => 'Bis',
+        ]);
+        $this->assertSame('<td title="value1">Bis</td>', $html);
+
+        return $crudExtension;
+    }
+
+    /**
+     * @depends testRepeatedValuesStringOtherColumnRepeat
+     */
+    public function testRepeatedValuesStringRepeatWithMarkup(CrudExtension $crudExtension): CrudExtension
+    {
+        $markup = new Markup('value1', 'UTF-8');
+        $html = $crudExtension->td($this->environment, 'column1', $this->createCrud(), $markup, [
+            'repeated_values_string' => 'Bis',
+        ]);
+        $this->assertSame('<td title="value1">Bis</td>', $html);
+
+        return $crudExtension;
+    }
+
+    /**
+     * @depends testRepeatedValuesStringRepeatWithMarkup
+     */
+    public function testRepeatedValuesStringRepeatWithTitleAttr(CrudExtension $crudExtension): CrudExtension
+    {
+        $html = $crudExtension->td($this->environment, 'column1', $this->createCrud(), 'value1', [
+            'repeated_values_string' => 'Bis',
+            'td_attr' => ['title' => 'Repeated'],
+        ]);
+        $this->assertSame('<td title="Repeated">Bis</td>', $html);
+
+        return $crudExtension;
+    }
+
+    /**
+     * @depends testRepeatedValuesStringRepeatWithMarkup
+     */
+    public function testRepeatedValuesStringNotRepeat(CrudExtension $crudExtension): CrudExtension
+    {
+        $html = $crudExtension->td($this->environment, 'column1', $this->createCrud(), 'value2', [
+            'repeated_values_string' => 'Bis',
+        ]);
+        $this->assertSame('<td>value2</td>', $html);
+
+        return $crudExtension;
+    }
+
+    /**
+     * @depends testRepeatedValuesStringNotRepeat
+     */
+    public function testRepeatedValuesWithEmptyValueFirst(CrudExtension $crudExtension): CrudExtension
+    {
+        $html = $crudExtension->td($this->environment, 'column1', $this->createCrud(), '', [
+            'repeated_values_string' => 'Bis',
+        ]);
+        $this->assertSame('<td></td>', $html);
+
+        return $crudExtension;
+    }
+
+    /**
+     * @depends testRepeatedValuesWithEmptyValueFirst
+     */
+    public function testRepeatedValuesWithEmptyValueRepeat(CrudExtension $crudExtension): CrudExtension
+    {
+        $html = $crudExtension->td($this->environment, 'column1', $this->createCrud(), '', [
+            'repeated_values_string' => 'Bis',
+        ]);
+        $this->assertSame('<td></td>', $html);
+
+        return $crudExtension;
+    }
+
+    public function testTdWithAttrOptions(): void
+    {
+        $html = $this->crudExtension->td($this->environment, 'column1', $this->createCrud(), 'value1', [
+            'td_attr' => ['class' => 'a', 'data-a' => 'val'],
+        ]);
+        $this->assertSame('<td class="a" data-a="val">value1</td>', $html);
+    }
+
+    public function testTdWithRenderOption(): void
+    {
+        $html = $this->crudExtension->td($this->environment, 'column1', $this->createCrud(), 'value1', [
+            'render' => 'render.html.twig',
+        ]);
+
+        $this->assertRegExp('/OK/', $html);
+    }
+
+    public function testTdWithBadOptions(): void
+    {
+        $this->expectException(UndefinedOptionsException::class);
+        $this->crudExtension->td($this->environment, 'column1', $this->createCrud(), 'value1', [
+            'bad_option' => 'bad',
+        ]);
+    }
+
+    protected function createCrud(string $sort = 'column1', string $sense = Crud::ASC): Crud
+    {
+        $columns = [
+            'column1' => new CrudColumn('column1', 'alias1', 'label1', true, true, 'alias1', 'alias1'),
+            'column2' => new CrudColumn('column2', 'alias2', 'label2', true, false, 'alias2', 'alias2'),
+            'column3' => new CrudColumn('column3', 'alias3', 'label3', false, true, 'alias3', 'alias3'),
+            'column4' => new CrudColumn('column4', 'alias4', 'label4', true, true, 'alias4', 'alias4'),
+        ];
+        $crudSession = new CrudSession();
+        $crudSession->displayedColumns = [
+            'column1',
+            'column2',
+            'column3',
+        ];
+        $crudSession->sort = $sort;
+        $crudSession->sense = $sense;
+
+        $crud = $this->getMockBuilder(Crud::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getDivIdList', 'getRouteName', 'getRouteParams', 'getSessionValues', 'getColumn'])
+            ->getMock();
+        $crud->expects($this->any())->method('getDivIdList')->willReturn('myId');
+        $crud->expects($this->any())->method('getRouteName')->willReturn('user_list');
+        $crud->expects($this->any())->method('getRouteParams')->willReturn([]);
+        $crud->expects($this->any())->method('getSessionValues')->willReturn($crudSession);
+        $crud->expects($this->any())->method('getColumn')->willReturnCallback(function ($columnId) use ($columns) {
+            return $columns[$columnId];
+        });
+
+        return $crud;
     }
 
     protected function createFormView(): FormView

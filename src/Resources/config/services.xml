@@ -31,6 +31,7 @@
             <argument type="service" id="Ecommit\CrudBundle\Helper\CrudHelper"/>
             <argument type="service" id="twig.form.renderer" />
             <argument>%ecommit_crud.theme%</argument>
+            <argument>%ecommit_crud.icon_theme%</argument>
             <tag name="twig.extension"/>
         </service>
 

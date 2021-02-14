@@ -45,7 +45,7 @@ class TestCrudControllerTest extends PantherTestCase
      */
     public function testChangeSortSense(Client $client): Client
     {
-        $link = $client->getCrawler()->filterXPath('//table[@class="result"]/thead/tr/th/a[text()="first_name"]');
+        $link = $client->getCrawler()->filterXPath('//table[@class="result"]/thead/tr/th/a[contains(text(), "first_name")]');
         $link->click();
         $this->waitForAjax($client);
 
@@ -286,26 +286,27 @@ class TestCrudControllerTest extends PantherTestCase
 
     protected function getSort(Crawler $crawler): array
     {
-        $imageSort = $crawler->filterXPath('//table[@class="result"]/thead/tr/th/img');
-        if (0 === \count($imageSort)) {
+        $iSort = $crawler->filterXPath('//table[@class="result"]/thead/tr/th/a/i');
+        if (0 === \count($iSort)) {
             return [];
         }
-        $imageSort = $imageSort->first();
+        $iSort = $iSort->first();
 
-        switch ($imageSort->getAttribute('alt')) {
+        switch ($iSort->text()) {
             case '^':
                 $sense = Crud::ASC;
                 break;
-            case 'V':
+            case 'v':
                 $sense = Crud::DESC;
                 break;
             default:
                 throw new \Exception('Bad sense');
         }
 
-        $column = $imageSort->filterXPath('ancestor::th')->last();
+        $column = $iSort->filterXPath('ancestor::th')->last()->text();
+        $column = str_replace(' '.$iSort->text(), '', $column);
 
-        return [$column->text(), $sense];
+        return [$column, $sense];
     }
 
     protected function getFirstUsername(Crawler $crawler): ?string

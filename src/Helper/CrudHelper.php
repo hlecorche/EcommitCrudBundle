@@ -22,7 +22,6 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Twig\Markup;
 use Twig_Environment;
 
 class CrudHelper
@@ -73,11 +72,6 @@ class CrudHelper
     protected $parameters;
 
     /**
-     * @var array
-     */
-    protected $lastValues = [];
-
-    /**
      * Constructor.
      *
      * @param Manager $javascriptManager
@@ -118,168 +112,6 @@ class CrudHelper
     public function getOverlayService()
     {
         return $this->overlay;
-    }
-
-    /**
-     * Returns one colunm, inside "header" CRUD.
-     *
-     * @param string $column_id   Column id
-     * @param array  $options     Options :
-     *                            * label: Label. If null, default label is displayed
-     *                            * image_up: Url image "^"
-     *                            * image_down: Url image "V"
-     *                            * template: Template used. If null, default template is used
-     * @param array  $thOptions   Html options
-     * @param array  $ajaxOptions Ajax Options
-     *
-     * @return string
-     */
-    public function th($column_id, Crud $crud, $options, $thOptions, $ajaxOptions)
-    {
-        $resolver = new OptionsResolver();
-        $resolver->setDefaults(
-            [
-                'label' => null,
-                'image_up' => $this->parameters['images']['th_image_up'],
-                'image_down' => $this->parameters['images']['th_image_down'],
-                'template' => null,
-            ]
-        );
-        $options = $resolver->resolve($options);
-
-        if ($options['template']) {
-            return $this->templating->render(
-                $options['template'],
-                [
-                    'column_id' => $column_id,
-                    'crud' => $crud,
-                    'th_options' => $thOptions,
-                    'ajax_options' => $ajaxOptions,
-                ]
-            );
-        }
-
-        if (!isset($ajaxOptions['update'])) {
-            $ajaxOptions['update'] = $crud->getDivIdList();
-        }
-        $image_up = $options['image_up'];
-        $image_down = $options['image_down'];
-
-        //If the column is not to be shown, returns empty
-        $session_values = $crud->getSessionValues();
-        if (!\in_array($column_id, $session_values->displayedColumns)) {
-            return '';
-        }
-
-        //If the label was not defined, we take default label
-        $column = $crud->getColumn($column_id);
-        $label = $options['label'];
-        if (null === $label) {
-            $label = $column->label;
-        }
-        //I18N label
-        $label = $this->translator->trans($label);
-        //XSS protection
-        $label = htmlentities($label, \ENT_QUOTES, 'UTF-8');
-
-        //Case n°1: We cannot sort this column, we just show the label
-        if (!$column->sortable) {
-            return $this->util->tag('th', $thOptions, $label);
-        }
-
-        //Case n°2: We can sort on this column, but the sorting is not active on her at present
-        if ($session_values->sort != $column_id) {
-            $content = $this->listePrivateLink(
-                $label,
-                $crud->getUrl(['sort' => $column_id]),
-                [],
-                $ajaxOptions
-            );
-
-            return $this->util->tag('th', $thOptions, $content);
-        }
-
-        //Case n°3: We can sort on this column, and the sorting is active on her at present
-        $image_src = (Crud::ASC == $session_values->sense) ? $image_up : $image_down;
-        $image_alt = (Crud::ASC == $session_values->sense) ? '^' : 'V';
-        $new_sense = (Crud::ASC == $session_values->sense) ? Crud::DESC : Crud::ASC;
-        $image = $this->util->tag('img', ['src' => $image_src, 'alt' => $image_alt]);
-        $link = $this->listePrivateLink($label, $crud->getUrl(['sense' => $new_sense]), [], $ajaxOptions);
-
-        return $this->util->tag('th', $thOptions, $link.$image);
-    }
-
-    /**
-     * Returns one colunm, inside "body" CRUD.
-     *
-     * @param string $column_id Column id
-     * @param string $value     Value
-     * @param array  $options   Options :
-     *                          * escape: Escape (or not) the value
-     *                          * template: Template used. If null, default template is used
-     * @param array  $tdOptions Html options
-     *
-     * @return string
-     */
-    public function td($column_id, Crud $crud, $value, $options, $tdOptions)
-    {
-        $resolver = new OptionsResolver();
-        $resolver->setDefaults(
-            [
-                'escape' => true,
-                'template' => null,
-                'repeated_values_string' => null,
-                'repeated_values_add_title' => true,
-            ]
-        );
-        $options = $resolver->resolve($options);
-
-        if ($options['template']) {
-            return $this->templating->render(
-                $options['template'],
-                [
-                    'column_id' => $column_id,
-                    'crud' => $crud,
-                    'value' => $value,
-                    'options' => $options,
-                    'td_options' => $tdOptions,
-                ]
-            );
-        }
-
-        //If the column is not to be shown, returns empty
-        $session_values = $crud->getSessionValues();
-        if (!\in_array($column_id, $session_values->displayedColumns)) {
-            return '';
-        }
-
-        //Repeated values
-        if (null !== $options['repeated_values_string']) {
-            if ($value instanceof Markup) {
-                $value = $value->__toString();
-            }
-            if (null === $value) {
-                $value = '';
-            }
-
-            if (isset($this->lastValues[$column_id]) && $this->lastValues[$column_id] === $value) {
-                if ('' !== $value) {
-                    if ($options['repeated_values_add_title']) {
-                        $tdOptions['title'] = $value;
-                    }
-                    $value = $options['repeated_values_string'];
-                }
-            } else {
-                $this->lastValues[$column_id] = $value;
-            }
-        }
-
-        //XSS protection
-        if ($options['escape']) {
-            $value = htmlentities((string) $value, \ENT_QUOTES, 'UTF-8');
-        }
-
-        return $this->util->tag('td', $tdOptions, $value);
     }
 
     /**

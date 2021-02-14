@@ -34,6 +34,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('theme')->isRequired()->end()
+                ->scalarNode('icon_theme')->isRequired()->end()
                 ->arrayNode('images')
                     ->addDefaultsIfNotSet()
                     ->children()

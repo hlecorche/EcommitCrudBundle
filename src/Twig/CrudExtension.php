@@ -36,12 +36,16 @@ class CrudExtension extends AbstractExtension
     protected $formRenderer;
 
     protected $theme;
+    protected $iconTheme;
 
-    public function __construct(CrudHelper $crudHelper, FormRendererInterface $formRenderer, string $theme)
+    protected $lastTdValues = [];
+
+    public function __construct(CrudHelper $crudHelper, FormRendererInterface $formRenderer, string $theme, string $iconTheme)
     {
         $this->crudHelper = $crudHelper;
         $this->formRenderer = $formRenderer;
         $this->theme = $theme;
+        $this->iconTheme = $iconTheme;
     }
 
     public function getName()
@@ -71,12 +75,18 @@ class CrudExtension extends AbstractExtension
             new TwigFunction(
                 'crud_th',
                 [$this, 'th'],
-                ['is_safe' => ['all']]
+                [
+                    'needs_environment' => true,
+                    'is_safe' => ['html'],
+                ]
             ),
             new TwigFunction(
                 'crud_td',
                 [$this, 'td'],
-                ['is_safe' => ['all']]
+                [
+                    'needs_environment' => true,
+                    'is_safe' => ['html'],
+                ]
             ),
             new TwigFunction(
                 'crud_display_settings',
@@ -124,6 +134,14 @@ class CrudExtension extends AbstractExtension
                     'is_safe' => ['html'],
                 ]
             ),
+            new TwigFunction(
+                'crud_icon',
+                [$this, 'crudIcon'],
+                [
+                    'needs_environment' => true,
+                    'is_safe' => ['html'],
+                ]
+            ),
         ];
     }
 
@@ -138,9 +156,9 @@ class CrudExtension extends AbstractExtension
      *                            * type: Type of links paginator: elastic (all links) or sliding. Default: sliding
      *                            * max_pages_before: Max links before current page (only if sliding type is used). Default: 3
      *                            * max_pages_after: Max links after current page (only if sliding type is used). Default: 3
-     *                            * nav_attr: "nav" CSS attributes
-     *                            * ul_attr: "ul" CSS attributes
-     *                            * li_attr: "li" CSS attributes for each page type (sub arrays: first_page, previous_page, current_page, next_page, last_page, other_page)
+     *                            * nav_attr: "nav" attributes
+     *                            * ul_attr: "ul" attributes
+     *                            * li_attr: "li" attributes for each page type (sub arrays: first_page, previous_page, current_page, next_page, last_page, other_page)
      *                            * a_attr: "a" CSS attributes for each page type (sub arrays: first_page, previous_page, current_page, next_page, last_page, other_page)
      *                            * render: Template used for generation. If null, default template is used
      */
@@ -247,23 +265,141 @@ class CrudExtension extends AbstractExtension
     }
 
     /**
-     * Twig function: "crud_th".
+     * Returns CRUD th tag.
      *
-     * @see CrudHelper:th
+     * @param string $columnId Column to display
+     * @param array  $options  Options:
+     *                         * ajax_options: Ajax Options. If null, Ajax is not used. Default: null
+     *                         * label: Th label. If null, CRUD configuration is used
+     *                         * th_attr: "th" attributes
+     *                         * a_attr: "a" attributes
+     *                         * render: Template used for generation. If null, default template is used
      */
-    public function th($columnId, Crud $crud, $options = [], $thOptions = [], $ajaxOptions = [])
+    public function th(Environment $environment, string $columnId, Crud $crud, array $options = []): string
     {
-        return $this->crudHelper->th($columnId, $crud, $options, $thOptions, $ajaxOptions);
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults([
+            'ajax_options' => null,
+            'label' => null,
+            'th_attr' => function (OptionsResolver $thResolver): void {
+                $thResolver->setDefaults([
+                    'not_sortable' => [],
+                    'sortable_active_asc' => [],
+                    'sortable_active_desc' => [],
+                    'sortable_not_active' => [],
+                ]);
+                foreach (['not_sortable', 'sortable_active_asc', 'sortable_active_desc', 'sortable_not_active'] as $option) {
+                    $thResolver->setAllowedTypes($option, 'array');
+                }
+            },
+            'a_attr' => function (OptionsResolver $aResolver): void {
+                $aResolver->setDefaults([
+                    'sortable_active_asc' => [],
+                    'sortable_active_desc' => [],
+                    'sortable_not_active' => [],
+                ]);
+                foreach (['sortable_active_asc', 'sortable_active_desc', 'sortable_not_active'] as $option) {
+                    $aResolver->setAllowedTypes($option, 'array');
+                }
+            },
+            'render' => null,
+        ]);
+        $resolver->setAllowedTypes('ajax_options', ['null', 'array']);
+        $resolver->setAllowedTypes('label', ['null', 'string']);
+        $options = $resolver->resolve($options);
+
+        //If the column is not to be shown, returns empty
+        $sessionValues = $crud->getSessionValues();
+        if (!\in_array($columnId, $sessionValues->displayedColumns)) {
+            return '';
+        }
+        $column = $crud->getColumn($columnId);
+
+        if ($options['render']) {
+            return $environment->render($options['render'], [
+                'column' => $column,
+                'crud' => $crud,
+                'options' => $options,
+            ]);
+        }
+
+        if (!isset($options['ajax_options']['update'])) {
+            $options['ajax_options']['update'] = '#'.$crud->getDivIdList();
+        }
+
+        //If the label was not defined, we take default label
+        $label = $options['label'];
+        if (null === $label) {
+            $label = $column->label;
+        }
+
+        return $this->renderBlock($environment, $this->theme, 'th', array_merge($options, [
+            'column' => $column,
+            'crud' => $crud,
+            'options' => $options,
+            'label' => $label,
+        ]));
     }
 
     /**
-     * Twig function: "crud_td".
+     * Returns CRUD td tag.
      *
-     * @see CrudHelper:td
+     * @param string $columnId Column to display
+     * @param array  $options  Options:
+     *                         * escape: Escape or not value. Default: true
+     *                         * repeated_values_string: If not null, use this value if the original value is repeated. Default: null
+     *                         * td_attr: "td" attributes
+     *                         * render: Template used for generation. If null, default template is used
      */
-    public function td($columnId, Crud $crud, $value, $options = [], $tdOptions = [])
+    public function td(Environment $environment, string $columnId, Crud $crud, $value, $options = []): string
     {
-        return $this->crudHelper->td($columnId, $crud, $value, $options, $tdOptions);
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults([
+            'escape' => true,
+            'repeated_values_string' => null,
+            'td_attr' => [],
+            'render' => null,
+        ]);
+        $resolver->setAllowedTypes('escape', 'bool');
+        $resolver->setAllowedTypes('repeated_values_string', ['null', 'string']);
+        $resolver->setAllowedTypes('td_attr', ['null', 'array']);
+        $options = $resolver->resolve($options);
+
+        //If the column is not to be shown, returns empty
+        $sessionValues = $crud->getSessionValues();
+        if (!\in_array($columnId, $sessionValues->displayedColumns)) {
+            return '';
+        }
+        $column = $crud->getColumn($columnId);
+
+        if ($options['render']) {
+            return $environment->render($options['render'], [
+                'column' => $column,
+                'crud' => $crud,
+                'value' => $value,
+                'options' => $options,
+            ]);
+        }
+
+        $repeatedValue = false;
+        if (null !== $options['repeated_values_string']) {
+            $value = (string) $value; //transform to string is important : eg: Twig Markup
+            if (isset($this->lastTdValues[$crud->getSessionName()][$columnId]) && $this->lastTdValues[$crud->getSessionName()][$columnId] === $value) {
+                if ('' !== $value) {
+                    $repeatedValue = true;
+                }
+            } else {
+                $this->lastTdValues[$crud->getSessionName()][$columnId] = $value;
+            }
+        }
+
+        return $this->renderBlock($environment, $this->theme, 'td', array_merge($options, [
+            'column' => $column,
+            'crud' => $crud,
+            'value' => $value,
+            'repeatedValue' => $repeatedValue,
+            'options' => $options,
+        ]));
     }
 
     /**
@@ -464,6 +600,11 @@ class CrudExtension extends AbstractExtension
         }
 
         return $attributes;
+    }
+
+    public function crudIcon(Environment $environment, string $iconName): string
+    {
+        return $this->renderBlock($environment, $this->iconTheme, $iconName);
     }
 
     protected function renderBlock(Environment $environment, string $templateName, string $blockName, array $parameters = []): ?string
