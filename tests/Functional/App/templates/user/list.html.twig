@@ -19,6 +19,8 @@
     </table>
 </div>
 
+{% if test_before_after_build_query is defined %}<div>TEST BEFORE AFTER BUILD QUERY {{ test_before_after_build_query }}</div>{% endif %}
+
 <div class="info-pagination">
     {% trans with {'%first%': crud.paginator.firstIndice, '%last%' : crud.paginator.lastIndice} %}Results %first%-%last%{% endtrans %}  -
     {% trans with {'%page%': crud.paginator.page, '%lastPage%' : crud.paginator.lastPage} %}Page %page%/%lastPage%{% endtrans %}

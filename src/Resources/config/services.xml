@@ -12,6 +12,11 @@
         </service>
         <service id="ecommit_crud.factory" alias="Ecommit\CrudBundle\Crud\CrudFactory" public="true" />
 
+        <service id="Ecommit\CrudBundle\Crud\CrudResponseGenerator" class="Ecommit\CrudBundle\Crud\CrudResponseGenerator" public="true">
+            <tag name="container.service_subscriber" />
+        </service>
+        <service id="ecommit_crud.response_generatror" alias="Ecommit\CrudBundle\Crud\CrudResponseGenerator" public="true" />
+
         <service id="Ecommit\CrudBundle\Helper\CrudHelper" class="Ecommit\CrudBundle\Helper\CrudHelper" public="true">
             <argument type="service" id="Ecommit\UtilBundle\Helper\UtilHelper"/>
             <argument type="service" id="Ecommit\JavascriptBundle\Helper\JqueryHelper"/>

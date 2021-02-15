@@ -20,6 +20,10 @@ use Symfony\Component\Panther\PantherTestCase;
 
 class TestCrudControllerTest extends PantherTestCase
 {
+    public const URL = '/user/';
+    public const SESSION_NAME = 'user';
+    public const SEARCH_IN_LIST = null;
+
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
@@ -30,12 +34,13 @@ class TestCrudControllerTest extends PantherTestCase
     public function testList(): Client
     {
         $client = static::createPantherClient();
-        $client->request('GET', '/user/');
+        $client->request('GET', static::URL);
 
         $this->assertSame([5, 2], $this->countRowsAndColumns($client->getCrawler()));
         $this->assertSame([1, 3], $this->getPagination($client->getCrawler()));
         $this->assertSame(['first_name', Crud::ASC], $this->getSort($client->getCrawler()));
         $this->assertSame('AudeJavel', $this->getFirstUsername($client->getCrawler()));
+        $this->checkBeforeAndAfterBuildQuery($client->getCrawler());
 
         return $client;
     }
@@ -53,6 +58,7 @@ class TestCrudControllerTest extends PantherTestCase
         $this->assertSame([1, 3], $this->getPagination($client->getCrawler()));
         $this->assertSame(['first_name', Crud::DESC], $this->getSort($client->getCrawler()));
         $this->assertSame('YvonEmbavé', $this->getFirstUsername($client->getCrawler()));
+        $this->checkBeforeAndAfterBuildQuery($client->getCrawler());
 
         return $client;
     }
@@ -70,6 +76,7 @@ class TestCrudControllerTest extends PantherTestCase
         $this->assertSame([1, 3], $this->getPagination($client->getCrawler()));
         $this->assertSame(['last_name', Crud::DESC], $this->getSort($client->getCrawler()));
         $this->assertSame('ClémentTine', $this->getFirstUsername($client->getCrawler()));
+        $this->checkBeforeAndAfterBuildQuery($client->getCrawler());
 
         return $client;
     }
@@ -82,14 +89,15 @@ class TestCrudControllerTest extends PantherTestCase
         $button = $client->getCrawler()->filterXPath('//button[contains(.,"Display Settings")]');
         $button->first()->click();
 
-        $client->getCrawler()->filterXPath('//form[@name="crud_display_settings_user"]/descendant::input[@value="username"]')->click();
-        $client->getCrawler()->filterXPath('//form[@name="crud_display_settings_user"]/descendant::button[@type="submit"]')->click();
+        $client->getCrawler()->filterXPath('//form[@name="crud_display_settings_'.static::SESSION_NAME.'"]/descendant::input[@value="username"]')->click();
+        $client->getCrawler()->filterXPath('//form[@name="crud_display_settings_'.static::SESSION_NAME.'"]/descendant::button[@type="submit"]')->click();
         $this->waitForAjax($client);
 
         $this->assertSame([5, 3], $this->countRowsAndColumns($client->getCrawler()));
         $this->assertSame([1, 3], $this->getPagination($client->getCrawler()));
         $this->assertSame(['last_name', Crud::DESC], $this->getSort($client->getCrawler()));
         $this->assertSame('ClémentTine', $this->getFirstUsername($client->getCrawler()));
+        $this->checkBeforeAndAfterBuildQuery($client->getCrawler());
 
         return $client;
     }
@@ -102,8 +110,8 @@ class TestCrudControllerTest extends PantherTestCase
         $button = $client->getCrawler()->filterXPath('//button[contains(., "Display Settings")]');
         $button->first()->click();
 
-        $form = $client->getCrawler()->filterXPath('//form[@name="crud_display_settings_user"]/descendant::button[@type="submit"]')->form();
-        $form['crud_display_settings_user[resultsPerPage]'] = 10;
+        $form = $client->getCrawler()->filterXPath('//form[@name="crud_display_settings_'.static::SESSION_NAME.'"]/descendant::button[@type="submit"]')->form();
+        $form['crud_display_settings_'.static::SESSION_NAME.'[resultsPerPage]'] = 10;
         $client->submit($form);
         $this->waitForAjax($client);
 
@@ -111,6 +119,7 @@ class TestCrudControllerTest extends PantherTestCase
         $this->assertSame([1, 2], $this->getPagination($client->getCrawler()));
         $this->assertSame(['last_name', Crud::DESC], $this->getSort($client->getCrawler()));
         $this->assertSame('ClémentTine', $this->getFirstUsername($client->getCrawler()));
+        $this->checkBeforeAndAfterBuildQuery($client->getCrawler());
 
         return $client;
     }
@@ -120,12 +129,13 @@ class TestCrudControllerTest extends PantherTestCase
      */
     public function testPersistentValuesAfterChangeSortAndSettings(Client $client): Client
     {
-        $client->request('GET', '/user/');
+        $client->request('GET', static::URL);
 
         $this->assertSame([10, 3], $this->countRowsAndColumns($client->getCrawler()));
         $this->assertSame([1, 2], $this->getPagination($client->getCrawler()));
         $this->assertSame(['last_name', Crud::DESC], $this->getSort($client->getCrawler()));
         $this->assertSame('ClémentTine', $this->getFirstUsername($client->getCrawler()));
+        $this->checkBeforeAndAfterBuildQuery($client->getCrawler());
 
         return $client;
     }
@@ -143,6 +153,7 @@ class TestCrudControllerTest extends PantherTestCase
         $this->assertSame([2, 2], $this->getPagination($client->getCrawler()));
         $this->assertSame(['last_name', Crud::DESC], $this->getSort($client->getCrawler()));
         $this->assertSame('JudieCieux', $this->getFirstUsername($client->getCrawler()));
+        $this->checkBeforeAndAfterBuildQuery($client->getCrawler());
 
         return $client;
     }
@@ -152,12 +163,13 @@ class TestCrudControllerTest extends PantherTestCase
      */
     public function testPersistentValuesAfterChangePage(Client $client): Client
     {
-        $client->request('GET', '/user/');
+        $client->request('GET', static::URL);
 
         $this->assertSame([1, 3], $this->countRowsAndColumns($client->getCrawler()));
         $this->assertSame([2, 2], $this->getPagination($client->getCrawler()));
         $this->assertSame(['last_name', Crud::DESC], $this->getSort($client->getCrawler()));
         $this->assertSame('JudieCieux', $this->getFirstUsername($client->getCrawler()));
+        $this->checkBeforeAndAfterBuildQuery($client->getCrawler());
 
         return $client;
     }
@@ -168,7 +180,7 @@ class TestCrudControllerTest extends PantherTestCase
     public function testSearch(Client $client): Client
     {
         $form = $client->getCrawler()->filterXPath('//div[@id="crud_search"]/descendant::button[@type="submit" and contains(text(), "Search")]')->form();
-        $form['crud_search_user[firstName]'] = 'Henri';
+        $form['crud_search_'.static::SESSION_NAME.'[firstName]'] = 'Henri';
         $client->submit($form);
         $this->waitForAjax($client);
 
@@ -176,6 +188,7 @@ class TestCrudControllerTest extends PantherTestCase
         $this->assertSame([1, 1], $this->getPagination($client->getCrawler()));
         $this->assertSame(['last_name', Crud::DESC], $this->getSort($client->getCrawler()));
         $this->assertSame('HenriPoste', $this->getFirstUsername($client->getCrawler()));
+        $this->checkBeforeAndAfterBuildQuery($client->getCrawler());
 
         return $client;
     }
@@ -185,12 +198,13 @@ class TestCrudControllerTest extends PantherTestCase
      */
     public function testPersistentValuesAfterSearch(Client $client): Client
     {
-        $client->request('GET', '/user/');
+        $client->request('GET', static::URL);
 
         $this->assertSame([2, 3], $this->countRowsAndColumns($client->getCrawler()));
         $this->assertSame([1, 1], $this->getPagination($client->getCrawler()));
         $this->assertSame(['last_name', Crud::DESC], $this->getSort($client->getCrawler()));
         $this->assertSame('HenriPoste', $this->getFirstUsername($client->getCrawler()));
+        $this->checkBeforeAndAfterBuildQuery($client->getCrawler());
 
         return $client;
     }
@@ -208,6 +222,7 @@ class TestCrudControllerTest extends PantherTestCase
         $this->assertSame([1, 2], $this->getPagination($client->getCrawler()));
         $this->assertSame(['last_name', Crud::DESC], $this->getSort($client->getCrawler()));
         $this->assertSame('ClémentTine', $this->getFirstUsername($client->getCrawler()));
+        $this->checkBeforeAndAfterBuildQuery($client->getCrawler());
 
         return $client;
     }
@@ -217,12 +232,13 @@ class TestCrudControllerTest extends PantherTestCase
      */
     public function testPersistentValuesAfterResetSearch(Client $client): Client
     {
-        $client->request('GET', '/user/');
+        $client->request('GET', static::URL);
 
         $this->assertSame([10, 3], $this->countRowsAndColumns($client->getCrawler()));
         $this->assertSame([1, 2], $this->getPagination($client->getCrawler()));
         $this->assertSame(['last_name', Crud::DESC], $this->getSort($client->getCrawler()));
         $this->assertSame('ClémentTine', $this->getFirstUsername($client->getCrawler()));
+        $this->checkBeforeAndAfterBuildQuery($client->getCrawler());
 
         return $client;
     }
@@ -235,7 +251,7 @@ class TestCrudControllerTest extends PantherTestCase
         $button = $client->getCrawler()->filterXPath('//button[contains(., "Display Settings")]');
         $button->first()->click();
 
-        $button = $client->getCrawler()->filterXPath('//form[@name="crud_display_settings_user"]/descendant::button[contains(., "Reset display settings")]');
+        $button = $client->getCrawler()->filterXPath('//form[@name="crud_display_settings_'.static::SESSION_NAME.'"]/descendant::button[contains(., "Reset display settings")]');
         $button->first()->click();
         $this->waitForAjax($client);
 
@@ -243,6 +259,7 @@ class TestCrudControllerTest extends PantherTestCase
         $this->assertSame([1, 3], $this->getPagination($client->getCrawler()));
         $this->assertSame(['first_name', Crud::ASC], $this->getSort($client->getCrawler()));
         $this->assertSame('AudeJavel', $this->getFirstUsername($client->getCrawler()));
+        $this->checkBeforeAndAfterBuildQuery($client->getCrawler());
 
         return $client;
     }
@@ -252,14 +269,26 @@ class TestCrudControllerTest extends PantherTestCase
      */
     public function testPersistentValuesAfterResetSettings(Client $client): Client
     {
-        $client->request('GET', '/user/');
+        $client->request('GET', static::URL);
 
         $this->assertSame([5, 2], $this->countRowsAndColumns($client->getCrawler()));
         $this->assertSame([1, 3], $this->getPagination($client->getCrawler()));
         $this->assertSame(['first_name', Crud::ASC], $this->getSort($client->getCrawler()));
         $this->assertSame('AudeJavel', $this->getFirstUsername($client->getCrawler()));
+        $this->checkBeforeAndAfterBuildQuery($client->getCrawler());
 
         return $client;
+    }
+
+    protected function checkBeforeAndAfterBuildQuery(Crawler $crawler): void
+    {
+        if (null === static::SEARCH_IN_LIST) {
+            $this->assertCount(0, $crawler->filterXPath('//div[contains(text(), "TEST BEFORE AFTER BUILD QUERY")]'));
+
+            return;
+        }
+
+        $this->assertCount(1, $crawler->filterXPath('//div[contains(text(), "TEST BEFORE AFTER BUILD QUERY '.static::SEARCH_IN_LIST.'")]'));
     }
 
     protected function countRowsAndColumns(Crawler $crawler): array

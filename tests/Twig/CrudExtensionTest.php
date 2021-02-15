@@ -161,7 +161,7 @@ class CrudExtensionTest extends KernelTestCase
         $paginator->setData([]);
         $paginator->init();
 
-        $result = $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_list');
+        $result = $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_crud');
 
         $this->assertEmpty($result);
     }
@@ -172,7 +172,7 @@ class CrudExtensionTest extends KernelTestCase
         $paginator->setData(['val']);
         $paginator->init();
 
-        $result = $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_list');
+        $result = $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_crud');
 
         $this->assertEmpty($result);
     }
@@ -187,7 +187,7 @@ class CrudExtensionTest extends KernelTestCase
         $paginator->setPage($page);
         $paginator->init();
 
-        $result = $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_list');
+        $result = $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_crud');
 
         $this->assertSame($expected, $result);
     }
@@ -213,7 +213,7 @@ class CrudExtensionTest extends KernelTestCase
         $paginator->setPage($page);
         $paginator->init();
 
-        $result = $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_list', [], [
+        $result = $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_crud', [], [
             'max_pages_before' => 4,
             'max_pages_after' => 2,
         ]);
@@ -242,7 +242,7 @@ class CrudExtensionTest extends KernelTestCase
         $paginator->setPage($page);
         $paginator->init();
 
-        $result = $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_list', [], [
+        $result = $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_crud', [], [
             'type' => $type,
         ]);
 
@@ -284,7 +284,7 @@ class CrudExtensionTest extends KernelTestCase
         $paginator->init();
 
         $expected = '<nav><ul class="ec-crud-pagination"><li class="current"><a href="/user?page=1" class="ec-crud-ajax-link-auto">1</a></li><li><a href="/user?page=2" class="ec-crud-ajax-link-auto">2</a></li><li class="next"><a href="/user?page=2" class="ec-crud-ajax-link-auto">›</a></li><li class="last"><a href="/user?page=20" class="ec-crud-ajax-link-auto">»</a></li></ul></nav>';
-        $result = $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_list', [], [
+        $result = $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_crud', [], [
             'ajax_options' => [],
             'max_pages_before' => 1,
             'max_pages_after' => 1,
@@ -301,7 +301,7 @@ class CrudExtensionTest extends KernelTestCase
         $paginator->init();
 
         $expected = '<nav><ul class="ec-crud-pagination"><li class="current"><a href="/user?page=1" class="ec-crud-ajax-link-auto" data-ec-crud-ajax-update="#myId">1</a></li><li><a href="/user?page=2" class="ec-crud-ajax-link-auto" data-ec-crud-ajax-update="#myId">2</a></li><li class="next"><a href="/user?page=2" class="ec-crud-ajax-link-auto" data-ec-crud-ajax-update="#myId">›</a></li><li class="last"><a href="/user?page=20" class="ec-crud-ajax-link-auto" data-ec-crud-ajax-update="#myId">»</a></li></ul></nav>';
-        $result = $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_list', [], [
+        $result = $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_crud', [], [
             'ajax_options' => [
                 'update' => '#myId',
             ],
@@ -320,7 +320,7 @@ class CrudExtensionTest extends KernelTestCase
         $paginator->init();
 
         $expected = '<nav><ul class="ec-crud-pagination"><li class="current"><a href="/user?p=1">1</a></li><li><a href="/user?p=2">2</a></li><li class="next"><a href="/user?p=2">›</a></li><li class="last"><a href="/user?p=20">»</a></li></ul></nav>';
-        $result = $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_list', [], [
+        $result = $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_crud', [], [
             'attribute_page' => 'p',
             'max_pages_before' => 1,
             'max_pages_after' => 1,
@@ -337,7 +337,7 @@ class CrudExtensionTest extends KernelTestCase
         $paginator->init();
 
         $expected = '<nav class="navattr" data-nav="val"><ul class="ulattr ec-crud-pagination" data-ul="val"><li class="lifirstpageattr first" data-li-first="val"><a href="/user?page=1" class="afirstpageattr" data-a-first="val">«</a></li><li class="lipreviouspageattr previous"><a href="/user?page=9" class="apreviouspageattr">‹</a></li><li class="liotherpageattr"><a href="/user?page=9" class="aotherpageattr">9</a></li><li class="liccurentpageattr current"><a href="/user?page=10" class="accurentpageattr">10</a></li><li class="liotherpageattr"><a href="/user?page=11" class="aotherpageattr">11</a></li><li class="linextpageattr next"><a href="/user?page=11" class="anextpageattr">›</a></li><li class="lilastpageattr last"><a href="/user?page=20" class="alastpageattr">»</a></li></ul></nav>';
-        $result = $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_list', [], [
+        $result = $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_crud', [], [
             'nav_attr' => ['class' => 'navattr', 'data-nav' => 'val'],
             'ul_attr' => ['class' => 'ulattr', 'data-ul' => 'val'],
             'li_attr' => [
@@ -370,7 +370,7 @@ class CrudExtensionTest extends KernelTestCase
         $paginator->setPage(1);
         $paginator->init();
 
-        $result = $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_list', [], [
+        $result = $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_crud', [], [
             'render' => 'render.html.twig',
         ]);
 
@@ -385,7 +385,7 @@ class CrudExtensionTest extends KernelTestCase
         $paginator->setPage(1);
         $paginator->init();
 
-        $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_list', [], [
+        $this->crudExtension->paginatorLinks($this->environment, $paginator, 'user_crud', [], [
             'bad_option' => 'bad',
         ]);
     }
@@ -403,7 +403,7 @@ class CrudExtensionTest extends KernelTestCase
             ->getMock();
         $crud->expects($this->once())->method('getDivIdList')->willReturn('myId');
         $crud->expects($this->once())->method('getPaginator')->willReturn($paginator);
-        $crud->expects($this->once())->method('getRouteName')->willReturn('user_list');
+        $crud->expects($this->once())->method('getRouteName')->willReturn('user_crud');
         $crud->expects($this->once())->method('getRouteParams')->willReturn([]);
 
         $expected = '<nav><ul class="ec-crud-pagination"><li class="current"><a href="/user?page=1" class="ec-crud-ajax-link-auto" data-ec-crud-ajax-update="#myId">1</a></li><li><a href="/user?page=2" class="ec-crud-ajax-link-auto" data-ec-crud-ajax-update="#myId">2</a></li><li class="next"><a href="/user?page=2" class="ec-crud-ajax-link-auto" data-ec-crud-ajax-update="#myId">›</a></li><li class="last"><a href="/user?page=20" class="ec-crud-ajax-link-auto" data-ec-crud-ajax-update="#myId">»</a></li></ul></nav>';
@@ -695,7 +695,7 @@ class CrudExtensionTest extends KernelTestCase
             ->onlyMethods(['getDivIdList', 'getRouteName', 'getRouteParams', 'getSessionValues', 'getColumn'])
             ->getMock();
         $crud->expects($this->any())->method('getDivIdList')->willReturn('myId');
-        $crud->expects($this->any())->method('getRouteName')->willReturn('user_list');
+        $crud->expects($this->any())->method('getRouteName')->willReturn('user_crud');
         $crud->expects($this->any())->method('getRouteParams')->willReturn([]);
         $crud->expects($this->any())->method('getSessionValues')->willReturn($crudSession);
         $crud->expects($this->any())->method('getColumn')->willReturnCallback(function ($columnId) use ($columns) {

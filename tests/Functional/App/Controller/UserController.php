@@ -20,7 +20,7 @@ use Ecommit\CrudBundle\Tests\Functional\App\Form\Searcher\UserSearcher;
 
 class UserController extends AbstractCrudController
 {
-    protected function configCrud()
+    protected function getCrud(): Crud
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -36,31 +36,25 @@ class UserController extends AbstractCrudController
             ->setAvailableResultsPerPage([5, 5, 10, 50], 5)
             ->setDefaultSort('firstName', Crud::ASC)
             ->createSearcherForm(new UserSearcher())
-            ->setRoute('user_ajax_list')
-            ->setSearchRoute('user_ajax_search')
+            ->setRoute('user_ajax_crud')
             ->setPersistentSettings(true)
             ->init();
 
         return $crud;
     }
 
-    protected function getTemplateName($action)
+    protected function getTemplateName(string $action): string
     {
         return sprintf('user/%s.html.twig', $action);
     }
 
-    public function listAction()
+    public function crudAction()
     {
-        return $this->autoListAction();
+        return $this->getCrudResponse();
     }
 
-    public function ajaxListAction()
+    public function ajaxCrudAction()
     {
-        return $this->autoAjaxListAction();
-    }
-
-    public function ajaxSearchAction()
-    {
-        return $this->autoAjaxSearchAction();
+        return $this->getAjaxCrudResponse();
     }
 }

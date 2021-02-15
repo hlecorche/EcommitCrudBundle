@@ -65,8 +65,6 @@ class Crud
      */
     protected $routeName = null;
     protected $routeParams = [];
-    protected $searchRouteName = null;
-    protected $searchRouteParams = [];
 
     protected $divIdSearch = 'crud_search';
     protected $divIdList = 'crud_list';
@@ -328,22 +326,6 @@ class Crud
     }
 
     /**
-     * Sets the search route.
-     *
-     * @param string $routeName
-     * @param array  $parameters
-     *
-     * @return Crud
-     */
-    public function setSearchRoute($routeName, $parameters = [])
-    {
-        $this->searchRouteName = $routeName;
-        $this->searchRouteParams = $parameters;
-
-        return $this;
-    }
-
-    /**
      * Returns the search url.
      *
      * @param array $parameters Additional parameters
@@ -352,9 +334,9 @@ class Crud
      */
     public function getSearchUrl($parameters = [])
     {
-        $parameters = array_merge($this->searchRouteParams, $parameters);
+        $parameters = array_merge($this->routeParams, ['search' => 1], $parameters);
 
-        return $this->router->generate($this->searchRouteName, $parameters);
+        return $this->router->generate($this->routeName, $parameters);
     }
 
     /**
@@ -559,9 +541,6 @@ class Crud
             'queryBuilder',
             'routeName',
         ];
-        if (!empty($this->defaultFormSearcherData)) {
-            $check_values[] = 'searchRouteName';
-        }
         foreach ($check_values as $value) {
             if (empty($this->$value)) {
                 throw new \Exception('Config Crud: Option '.$value.' is required');

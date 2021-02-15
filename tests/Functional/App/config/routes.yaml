@@ -1,11 +1,15 @@
-user_list:
+user_crud:
     path: /user
-    controller: Ecommit\CrudBundle\Tests\Functional\App\Controller\UserController::listAction
+    controller: Ecommit\CrudBundle\Tests\Functional\App\Controller\UserController::crudAction
 
-user_ajax_list:
-    path: /user/ajax-list
-    controller: Ecommit\CrudBundle\Tests\Functional\App\Controller\UserController::ajaxListAction
+user_ajax_crud:
+    path: /user/ajax-crud
+    controller: Ecommit\CrudBundle\Tests\Functional\App\Controller\UserController::ajaxCrudAction
 
-user_ajax_search:
-    path: /user/ajax-search
-    controller: Ecommit\CrudBundle\Tests\Functional\App\Controller\UserController::ajaxSearchAction
+user_without_trait_crud:
+    path: /user-without-trait
+    controller: Ecommit\CrudBundle\Tests\Functional\App\Controller\UserWithoutTraitController::crudAction
+
+user_without_trait_ajax_crud:
+    path: /user-without-trait/ajax-crud
+    controller: Ecommit\CrudBundle\Tests\Functional\App\Controller\UserWithoutTraitController::ajaxCrudAction
