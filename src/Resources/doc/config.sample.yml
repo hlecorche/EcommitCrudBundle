@@ -1,5 +1,0 @@
-ecommit_crud:
-  images:
-    #Images used in th method
-    th_image_up: "/bundles/ecommitcrud/images/i16/sort_incr.png"
-    th_image_down: "/bundles/ecommitcrud/images/i16/sort_decrease.png"
