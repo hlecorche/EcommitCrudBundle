@@ -97,14 +97,28 @@ class CrudExtension extends AbstractExtension
                 ]
             ),
             new TwigFunction(
-                'crud_search_form',
-                [$this, 'searchForm'],
-                ['is_safe' => ['all']]
+                'crud_search_form_start',
+                [$this, 'searchFormStart'],
+                [
+                    'needs_environment' => true,
+                    'is_safe' => ['all'],
+                ]
             ),
             new TwigFunction(
-                'crud_search_reset',
-                [$this, 'searchReset'],
-                ['is_safe' => ['all']]
+                'crud_search_form_submit',
+                [$this, 'searchFormSubmit'],
+                [
+                    'needs_environment' => true,
+                    'is_safe' => ['all'],
+                ]
+            ),
+            new TwigFunction(
+                'crud_search_form_reset',
+                [$this, 'searchFormReset'],
+                [
+                    'needs_environment' => true,
+                    'is_safe' => ['all'],
+                ]
             ),
             new TwigFunction(
                 'crud_declare_modal',
@@ -403,92 +417,158 @@ class CrudExtension extends AbstractExtension
     }
 
     /**
-     * Twig function: "crud_display_config".
+     * Returns CRUD td tag.
      *
-     * @param array $options     Options :
-     *                           * modal:  Include (or not) inside a modal. Default: true
-     *                           * image_url: Url image (button)
-     *                           * use_bootstrap: Use Bootstrap or not
-     *                           * modal_close_div_class: Close Div CSS Class
-     *                           * template: Template used. If null, default template is used
-     * @param array $ajaxOptions Ajax options
-     *
-     * @return string
+     * @param array $options Options:
+     *                       * modal: Use modal or not. Default: true
+     *                       * render: Template used for generation. If null, default template is used
      */
-    public function displaySettings(Environment $environment, Crud $crud, $options = [], $ajaxOptions = [])
+    public function displaySettings(Environment $environment, Crud $crud, array $options = []): string
     {
         $resolver = new OptionsResolver();
-        $resolver->setDefaults(
-            [
-                'modal' => true,
-                'image_url' => '/bundles/ecommitcrud/images/i16/list.png',
-                'use_bootstrap' => $this->crudHelper->useBootstrap(),
-                'modal_close_div_class' => 'overlay-close',
-                'template' => null,
-            ]
-        );
+        $resolver->setDefaults([
+            'modal' => true,
+            'render' => null,
+        ]);
         $resolver->setAllowedTypes('modal', 'bool');
-        $resolver->setAllowedTypes('use_bootstrap', 'bool');
         $options = $resolver->resolve($options);
 
-        if (!isset($ajaxOptions['update'])) {
-            $ajaxOptions['update'] = '#'.$crud->getDivIdList();
-        }
+        $form = $crud->getDisplaySettingsForm();
 
-        $form = $this->crudHelper->getFormDisplaySettings($crud);
-
-        if (!empty($options['template'])) {
-            $templateName = $options['template'];
-        } elseif ($options['modal']) {
-            if ($options['use_bootstrap']) {
-                $templateName = '@EcommitCrud/Crud/form_settings_modal_bootstrap.html.twig';
-            } else {
-                $templateName = '@EcommitCrud/Crud/form_settings_modal.html.twig';
-            }
-        } else {
-            if ($options['use_bootstrap']) {
-                $templateName = '@EcommitCrud/Crud/form_settings_nomodal_bootstrap.html.twig';
-            } else {
-                $templateName = '@EcommitCrud/Crud/form_settings_nomodal.html.twig';
-            }
-        }
-
-        return $environment->render(
-            $templateName,
-            [
+        if ($options['render']) {
+            return $environment->render($options['render'], [
+                'crud' => $crud,
                 'form' => $form,
-                'url' => $crud->getUrl(),
-                'reset_settings_url' => $crud->getUrl(['razsettings' => 1]),
-                'ajax_options' => $ajaxOptions,
-                'image_url' => $options['image_url'],
-                'suffix' => $crud->getSessionName(),
-                'use_bootstrap' => $options['use_bootstrap'],
-                'close_div_class' => $options['modal_close_div_class'],
-                'overlay_service' => $this->crudHelper->getOverlayService(),
-                'display_button' => $crud->getDisplayResults(),
-                'div_id_list' => $crud->getDivIdList(),
-            ]
+                'options' => $options,
+            ]);
+        }
+
+        return $this->renderBlock($environment, $this->theme, 'display_settings', array_merge($options, [
+            'crud' => $crud,
+            'form' => $form,
+        ]));
+    }
+
+    /**
+     * @param array $options Options:
+     *                       * ajax_options: Ajax options. Default: []
+     *                       * form_attr: "form" attributes
+     *                       * render: Template used for generation. If null, default template is used
+     */
+    public function searchFormStart(Environment $environment, Crud $crud, array $options = [])
+    {
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults([
+            'ajax_options' => [],
+            'form_attr' => [],
+            'render' => null,
+        ]);
+        $resolver->setAllowedTypes('ajax_options', ['array']);
+        $resolver->setAllowedTypes('form_attr', ['array']);
+        $options = $resolver->resolve($options);
+
+        if ($options['render']) {
+            return $environment->render($options['render'], [
+                'crud' => $crud,
+                'options' => $options,
+            ]);
+        }
+
+        $options['form_attr'] = array_merge(
+            [
+                'data-crud-search-id' => $crud->getDivIdSearch(),
+                'data-crud-list-id' => $crud->getDivIdList(),
+            ],
+            $options['form_attr'],
+            $this->getAjaxAttributes($this->validateAjaxOptions($options['ajax_options']))
         );
+        $class = 'ec-crud-search-form';
+        if (isset($options['form_attr']['class'])) {
+            $options['form_attr']['class'] = sprintf('%s %s', $class, $options['form_attr']['class']);
+        } else {
+            $options['form_attr']['class'] = $class;
+        }
+
+        if (!isset($options['form_attr']['novalidate'])) {
+            $options['form_attr']['novalidate'] = 'novalidate';
+        }
+
+        return $this->renderBlock($environment, $this->theme, 'search_form_start', array_merge($options, [
+            'crud' => $crud,
+        ]));
     }
 
     /**
-     * Twig function: "crud_search_form".
-     *
-     * @see CrudHelper:searchFormTag
+     * @param array $options Options:
+     *                       * button_attr: "button" attributes
+     *                       * render: Template used for generation. If null, default template is used
      */
-    public function searchForm(Crud $crud, $ajaxOptions = [], $htmlOptions = [])
+    public function searchFormSubmit(Environment $environment, Crud $crud, $options = [], $ajaxOptions = [], $htmlOptions = [])
     {
-        return $this->crudHelper->searchFormTag($crud, $ajaxOptions, $htmlOptions);
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults([
+            'button_attr' => [],
+            'render' => null,
+        ]);
+        $resolver->setAllowedTypes('button_attr', ['array']);
+        $options = $resolver->resolve($options);
+
+        if ($options['render']) {
+            return $environment->render($options['render'], [
+                'crud' => $crud,
+                'options' => $options,
+            ]);
+        }
+
+        return $this->renderBlock($environment, $this->theme, 'search_form_submit', array_merge($options, [
+            'crud' => $crud,
+        ]));
     }
 
     /**
-     * Twig function: "crud_search_reset".
-     *
-     * @see CrudHelper:searchResetButton
+     * @param array $options Options:
+     *                       * ajax_options: Ajax options. Default: []
+     *                       * button_attr: "button" attributes
+     *                       * render: Template used for generation. If null, default template is used
      */
-    public function searchReset(Crud $crud, $options = [], $ajaxOptions = [], $htmlOptions = [])
+    public function searchFormReset(Environment $environment, Crud $crud, $options = [], $ajaxOptions = [], $htmlOptions = [])
     {
-        return $this->crudHelper->searchResetButton($crud, $options, $ajaxOptions, $htmlOptions);
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults([
+            'ajax_options' => [],
+            'button_attr' => [],
+            'render' => null,
+        ]);
+        $resolver->setAllowedTypes('ajax_options', ['array']);
+        $resolver->setAllowedTypes('button_attr', ['array']);
+        $options = $resolver->resolve($options);
+
+        if ($options['render']) {
+            return $environment->render($options['render'], [
+                'crud' => $crud,
+                'options' => $options,
+            ]);
+        }
+
+        $options['button_attr'] = array_merge(
+            [
+                'data-crud-search-id' => $crud->getDivIdSearch(),
+                'data-crud-list-id' => $crud->getDivIdList(),
+                'data-ec-crud-ajax-url' => $crud->getSearchUrl(['raz' => 1]),
+            ],
+            $options['button_attr'],
+            $this->getAjaxAttributes($this->validateAjaxOptions($options['ajax_options']))
+        );
+        $class = 'ec-crud-search-reset';
+        if (isset($options['button_attr']['class'])) {
+            $options['button_attr']['class'] = sprintf('%s %s', $class, $options['button_attr']['class']);
+        } else {
+            $options['button_attr']['class'] = $class;
+        }
+
+        return $this->renderBlock($environment, $this->theme, 'search_form_reset', array_merge($options, [
+            'crud' => $crud,
+        ]));
     }
 
     /**

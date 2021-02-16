@@ -355,5 +355,7 @@ class TestCrudControllerTest extends PantherTestCase
         $driver->wait($timeout, 500)->until(static function ($driver) {
             return !$driver->executeScript('return (typeof jQuery !== "undefined" && jQuery.active);');
         });
+
+        usleep(500000);
     }
 }

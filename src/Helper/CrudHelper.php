@@ -13,12 +13,9 @@ declare(strict_types=1);
 
 namespace Ecommit\CrudBundle\Helper;
 
-use Ecommit\CrudBundle\Crud\Crud;
-use Ecommit\CrudBundle\Form\Type\DisplaySettingsType;
 use Ecommit\JavascriptBundle\Helper\JqueryHelper;
 use Ecommit\JavascriptBundle\Overlay\AbstractOverlay;
 use Ecommit\UtilBundle\Helper\UtilHelper;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -35,11 +32,6 @@ class CrudHelper
      * @var JqueryHelper
      */
     protected $javascriptManager;
-
-    /**
-     * @var FormFactoryInterface
-     */
-    protected $formFactory;
 
     /**
      * @var RouterInterface
@@ -80,7 +72,6 @@ class CrudHelper
     public function __construct(
         UtilHelper $util,
         JqueryHelper $javascriptManager,
-        FormFactoryInterface $formFactory,
         RouterInterface $router,
         TranslatorInterface $translator,
         Twig_Environment $templating,
@@ -89,7 +80,6 @@ class CrudHelper
     ) {
         $this->util = $util;
         $this->javascriptManager = $javascriptManager;
-        $this->formFactory = $formFactory;
         $this->router = $router;
         $this->translator = $translator;
         $this->templating = $templating;
@@ -112,115 +102,6 @@ class CrudHelper
     public function getOverlayService()
     {
         return $this->overlay;
-    }
-
-    /**
-     * Returns "Display Settings" form.
-     *
-     * @return FormView
-     */
-    public function getFormDisplaySettings(Crud $crud)
-    {
-        $form_name = sprintf('crud_display_settings_%s', $crud->getSessionName());
-        $resultsPerPageChoices = [];
-        foreach ($crud->getAvailableResultsPerPage() as $number) {
-            $resultsPerPageChoices[$number] = $number;
-        }
-        $columnsChoices = [];
-        foreach ($crud->getColumns() as $column) {
-            $columnsChoices[$column->id] = $column->label;
-        }
-        $data = [
-            'resultsPerPage' => $crud->getSessionValues()->resultsPerPage,
-            'displayedColumns' => $crud->getSessionValues()->displayedColumns,
-        ];
-
-        $form = $this->formFactory->createNamed(
-            $form_name,
-            DisplaySettingsType::class,
-            $data,
-            [
-                'resultsPerPageChoices' => $resultsPerPageChoices,
-                'columnsChoices' => $columnsChoices,
-                'action' => $crud->getUrl(),
-            ]
-        );
-
-        return $form->createView();
-    }
-
-    /**
-     * Returns search form tag.
-     *
-     * @param array $ajaxOptions Ajax Options
-     * @param type  $htmlOptions Html options
-     *
-     * @return string
-     */
-    public function searchFormTag(Crud $crud, $ajaxOptions, $htmlOptions)
-    {
-        if (!isset($ajaxOptions['update'])) {
-            $ajaxOptions['update'] = 'js_holder_for_multi_update_'.$crud->getSessionName();
-        }
-
-        if (!isset($htmlOptions['novalidate'])) {
-            $htmlOptions['novalidate'] = 'novalidate';
-        }
-
-        return $this->javascriptManager->jQueryFormToRemote($crud->getSearcherForm(), $ajaxOptions, $htmlOptions);
-    }
-
-    /**
-     * Returns search reset button.
-     *
-     * @param array $options     Options :
-     *                           * label: Label. Défault: Reset
-     *                           * template: Template used. If null, default template is used
-     * @param array $ajaxOptions Ajax options
-     * @param array $htmlOptions Html options
-     *
-     * @return string
-     */
-    public function searchResetButton(Crud $crud, $options, $ajaxOptions, $htmlOptions)
-    {
-        $resolver = new OptionsResolver();
-        $resolver->setDefaults(
-            [
-                'label' => 'Reset',
-                'template' => null,
-            ]
-        );
-        $options = $resolver->resolve($options);
-
-        if ($options['template']) {
-            return $this->templating->render(
-                $options['template'],
-                [
-                    'crud' => $crud,
-                    'options' => $options,
-                    'ajax_options' => $ajaxOptions,
-                    'html_options' => $htmlOptions,
-                ]
-            );
-        }
-
-        if (!isset($ajaxOptions['update'])) {
-            $ajaxOptions['update'] = 'js_holder_for_multi_update_'.$crud->getSessionName();
-        }
-        if (!isset($htmlOptions['class'])) {
-            $htmlOptions['class'] = ($this->useBootstrap) ? 'raz-bootstrap btn btn-default btn-sm' : 'raz';
-        }
-        $label = $this->translator->trans($options['label']);
-        if ($this->useBootstrap) {
-            $label = '<span class="glyphicon glyphicon-fire"></span> '.$label;
-        }
-
-        return $this->javascriptManager->jQueryButtonToRemote(
-            $label,
-            $crud->getSearchUrl(['raz' => 1]),
-            $ajaxOptions,
-            $htmlOptions
-        );
     }
 
     /**

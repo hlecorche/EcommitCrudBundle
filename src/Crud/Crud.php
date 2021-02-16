@@ -17,6 +17,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Ecommit\CrudBundle\DoctrineExtension\Paginate;
 use Ecommit\CrudBundle\Entity\UserCrudSettings;
 use Ecommit\CrudBundle\Form\Searcher\AbstractFormSearcher;
+use Ecommit\CrudBundle\Form\Type\DisplaySettingsType;
 use Ecommit\CrudBundle\Form\Type\FormSearchType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -42,6 +43,11 @@ class Crud
      * @var Form
      */
     protected $formSearcher = null;
+
+    /**
+     * @var Form
+     */
+    protected $formDisplaySettings = null;
 
     protected $availableColumns = [];
     protected $availableVirtualColumns = [];
@@ -562,6 +568,8 @@ class Crud
             $this->displayResults = $this->sessionValues->formSearcherData->isSubmitted;
         }
 
+        $this->createDisplaySettingsForm();
+
         //Process request (resultsPerPage, sort, sense, change_columns)
         $this->processRequest();
 
@@ -766,15 +774,12 @@ class Crud
 
             return;
         }
-        $displaySettingsFormName = sprintf('crud_display_settings_%s', $this->sessionName);
-        if ($this->request->request->has($displaySettingsFormName)) {
-            $displaySettings = $this->request->request->get($displaySettingsFormName);
-            if (\is_array($displaySettings) && isset($displaySettings['displayedColumns'])) {
-                $this->changeColumnsDisplayed($displaySettings['displayedColumns']);
-            }
-            if (\is_array($displaySettings) && isset($displaySettings['resultsPerPage'])) {
-                $this->changeNumberResultsDisplayed($displaySettings['resultsPerPage']);
-            }
+
+        $this->formDisplaySettings->handleRequest($this->request);
+        if ($this->formDisplaySettings->isSubmitted() && $this->formDisplaySettings->isValid()) {
+            $displaySettingsData = $this->formDisplaySettings->getData();
+            $this->changeColumnsDisplayed($displaySettingsData['displayedColumns']);
+            $this->changeNumberResultsDisplayed($displaySettingsData['resultsPerPage']);
         }
         if ($this->request->query->has('sort')) {
             $this->changeSort($this->request->query->get('sort'));
@@ -785,6 +790,30 @@ class Crud
         if ($this->request->query->has('page')) {
             $this->changePage($this->request->query->get('page'));
         }
+    }
+
+    public function createDisplaySettingsForm(): void
+    {
+        $resultsPerPageChoices = [];
+        foreach ($this->getAvailableResultsPerPage() as $number) {
+            $resultsPerPageChoices[$number] = $number;
+        }
+        $columnsChoices = [];
+        foreach ($this->getColumns() as $column) {
+            $columnsChoices[$column->id] = $column->label;
+        }
+        $data = [
+            'resultsPerPage' => $this->getSessionValues()->resultsPerPage,
+            'displayedColumns' => $this->getSessionValues()->displayedColumns,
+        ];
+        $formName = sprintf('crud_display_settings_%s', $this->getSessionName());
+
+        $this->formDisplaySettings = $this->formFactory->createNamed($formName, DisplaySettingsType::class, $data, [
+            'results_per_page_choices' => $resultsPerPageChoices,
+            'columns_choices' => $columnsChoices,
+            'action' => $this->getUrl(['display-settings' => 1]),
+            'reset_settings_url' => $this->getUrl(['razsettings' => 1]),
+        ]);
     }
 
     /**
@@ -957,6 +986,7 @@ class Crud
         } else {
             $this->formSearcher = $this->formSearcher->createView();
         }
+        $this->formDisplaySettings = $this->formDisplaySettings->createView();
         $this->defaultFormSearcherData = null;
     }
 
@@ -1023,6 +1053,16 @@ class Crud
     public function getSearcherForm()
     {
         return $this->formSearcher;
+    }
+
+    /**
+     * Returns the search form.
+     *
+     * @return Form (before clearTemplate) or FormView (after clearTemplate)
+     */
+    public function getDisplaySettingsForm()
+    {
+        return $this->formDisplaySettings;
     }
 
     /**

@@ -12,3 +12,91 @@
     {% set li_attr = li_attr|merge({current_page: li_attr_child}) %}
     {{ parent() }}
 {% endblock %}
+
+{# Display settings #}
+
+{% block display_settings_button %}
+    {% set button_attr = button_attr|default([])|merge({class: (button_attr.class|default('') ~ ' btn btn-default btn-sm')|trim}) %}
+    {{ parent() }}
+{% endblock %}
+
+{% block display_settings_button_modal %}
+    {% set button_attr = {'data-modal': '1'} %}
+    {{ block('display_settings_button', template_name) }}
+{% endblock %}
+
+{% block display_settings_container_modal %}
+    {% set displaySettingsContainerAttributes = displaySettingsContainerAttributes|default({})|merge({class: (displaySettingsContainerAttributes.class|default('') ~ ' modal fade')|trim, 'data-modal': '1', 'style': 'display: none;', 'role': 'dialog'}) %}
+    <div{% with { attr: displaySettingsContainerAttributes } %}{{ block('attributes', template_name) }}{% endwith %}>
+        {{ block('display_settings_content_modal', template_name) }}
+    </div>
+{% endblock %}
+
+{% block display_settings_content_modal %}
+    {% form_theme form 'bootstrap_3_layout.html.twig' %}
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>{{ 'display_settings.title'|trans({}, 'EcommitCrudBundle') }}</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {{ form_start(form) }}
+                <div class="modal-body">
+                    {{ form_row(form.resultsPerPage) }}
+                    {{ form_row(form.displayedColumns) }}
+                    <div>
+                        <button type="button" class="btn btn-default btn-xs ec-crud-display-settings-check-all-columns">{{ 'display_settings.check_all'|trans({}, 'EcommitCrudBundle') }}</button>
+                        &nbsp;
+                        <button type="button" class="btn btn-default btn-xs ec-crud-display-settings-uncheck-all-columns">{{ 'display_settings.uncheck_all'|trans({}, 'EcommitCrudBundle') }}</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    {{ form_widget(form.reset) }}
+                    {{ form_widget(form.save, {'attr': {'class': 'btn-success'}}) }}
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block display_settings_content_without_modal %}
+    {% form_theme form 'bootstrap_3_layout.html.twig' %}
+    <div>
+        <h4>{{ 'display_settings.title'|trans({}, 'EcommitCrudBundle') }}</h4>
+
+        {{ form_start(form) }}
+            {{ form_row(form.resultsPerPage) }}
+            {{ form_row(form.displayedColumns) }}
+            <div>
+                <button type="button" class="btn btn-default btn-xs ec-crud-display-settings-check-all-columns">{{ 'display_settings.check_all'|trans({}, 'EcommitCrudBundle') }}</button>
+                &nbsp;
+                <button type="button" class="btn btn-default btn-xs ec-crud-display-settings-uncheck-all-columns">{{ 'display_settings.uncheck_all'|trans({}, 'EcommitCrudBundle') }}</button>
+            </div>
+
+            <div style="text-align: center;">
+                {{ form_row(form.reset) }}
+                {{ form_row(form.save, {'attr': {'class': 'btn-success'}}) }}
+            </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
+
+{# search_form_submit #}
+
+{% block search_form_submit %}
+{% spaceless %}
+    {% set button_attr = button_attr|default([])|merge({class: (button_attr.class|default('') ~ ' btn btn-default btn-sm')|trim}) %}
+    {{ parent() }}
+{% endspaceless %}
+{% endblock %}
+
+{# search_form_reset #}
+
+{% block search_form_reset %}
+{% spaceless %}
+    {% set button_attr = button_attr|default([])|merge({class: (button_attr.class|default('') ~ ' btn btn-default btn-sm')|trim}) %}
+    {{ parent() }}
+{% endspaceless %}
+{% endblock %}

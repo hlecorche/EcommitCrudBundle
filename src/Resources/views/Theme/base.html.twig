@@ -157,6 +157,105 @@
 {% endspaceless %}
 {% endblock %}
 
+{# Display settings #}
+
+{% block display_settings %}
+{% spaceless %}
+    {% if crud.displayResults %}
+        {% set displaySettingsContainerAttributes = {'class': 'ec-crud-display-settings', 'id': 'ec-crud-display-settings-'~crud.sessionName, 'data-crud-list-id': crud.divIdList} %}
+        {% if modal %}
+            {{ block('display_settings_button_modal', template_name) }}
+            {{ block('display_settings_container_modal', template_name) }}
+        {% else %}
+            {{ block('display_settings_button_without_modal', template_name) }}
+            {{ block('display_settings_container_without_modal', template_name) }}
+        {% endif %}
+    {% endif %}
+{% endspaceless %}
+{% endblock %}
+
+{% block display_settings_button_modal %}
+    {# Modal not available in this theme #}
+    {{ block('display_settings_button_without_modal', template_name) }}
+{% endblock %}
+
+{% block display_settings_button_without_modal %}
+    {% set button_attr = {'data-modal': '0'} %}
+    {{ block('display_settings_button', template_name) }}
+{% endblock %}
+
+{% block display_settings_button %}
+    {% set button_attr = button_attr|default([])|merge({class: (button_attr.class|default('') ~ ' ec-crud-display-settings-button')|trim, 'data-display-settings': 'ec-crud-display-settings-'~crud.sessionName}) %}
+    <button{% with { attr: button_attr } %}{{ block('attributes', template_name) }}{% endwith %}>
+        {{ crud_icon('display_settings') }} {{ 'display_settings.title'|trans({}, 'EcommitCrudBundle') }}
+    </button>
+{% endblock %}
+
+{% block display_settings_container_modal %}
+    {# Modal not available in this theme #}
+    {{ block('display_settings_container_without_modal', template_name) }}
+{% endblock %}
+
+{% block display_settings_container_without_modal %}
+    {% set displaySettingsContainerAttributes = displaySettingsContainerAttributes|default({})|merge({'data-modal': '0', 'style': 'display: none;'}) %}
+    <div{% with { attr: displaySettingsContainerAttributes } %}{{ block('attributes', template_name) }}{% endwith %}>
+        {{ block('display_settings_content_without_modal', template_name) }}
+    </div>
+{% endblock %}
+
+{% block display_settings_content_modal %}
+    {# Modal not available in this theme #}
+    {{ block('display_settings_content_without_modal', template_name) }}
+{% endblock %}
+
+{% block display_settings_content_without_modal %}
+    <div>
+        <h4>{{ 'display_settings.title'|trans({}, 'EcommitCrudBundle') }}</h4>
+
+        {{ form_start(form) }}
+            {{ form_row(form.resultsPerPage) }}
+            {{ form_row(form.displayedColumns) }}
+            <div>
+                <button type="button" class="ec-crud-display-settings-check-all-columns">{{ 'display_settings.check_all'|trans({}, 'EcommitCrudBundle') }}</button>
+                &nbsp;
+                <button type="button" class="ec-crud-display-settings-uncheck-all-columns">{{ 'display_settings.uncheck_all'|trans({}, 'EcommitCrudBundle') }}</button>
+            </div>
+            <div style="text-align: center;">
+                {{ form_row(form.reset) }}
+                {{ form_row(form.save) }}
+            </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
+
+{# search_form_start #}
+
+{% block search_form_start %}
+{% spaceless %}
+    {{ form_start(crud.searcherForm, {'attr': form_attr}) }}
+{% endspaceless %}
+{% endblock %}
+
+{# search_form_submit #}
+
+{% block search_form_submit %}
+    {% spaceless %}
+        <button type="submit" {% with { attr: button_attr } %}{{ block('attributes', template_name) }}{% endwith %}>
+            {{ crud_icon('search') }} {{ 'search.submit'|trans({}, 'EcommitCrudBundle') }}
+        </button>
+    {% endspaceless %}
+{% endblock %}
+
+{# search_form_reset #}
+
+{% block search_form_reset %}
+{% spaceless %}
+    <button type="button" {% with { attr: button_attr } %}{{ block('attributes', template_name) }}{% endwith %}>
+        {{ crud_icon('reset') }} {{ 'search.reset'|trans({}, 'EcommitCrudBundle') }}
+    </button>
+{% endspaceless %}
+{% endblock %}
+
 {# Attributes #}
 
 {% block attributes %}

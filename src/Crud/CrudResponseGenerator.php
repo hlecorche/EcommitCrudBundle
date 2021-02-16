@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Ecommit\CrudBundle\Crud;
 
 use Psr\Container\ContainerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -50,18 +51,15 @@ class CrudResponseGenerator implements ServiceSubscriberInterface
 
         $request = $this->container->get('request_stack')->getCurrentRequest();
         if ($request->query->has('search')) {
-            $renderSearch = $this->renderCrudView($this->getTemplateName($options['template_generator'], 'search'), $data);
-            $renderList = $this->renderCrudView($this->getTemplateName($options['template_generator'], 'list'), $data);
-
-            return $this->renderCrud(
-                '@EcommitCrud/Crud/double_search.html.twig',
-                [
-                    'id_search' => $crud->getDivIdSearch(),
-                    'id_list' => $crud->getDivIdList(),
-                    'render_search' => $renderSearch,
-                    'render_list' => $renderList,
-                ]
-            );
+            return new JsonResponse([
+                'render_search' => $this->renderCrudView($this->getTemplateName($options['template_generator'], 'search'), $data),
+                'render_list' => $this->renderCrudView($this->getTemplateName($options['template_generator'], 'list'), $data),
+            ]);
+        } elseif ($request->query->has('display-settings')) {
+            return new JsonResponse([
+                'render_list' => $this->renderCrudView($this->getTemplateName($options['template_generator'], 'list'), $data),
+                'form_is_valid' => $crud->getDisplaySettingsForm()->vars['valid'],
+            ]);
         }
 
         return $this->renderCrud($this->getTemplateName($options['template_generator'], 'list'), $data);

@@ -1,10 +1,3 @@
-Display Settings: Propriétés d'affichage
-Number of results per page: Nombre de résultats par page
-Columns to be shown: Colonnes à afficher
-You need to select at least one column to display: Vous devez sélectionner au moins une colonne à afficher
-Save: Enregistrer
-Search: Rechercher
-Reset: R.A.Z
 '{0} No results|{1} 1 result found|]1,Inf] %count% results found': '{0} Pas de résultat|{1} 1 résultat trouvé|]1,Inf] %count% résultats trouvés'
 Page %firstPage%/%lastPage%: Page %page%/%lastPage%
 Results %first%-%last%: Résultats %first%-%last%
@@ -14,6 +7,3 @@ filter.false: Non
 filter.choices.placeholder: Tous
 picker.add: Ajouter
 picker.list: Sélectionner
-reset_display_settings: Réinitialiser paramètres par défaut
-check_all: Tout sélectionner
-uncheck_all: Tout désélectionner

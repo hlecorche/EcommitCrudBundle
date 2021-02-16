@@ -14,9 +14,13 @@ declare(strict_types=1);
 namespace Ecommit\CrudBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Count;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class DisplaySettingsType extends AbstractType
 {
@@ -25,28 +29,37 @@ class DisplaySettingsType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        //Field "resultsPerPage"
-        $builder->add(
-            'resultsPerPage',
-            ChoiceType::class,
-            [
-                'choices' => array_flip($options['resultsPerPageChoices']),
-                'label' => 'Number of results per page',
-                'choice_translation_domain' => false,
-            ]
-        );
+        $builder->add('resultsPerPage', ChoiceType::class, [
+            'choices' => array_flip($options['results_per_page_choices']),
+            'label' => 'display_settings.results_per_page',
+            'translation_domain' => 'EcommitCrudBundle',
+            'choice_translation_domain' => false,
+            'constraints' => new NotBlank(),
+        ]);
 
-        //Field "displayedColumns"
-        $builder->add(
-            'displayedColumns',
-            ChoiceType::class,
-            [
-                'choices' => array_flip($options['columnsChoices']),
-                'multiple' => true,
-                'expanded' => true,
-                'label' => 'Columns to be shown',
-            ]
-        );
+        $builder->add('displayedColumns', ChoiceType::class, [
+            'choices' => array_flip($options['columns_choices']),
+            'multiple' => true,
+            'expanded' => true,
+            'label' => 'display_settings.displayed_columns',
+            'translation_domain' => 'EcommitCrudBundle',
+            'choice_translation_domain' => 'messages',
+            'constraints' => [new NotBlank(), new Count(['min' => 1])],
+        ]);
+
+        $builder->add('reset', ButtonType::class, [
+            'label' => 'display_settings.reset_display_settings',
+            'translation_domain' => 'EcommitCrudBundle',
+            'attr' => [
+                'class' => 'ec-crud-display-settings-raz',
+                'data-reset-url' => $options['reset_settings_url'],
+            ],
+        ]);
+
+        $builder->add('save', SubmitType::class, [
+            'label' => 'display_settings.save',
+            'translation_domain' => 'EcommitCrudBundle',
+        ]);
     }
 
     /**
@@ -54,18 +67,15 @@ class DisplaySettingsType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(
-            [
-                'csrf_protection' => false,
-            ]
-        );
+        $resolver->setDefaults([
+            'csrf_protection' => false,
+        ]);
 
-        $resolver->setRequired(
-            [
-                'resultsPerPageChoices',
-                'columnsChoices',
-            ]
-        );
+        $resolver->setRequired([
+            'results_per_page_choices',
+            'columns_choices',
+            'reset_settings_url',
+        ]);
     }
 
     /**

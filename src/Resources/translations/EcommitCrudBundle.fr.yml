@@ -1,0 +1,12 @@
+display_settings:
+    check_all: Tout sélectionner
+    displayed_columns: Colonnes à afficher
+    reset_display_settings: Réinitialiser paramètres par défaut
+    results_per_page: Nombre de résultats par page
+    save: Enregistrer
+    title: Propriétés d'affichage
+    uncheck_all: Tout désélectionner
+
+search:
+    reset: R.A.Z
+    submit: Rechercher

@@ -20,7 +20,6 @@
         <service id="Ecommit\CrudBundle\Helper\CrudHelper" class="Ecommit\CrudBundle\Helper\CrudHelper" public="true">
             <argument type="service" id="Ecommit\UtilBundle\Helper\UtilHelper"/>
             <argument type="service" id="Ecommit\JavascriptBundle\Helper\JqueryHelper"/>
-            <argument type="service" id="Symfony\Component\Form\FormFactoryInterface"/>
             <argument type="service" id="Symfony\Component\Routing\RouterInterface"/>
             <argument type="service" id="Symfony\Contracts\Translation\TranslatorInterface"/>
             <argument type="service" id="Twig\Environment"/>
