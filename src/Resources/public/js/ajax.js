@@ -166,28 +166,39 @@ export function sendForm (form, options) {
     sendRequest(options);
 }
 
-export function updateDom (element, updateMode, data) {
+export function updateDom (element, updateMode, content) {
+    const eventBefore = $.Event('ec-crud-ajax-update-dom-before', {
+        element: element,
+        updateMode: updateMode,
+        content: content
+    });
+    $(element).trigger(eventBefore);
+    if (eventBefore.isDefaultPrevented()) {
+        return;
+    }
+    updateMode = eventBefore.updateMode;
+    content = eventBefore.content;
+
     if (updateMode === 'update') {
-        $(element).html(data);
-
-        return;
+        $(element).html(content);
     } else if (updateMode === 'before') {
-        $(element).before(data);
-
-        return;
+        $(element).before(content);
     } else if (updateMode === 'after') {
-        $(element).after(data);
-
-        return;
+        $(element).after(content);
     } else if (updateMode === 'prepend') {
-        $(element).prepend(data);
-
-        return;
+        $(element).prepend(content);
     } else if (updateMode === 'append') {
-        $(element).append(data);
+        $(element).append(content);
+    } else {
+        console.error('Bad updateMode: ' + updateMode);
 
         return;
     }
 
-    console.error('Bad updateMode: ' + updateMode);
+    const eventAfter = $.Event('ec-crud-ajax-update-dom-after', {
+        element: element,
+        updateMode: updateMode,
+        content: content
+    });
+    $(element).trigger(eventAfter);
 }

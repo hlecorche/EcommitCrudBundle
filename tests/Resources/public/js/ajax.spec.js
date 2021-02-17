@@ -597,6 +597,8 @@ describe('Test Ajax.updateDom', function () {
 
     afterEach(function () {
         $('.html-test').remove();
+        $(document).off('ec-crud-ajax-update-dom-before');
+        $(document).off('ec-crud-ajax-update-dom-after');
     });
 
     it('Update with "update" mode', function () {
@@ -617,6 +619,60 @@ describe('Test Ajax.updateDom', function () {
 
     it('Update with "append" mode', function () {
         testUpdateDom('append', '<div class="content">XOK</div>');
+    });
+
+    it('Update with "update" mode and ec-crud-ajax-update-dom-before event - change updateMode', function () {
+        $(document).on('ec-crud-ajax-update-dom-before', function (event) {
+            event.updateMode = 'append';
+        });
+
+        testUpdateDom('update', '<div class="content">XOK</div>');
+    });
+
+    it('Update with "update" mode and ec-crud-ajax-update-dom-before event - change content', function () {
+        $(document).on('ec-crud-ajax-update-dom-before', function (event) {
+            event.content = 'NEW OK';
+        });
+
+        testUpdateDom('update', '<div class="content">NEW OK</div>');
+    });
+
+    it('Update with "update" mode and ec-crud-ajax-update-dom-before event - preventDefault', function () {
+        $(document).on('ec-crud-ajax-update-dom-before', function (event) {
+            event.preventDefault();
+        });
+
+        testUpdateDom('update', '<div class="content">X</div>');
+    });
+
+    it('Update with "update" mode and ec-crud-ajax-update-dom-after event', function () {
+        $(document).on('ec-crud-ajax-update-dom-after', function (event) {
+            $(event.element).find('.content').html('OK');
+        });
+
+        ajax.updateDom('#container .content', 'update', '<div><span class="content"></span></div>');
+        expect($('#container').html()).toEqual('<div class="content"><div><span class="content">OK</span></div></div>');
+    });
+
+    it('Update with "update" mode and ec-crud-ajax-update-dom-after event - with scopes', function () {
+        const callbackCalled1 = jasmine.createSpy('called1');
+        const callbackCalled2 = jasmine.createSpy('called2');
+        const callbackNotCalled = jasmine.createSpy('not-called');
+
+        $(document).on('ec-crud-ajax-update-dom-before', function (event) {
+            callbackCalled1();
+        });
+        $(document).on('ec-crud-ajax-update-dom-before', '#container', function (event) {
+            callbackCalled2();
+        });
+        $(document).on('ec-crud-ajax-update-dom-before', '#id-does-not-exit', function (event) {
+            callbackNotCalled();
+        });
+
+        testUpdateDom('update', '<div class="content">OK</div>');
+        expect(callbackCalled1).toHaveBeenCalled();
+        expect(callbackCalled2).toHaveBeenCalled();
+        expect(callbackNotCalled).not.toHaveBeenCalled();
     });
 
     function testUpdateDom (updateMode, expected) {
