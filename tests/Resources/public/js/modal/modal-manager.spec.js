@@ -93,7 +93,7 @@ describe('Test Modal-manager with spy engine', function () {
         $(document).off('ec-crud-modal-auto-before', '#linkToTest');
     });
 
-    it('Test auto openRemoteModal', function () {
+    it('Test auto openRemoteModal - link', function () {
         $('body').append('<a href="#" class="html-test ec-crud-remote-modal-auto" id="linkToTest" data-ec-crud-modal-element="#myId" data-ec-crud-modal-element-content="#myId .content" data-ec-crud-modal-url="/goodRequest">Go !</a>');
 
         $('#linkToTest').click();
@@ -104,7 +104,29 @@ describe('Test Modal-manager with spy engine', function () {
         expect(jasmine.Ajax.requests.mostRecent().method).toBe('POST');
     });
 
-    it('Test auto openRemoteModal canceled', function () {
+    it('Test auto openRemoteModal - link with href', function () {
+        $('body').append('<a href="/goodRequest" class="html-test ec-crud-remote-modal-auto" id="linkToTest" data-ec-crud-modal-element="#myId" data-ec-crud-modal-element-content="#myId .content">Go !</a>');
+
+        $('#linkToTest').click();
+
+        expect(this.spyEngine.openModal).toHaveBeenCalled();
+        expect(this.spyEngine.closeModal).not.toHaveBeenCalled();
+        expect(jasmine.Ajax.requests.mostRecent().url).toBe('/goodRequest');
+        expect(jasmine.Ajax.requests.mostRecent().method).toBe('POST');
+    });
+
+    it('Test auto openRemoteModal - link - prioriry url attr', function () {
+        $('body').append('<a href="/badRequest" class="html-test ec-crud-remote-modal-auto" id="linkToTest" data-ec-crud-modal-element="#myId" data-ec-crud-modal-element-content="#myId .content" data-ec-crud-modal-url="/goodRequest">Go !</a>');
+
+        $('#linkToTest').click();
+
+        expect(this.spyEngine.openModal).toHaveBeenCalled();
+        expect(this.spyEngine.closeModal).not.toHaveBeenCalled();
+        expect(jasmine.Ajax.requests.mostRecent().url).toBe('/goodRequest');
+        expect(jasmine.Ajax.requests.mostRecent().method).toBe('POST');
+    });
+
+    it('Test auto openRemoteModal - link - canceled', function () {
         $(document).on('ec-crud-remote-modal-auto-before', '#linkToTest', function (event) {
             event.preventDefault();
         });
@@ -117,6 +139,32 @@ describe('Test Modal-manager with spy engine', function () {
         expect(jasmine.Ajax.requests.mostRecent()).toBeUndefined();
 
         $(document).off('ec-crud-remote-modal-auto-before', '#linkToTest');
+    });
+
+    it('Test auto openRemoteModal - button', function () {
+        $('body').append('<button class="html-test ec-crud-remote-modal-auto" id="buttonToTest" data-ec-crud-modal-element="#myId" data-ec-crud-modal-element-content="#myId .content" data-ec-crud-modal-url="/goodRequest">Go !</button>');
+
+        $('#buttonToTest').click();
+
+        expect(this.spyEngine.openModal).toHaveBeenCalled();
+        expect(this.spyEngine.closeModal).not.toHaveBeenCalled();
+        expect(jasmine.Ajax.requests.mostRecent().url).toBe('/goodRequest');
+        expect(jasmine.Ajax.requests.mostRecent().method).toBe('POST');
+    });
+
+    it('Test auto openRemoteModal - button - canceled', function () {
+        $(document).on('ec-crud-remote-modal-auto-before', '#buttonToTest', function (event) {
+            event.preventDefault();
+        });
+        $('body').append('<button class="html-test ec-crud-remote-modal-auto" id="buttonToTest" data-ec-crud-modal-element="#myId" data-ec-crud-modal-element-content="#myId .content" data-ec-crud-modal-url="/goodRequest">Go !</button>');
+
+        $('#buttonToTest').click();
+
+        expect(this.spyEngine.openModal).not.toHaveBeenCalled();
+        expect(this.spyEngine.closeModal).not.toHaveBeenCalled();
+        expect(jasmine.Ajax.requests.mostRecent()).toBeUndefined();
+
+        $(document).off('ec-crud-remote-modal-auto-before', '#buttonToTest');
     });
 });
 

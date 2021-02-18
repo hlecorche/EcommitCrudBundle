@@ -29,7 +29,7 @@ $(function () {
         openModal(optionsResolver.getDataAttributes(this, 'ecCrudModal'));
     });
 
-    $(document).on('click', '.ec-crud-remote-modal-auto', function (event) {
+    $(document).on('click', 'button.ec-crud-remote-modal-auto', function (event) {
         event.preventDefault();
         const eventBefore = $.Event('ec-crud-remote-modal-auto-before');
         $(this).trigger(eventBefore);
@@ -38,6 +38,25 @@ $(function () {
         }
 
         openRemoteModal(optionsResolver.getDataAttributes(this, 'ecCrudModal'));
+    });
+
+    $(document).on('click', 'a.ec-crud-remote-modal-auto', function (event) {
+        event.preventDefault();
+        const eventBefore = $.Event('ec-crud-remote-modal-auto-before');
+        $(this).trigger(eventBefore);
+        if (eventBefore.isDefaultPrevented()) {
+            return;
+        }
+
+        // Options in data-* override href
+        const options = optionsResolver.resolve(
+            {
+                url: $(this).attr('href')
+            },
+            optionsResolver.getDataAttributes(this, 'ecCrudModal')
+        );
+
+        openRemoteModal(options);
     });
 });
 
