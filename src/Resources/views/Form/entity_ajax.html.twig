@@ -1,0 +1,20 @@
+{% block ecommit_crud_entity_ajax_widget %}
+    {% set attr = attr|merge({
+        'data-ec-crud-entity-ajax-url': url,
+        'data-ec-crud-entity-ajax-multiple': multiple ? 'true' : 'false',
+        'class': (attr.class|default('') ~ ' ec-crud-entity-ajax form-control')|trim,
+    }) %}
+
+    {% if multiple %}
+        {% set attr = attr|merge({'multiple': 'multiple'}) %}
+    {% endif %}
+
+    <select {{ block('widget_attributes') }}>
+        {# If null (invalid) or if invalid : Not display list because several labels are missing #}
+        {% if value is not null and valid %}
+            {% for id, label in value %}
+                <option value="{{ id }}" selected="selected">{{ label }}</option>
+            {% endfor %}
+        {% endif %}
+    </select>
+{% endblock %}

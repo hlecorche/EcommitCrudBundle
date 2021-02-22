@@ -42,5 +42,11 @@
         <service id="Ecommit\CrudBundle\EventListener\MappingEntities" class="Ecommit\CrudBundle\EventListener\MappingEntities">
             <tag name="doctrine.event_listener" event="loadClassMetadata" />
         </service>
+
+        <service id="Ecommit\CrudBundle\Form\Type\EntityAjaxType" class="Ecommit\CrudBundle\Form\Type\EntityAjaxType">
+            <argument type="service" id="Doctrine\Persistence\ManagerRegistry" />
+            <argument type="service" id="Symfony\Component\Routing\RouterInterface" />
+            <tag name="form.type" />
+        </service>
     </services>
 </container>
