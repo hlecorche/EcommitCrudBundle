@@ -17,22 +17,7 @@
         </service>
         <service id="ecommit_crud.response_generatror" alias="Ecommit\CrudBundle\Crud\CrudResponseGenerator" public="true" />
 
-        <service id="Ecommit\CrudBundle\Helper\CrudHelper" class="Ecommit\CrudBundle\Helper\CrudHelper" public="true">
-            <argument type="service" id="Ecommit\UtilBundle\Helper\UtilHelper"/>
-            <argument type="service" id="Ecommit\JavascriptBundle\Helper\JqueryHelper"/>
-            <argument type="service" id="Symfony\Component\Routing\RouterInterface"/>
-            <argument type="service" id="Symfony\Contracts\Translation\TranslatorInterface"/>
-            <argument type="service" id="Twig\Environment"/>
-            <argument type="service" id="ecommit_javascript.overlay"/>
-            <argument type="collection">
-                <argument key="use_bootstrap">%ecommit_javascript.use_bootstrap%</argument>
-                <argument key="images">%ecommit_crud.images%</argument>
-            </argument>
-        </service>
-        <service id="ecommit_crud.helper" alias="Ecommit\CrudBundle\Helper\CrudHelper" public="true" />
-
         <service id="Ecommit\CrudBundle\Twig\CrudExtension" class="Ecommit\CrudBundle\Twig\CrudExtension">
-            <argument type="service" id="Ecommit\CrudBundle\Helper\CrudHelper"/>
             <argument type="service" id="twig.form.renderer" />
             <argument>%ecommit_crud.theme%</argument>
             <argument>%ecommit_crud.icon_theme%</argument>

@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Ecommit\CrudBundle\Twig;
 
 use Ecommit\CrudBundle\Crud\Crud;
-use Ecommit\CrudBundle\Helper\CrudHelper;
 use Ecommit\CrudBundle\Paginator\AbstractPaginator;
 use Symfony\Component\Form\FormRendererInterface;
 use Symfony\Component\Form\FormView;
@@ -26,11 +25,6 @@ use Twig\TwigFunction;
 class CrudExtension extends AbstractExtension
 {
     /**
-     * @var CrudHelper
-     */
-    protected $crudHelper;
-
-    /**
      * @var FormRendererInterface
      */
     protected $formRenderer;
@@ -40,9 +34,8 @@ class CrudExtension extends AbstractExtension
 
     protected $lastTdValues = [];
 
-    public function __construct(CrudHelper $crudHelper, FormRendererInterface $formRenderer, string $theme, string $iconTheme)
+    public function __construct(FormRendererInterface $formRenderer, string $theme, string $iconTheme)
     {
-        $this->crudHelper = $crudHelper;
         $this->formRenderer = $formRenderer;
         $this->theme = $theme;
         $this->iconTheme = $iconTheme;
@@ -119,21 +112,6 @@ class CrudExtension extends AbstractExtension
                     'needs_environment' => true,
                     'is_safe' => ['all'],
                 ]
-            ),
-            new TwigFunction(
-                'crud_declare_modal',
-                [$this, 'declareModal'],
-                ['is_safe' => ['all']]
-            ),
-            new TwigFunction(
-                'crud_remote_modal',
-                [$this, 'remoteModal'],
-                ['is_safe' => ['all']]
-            ),
-            new TwigFunction(
-                'crud_form_modal',
-                [$this, 'formModal'],
-                ['is_safe' => ['all']]
             ),
             new TwigFunction(
                 'form_start_ajax',
@@ -569,36 +547,6 @@ class CrudExtension extends AbstractExtension
         return $this->renderBlock($environment, $this->theme, 'search_form_reset', array_merge($options, [
             'crud' => $crud,
         ]));
-    }
-
-    /**
-     * Twig function: "crud_declare_modal".
-     *
-     * @see CrudHelper:declareModal
-     */
-    public function declareModal($modalId, $options = [])
-    {
-        return $this->crudHelper->declareModal($modalId, $options);
-    }
-
-    /**
-     * Twig function: "crud_remote_modal".
-     *
-     * @see CrudHelper:remoteModal
-     */
-    public function remoteModal($modalId, $url, $options = [], $ajaxOptions = [])
-    {
-        return $this->crudHelper->remoteModal($modalId, $url, $options, $ajaxOptions);
-    }
-
-    /**
-     * Twig function: "crud_form_modal".
-     *
-     * @see CrudHelper:formModal
-     */
-    public function formModal($modalId, $form, $ajaxOptions = [], $htmlOptions = [])
-    {
-        return $this->crudHelper->formModal($modalId, $form, $ajaxOptions, $htmlOptions);
     }
 
     public function formStartAjax(FormView $formView, array $options = []): string
