@@ -20,7 +20,6 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints as Assert;
 
 class FieldFilterDate extends AbstractFieldFilter
 {
@@ -94,16 +93,6 @@ class FieldFilterDate extends AbstractFieldFilter
         $formBuilder->add($this->property, $this->options['type'], $this->typeOptions);
 
         return $formBuilder;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getAutoConstraints()
-    {
-        return [
-            new Assert\Date(),
-        ];
     }
 
     /**
