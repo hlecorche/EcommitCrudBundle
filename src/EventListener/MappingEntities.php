@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Ecommit\CrudBundle\EventListener;
 
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 
 final class MappingEntities
@@ -43,7 +44,7 @@ final class MappingEntities
         }
     }
 
-    protected function mappUserCrudSettings(ClassMetadataInfo $userCrudSettingsMetadata, ClassMetadataInfo $userMetadata): void
+    protected function mappUserCrudSettings(ClassMetadataInfo|ClassMetadata $userCrudSettingsMetadata, ClassMetadataInfo|ClassMetadata $userMetadata): void
     {
         $this->isLoad = true;
 

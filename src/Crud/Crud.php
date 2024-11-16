@@ -584,9 +584,10 @@ final class Crud
         if ($this->options['persistent_settings']) {
             // Remove settings in database
             $qb = $this->container->get('doctrine')->getManager()->createQueryBuilder();
-            $qb->delete('EcommitCrudBundle:UserCrudSettings', 's')
+            $qb->delete(UserCrudSettings::class, 's')
                 ->andWhere('s.user = :user AND s.crudName = :crud_name')
-                ->setParameters(['user' => $this->container->get('security.token_storage')->getToken()->getUser(), 'crud_name' => $this->getSessionName()])
+                ->setParameter('user', $this->container->get('security.token_storage')->getToken()->getUser())
+                ->setParameter('crud_name', $this->getSessionName())
                 ->getQuery()
                 ->execute();
         }
