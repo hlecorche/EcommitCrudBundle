@@ -55,7 +55,7 @@ class DateFilter extends AbstractFilter
                 }
                 $value = $value->format('Y-m-d H:i:s');
                 $queryBuilder->andWhere(
-                    sprintf('%s %s :%s', $options['alias_search'], $options['comparator'], $parameterName)
+                    \sprintf('%s %s :%s', $options['alias_search'], $options['comparator'], $parameterName)
                 )
                     ->setParameter($parameterName, $value);
                 break;
@@ -66,7 +66,7 @@ class DateFilter extends AbstractFilter
                 }
                 $value = $value->format('Y-m-d H:i:s');
                 $queryBuilder->andWhere(
-                    sprintf('%s %s :%s', $options['alias_search'], $options['comparator'], $parameterName)
+                    \sprintf('%s %s :%s', $options['alias_search'], $options['comparator'], $parameterName)
                 )
                     ->setParameter($parameterName, $value);
                 break;
@@ -82,7 +82,7 @@ class DateFilter extends AbstractFilter
                 $parameterNameInf = 'value_date_inf_'.str_replace(' ', '', $property);
                 $parameterNameSup = 'value_date_sup_'.str_replace(' ', '', $property);
                 $queryBuilder->andWhere(
-                    sprintf(
+                    \sprintf(
                         '%s >= :%s AND %s <= :%s',
                         $options['alias_search'],
                         $parameterNameInf,

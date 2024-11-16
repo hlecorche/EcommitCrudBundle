@@ -30,6 +30,6 @@ class NullFilter extends AbstractFilter
             return;
         }
 
-        $queryBuilder->andWhere(sprintf('%s IS NULL', $options['alias_search']));
+        $queryBuilder->andWhere(\sprintf('%s IS NULL', $options['alias_search']));
     }
 }

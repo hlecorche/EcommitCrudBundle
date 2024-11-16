@@ -42,7 +42,7 @@ class TextFilter extends AbstractFilter
         $parameterName = 'value_text_'.str_replace(' ', '', $property);
 
         if ($options['must_begin'] && $options['must_end']) {
-            $queryBuilder->andWhere(sprintf('%s = :%s', $options['alias_search'], $parameterName))
+            $queryBuilder->andWhere(\sprintf('%s = :%s', $options['alias_search'], $parameterName))
                 ->setParameter($parameterName, $value);
         } else {
             $after = ($options['must_begin']) ? '' : '%';

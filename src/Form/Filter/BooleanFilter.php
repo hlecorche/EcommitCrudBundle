@@ -45,25 +45,25 @@ class BooleanFilter extends AbstractFilter
 
         if (static::VALUE_TRUE === $value) {
             $or = $queryBuilder->expr()->orX();
-            $or->add(sprintf('%s = :%s', $options['alias_search'], $parameterTrueName));
+            $or->add(\sprintf('%s = :%s', $options['alias_search'], $parameterTrueName));
             $queryBuilder->setParameter($parameterTrueName, $options['value_true']);
             if ($options['not_null_is_true']) {
-                $or->add(sprintf('%s IS NOT NULL AND %s != :%s', $options['alias_search'], $options['alias_search'], $parameterFalseName));
+                $or->add(\sprintf('%s IS NOT NULL AND %s != :%s', $options['alias_search'], $options['alias_search'], $parameterFalseName));
                 $queryBuilder->setParameter($parameterFalseName, $options['value_false']);
             }
             $queryBuilder->andWhere($or);
         } elseif (static::VALUE_FALSE === $value) {
             if (null === $options['value_false']) {
-                $queryBuilder->andWhere(sprintf('%s IS NULL', $options['alias_search']));
+                $queryBuilder->andWhere(\sprintf('%s IS NULL', $options['alias_search']));
 
                 return;
             }
 
             $or = $queryBuilder->expr()->orX();
-            $or->add(sprintf('%s = :%s', $options['alias_search'], $parameterFalseName));
+            $or->add(\sprintf('%s = :%s', $options['alias_search'], $parameterFalseName));
             $queryBuilder->setParameter($parameterFalseName, $options['value_false']);
             if ($options['null_is_false']) {
-                $or->add(sprintf('%s IS NULL', $options['alias_search']));
+                $or->add(\sprintf('%s IS NULL', $options['alias_search']));
             }
             $queryBuilder->andWhere($or);
         }

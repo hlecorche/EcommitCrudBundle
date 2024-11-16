@@ -93,14 +93,14 @@ class EntityAjaxType extends AbstractType
 
             $em = $this->registry->getManagerForClass($options['class']);
             if (null === $em) {
-                throw new RuntimeException(sprintf('Class "%s" : Entity manager not found', $options['class']));
+                throw new RuntimeException(\sprintf('Class "%s" : Entity manager not found', $options['class']));
             }
 
             return $em;
         };
         $resolver->setNormalizer('em', $emNormalizer);
 
-        $queryBuilderNormalizer = function (Options $options, null|QueryBuilder|\Closure $queryBuilder): QueryBuilder {
+        $queryBuilderNormalizer = function (Options $options, QueryBuilder|\Closure|null $queryBuilder): QueryBuilder {
             $em = $options['em'];
             $class = $options['class'];
 

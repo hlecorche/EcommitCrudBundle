@@ -248,7 +248,7 @@ class CrudExtensionTest extends KernelTestCase
             $result = '';
             for ($i = 1; $i <= 20; ++$i) {
                 $class = ($i === $currentPage) ? ' class="current"' : '';
-                $result .= sprintf('<li%s><a href="/user?page=%s">%s</a></li>', $class, $i, $i);
+                $result .= \sprintf('<li%s><a href="/user?page=%s">%s</a></li>', $class, $i, $i);
             }
 
             return $result;

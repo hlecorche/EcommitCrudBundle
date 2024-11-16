@@ -67,7 +67,7 @@ class EntitiesToChoicesTransformer extends AbstractEntityTransformer
         }
         $value = array_unique($value);
         if (\count($value) > $this->maxResults) {
-            throw new TransformationFailedException(sprintf('This collection should contain %s elements or less.', $this->maxResults));
+            throw new TransformationFailedException(\sprintf('This collection should contain %s elements or less.', $this->maxResults));
         }
 
         $hash = $this->getCacheHash($value);

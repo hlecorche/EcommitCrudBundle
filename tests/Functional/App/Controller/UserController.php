@@ -78,7 +78,7 @@ class UserController extends AbstractCrudController
 
     protected function getTemplateName(string $action): string
     {
-        return sprintf('user/%s.html.twig', $action);
+        return \sprintf('user/%s.html.twig', $action);
     }
 
     public function crudAction()

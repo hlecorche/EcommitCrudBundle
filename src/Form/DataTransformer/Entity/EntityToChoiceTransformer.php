@@ -62,7 +62,7 @@ class EntityToChoiceTransformer extends AbstractEntityTransformer
             }
             if (1 !== \count($entities)) {
                 if ($this->throwExceptionIfValueNotFoundInReverse) {
-                    throw new TransformationFailedException(sprintf('The entity with key "%s" could not be found or is not unique', (string) $value));
+                    throw new TransformationFailedException(\sprintf('The entity with key "%s" could not be found or is not unique', (string) $value));
                 }
 
                 return null;

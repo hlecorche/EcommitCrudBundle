@@ -39,7 +39,7 @@ class IntegerFilter extends AbstractFilter
 
         $parameterName = 'value_integer_'.str_replace(' ', '', $property);
 
-        $queryBuilder->andWhere(sprintf('%s %s :%s', $options['alias_search'], $options['comparator'], $parameterName))
+        $queryBuilder->andWhere(\sprintf('%s %s :%s', $options['alias_search'], $options['comparator'], $parameterName))
             ->setParameter($parameterName, $value);
     }
 

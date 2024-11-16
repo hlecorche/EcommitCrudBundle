@@ -704,7 +704,7 @@ final class CrudExtension extends AbstractExtension
         return $attributes;
     }
 
-    public function crudIcon(Environment $environment, string $iconName, string $iconTheme = null): string
+    public function crudIcon(Environment $environment, string $iconName, ?string $iconTheme = null): string
     {
         if (null === $iconTheme) {
             $iconTheme = $this->iconTheme;
@@ -723,7 +723,7 @@ final class CrudExtension extends AbstractExtension
         return ob_get_clean();
     }
 
-    protected function buildOptions(string $function, array $inlineOptions, Crud $crud = null): array
+    protected function buildOptions(string $function, array $inlineOptions, ?Crud $crud = null): array
     {
         $options = [];
 

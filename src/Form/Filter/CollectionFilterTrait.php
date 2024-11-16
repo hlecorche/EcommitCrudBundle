@@ -62,7 +62,7 @@ trait CollectionFilterTrait
             if (!\is_scalar($value)) {
                 return;
             }
-            $queryBuilder->andWhere(sprintf('%s = :%s', $options['alias_search'], $parameterName))
+            $queryBuilder->andWhere(\sprintf('%s = :%s', $options['alias_search'], $parameterName))
                 ->setParameter($parameterName, $value);
         }
     }

@@ -21,6 +21,6 @@ class NotNullFilter extends NullFilter
             return;
         }
 
-        $queryBuilder->andWhere(sprintf('%s IS NOT NULL', $options['alias_search']));
+        $queryBuilder->andWhere(\sprintf('%s IS NOT NULL', $options['alias_search']));
     }
 }

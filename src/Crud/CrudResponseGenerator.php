@@ -133,7 +133,7 @@ final class CrudResponseGenerator implements ServiceSubscriberInterface
         return $this->container->get('twig')->render($view, $parameters);
     }
 
-    protected function renderCrud(string $view, array $parameters = [], Response $response = null): Response
+    protected function renderCrud(string $view, array $parameters = [], ?Response $response = null): Response
     {
         $content = $this->container->get('twig')->render($view, $parameters);
 

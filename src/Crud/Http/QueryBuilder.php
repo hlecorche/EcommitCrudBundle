@@ -31,7 +31,7 @@ final class QueryBuilder implements QueryBuilderInterface
     protected array $orders = [];
     protected HttpClientInterface $client;
 
-    public function __construct(protected string $url, protected string $httpMethod, HttpClientInterface $client = null)
+    public function __construct(protected string $url, protected string $httpMethod, ?HttpClientInterface $client = null)
     {
         if (null === $client) {
             $client = HttpClient::create();

@@ -115,7 +115,7 @@ final class Crud
                     throw new \Exception('A column must be an array or a CrudColum instance.');
                 }
                 if (\array_key_exists($column->getId(), $columns)) {
-                    throw new \Exception(sprintf('The column "column1" already exists.', $column->getId()));
+                    throw new \Exception(\sprintf('The column "column1" already exists.', $column->getId()));
                 }
                 $columns[$column->getId()] = $column;
             }
@@ -133,7 +133,7 @@ final class Crud
                     throw new \Exception('A column must be an array or a CrudColum instance.');
                 }
                 if (\array_key_exists($column->getId(), $columns)) {
-                    throw new \Exception(sprintf('The column "column1" already exists.', $column->getId()));
+                    throw new \Exception(\sprintf('The column "column1" already exists.', $column->getId()));
                 }
                 $columns[$column->getId()] = $column;
             }
@@ -186,7 +186,7 @@ final class Crud
         // Check duplicates in columns / vitual columns
         $duplicates = array_intersect_key($this->options['columns'], $this->options['virtual_columns']);
         if (\count($duplicates) > 0) {
-            throw new \Exception(sprintf('The column "column1" already exists.', array_keys($duplicates)[0]));
+            throw new \Exception(\sprintf('The column "column1" already exists.', array_keys($duplicates)[0]));
         }
 
         $this->init();
@@ -262,7 +262,7 @@ final class Crud
         if (isset($this->options['columns'][$columnId])) {
             return $this->options['columns'][$columnId];
         }
-        throw new \Exception(sprintf('The column "%s" does not exist.', $columnId));
+        throw new \Exception(\sprintf('The column "%s" does not exist.', $columnId));
     }
 
     /**
@@ -296,7 +296,7 @@ final class Crud
         if (isset($this->options['virtual_columns'][$columnId])) {
             return $this->options['virtual_columns'][$columnId];
         }
-        throw new \Exception(sprintf('The column "%s" does not exist.', $columnId));
+        throw new \Exception(\sprintf('The column "%s" does not exist.', $columnId));
     }
 
     public function getQueryBuilder(): \Doctrine\ORM\QueryBuilder|\Doctrine\DBAL\Query\QueryBuilder|QueryBuilderInterface
@@ -805,7 +805,7 @@ final class Crud
             'resultsPerPage' => $this->getSessionValues()->getMaxPerPage(),
             'displayedColumns' => $this->getSessionValues()->getDisplayedColumns(),
         ];
-        $formName = sprintf('crud_display_settings_%s', $this->getSessionName());
+        $formName = \sprintf('crud_display_settings_%s', $this->getSessionName());
 
         $this->displaySettingsForm = $this->container->get('form.factory')->createNamed($formName, DisplaySettingsType::class, $data, [
             'results_per_page_choices' => $resultsPerPageChoices,
