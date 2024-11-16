@@ -34,14 +34,14 @@ class NumberFilterTest extends IntegerFilterTest
             ['5', NumberFilter::GREATER_EQUAL, '5', 'e.name >= :value_integer_propertyName', ['value_integer_propertyName' => '5']],
             ['5', NumberFilter::SMALLER_THAN, '5', 'e.name < :value_integer_propertyName', ['value_integer_propertyName' => '5']],
             ['5', NumberFilter::SMALLER_EQUAL, '5', 'e.name <= :value_integer_propertyName', ['value_integer_propertyName' => '5']],
-            ['5.25', NumberFilter::EQUAL, '5,25', 'e.name = :value_integer_propertyName', ['value_integer_propertyName' => '5.25']],
+            ['5.25', NumberFilter::EQUAL, '5.25', 'e.name = :value_integer_propertyName', ['value_integer_propertyName' => '5.25']],
 
             // Int value
             [5, NumberFilter::GREATER_THAN, '5', 'e.name > :value_integer_propertyName', ['value_integer_propertyName' => '5']],
             [5, NumberFilter::GREATER_EQUAL, '5', 'e.name >= :value_integer_propertyName', ['value_integer_propertyName' => '5']],
             [5, NumberFilter::SMALLER_THAN, '5', 'e.name < :value_integer_propertyName', ['value_integer_propertyName' => '5']],
             [5, NumberFilter::SMALLER_EQUAL, '5', 'e.name <= :value_integer_propertyName', ['value_integer_propertyName' => '5']],
-            [5.25, NumberFilter::EQUAL, '5,25', 'e.name = :value_integer_propertyName', ['value_integer_propertyName' => '5.25']],
+            [5.25, NumberFilter::EQUAL, '5.25', 'e.name = :value_integer_propertyName', ['value_integer_propertyName' => '5.25']],
         ];
     }
 
@@ -51,8 +51,8 @@ class NumberFilterTest extends IntegerFilterTest
             [null, null, ''],
             ['', null, ''],
             ['5', 5.0, '5'],
-            ['5.25', 5.25, '5,25'],
-            ['5,25', 5.25, '5,25'],
+            ['5.25', 5.25, '5.25'],
+            ['5,25', 5.25, '5.25'],
         ];
     }
 }

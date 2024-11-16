@@ -4,3 +4,4 @@ framework:
     session:
         handler_id: null
         storage_factory_id: session.storage.factory.mock_file
+    default_locale: en
