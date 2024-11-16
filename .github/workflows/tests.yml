@@ -15,26 +15,16 @@ jobs:
                 include:
                     #Mini (for each Symfony version)
                     -   php-version: '8.1'
-                        symfony-version: '5.4.*'
-                        composer-flags: '--prefer-stable --prefer-lowest'
-                        description: 'with SF 5.4.* lowest'
-                    -   php-version: '8.1'
                         symfony-version: '6.4.*'
                         composer-flags: '--prefer-stable --prefer-lowest'
                         description: 'with SF 6.4.* lowest'
                     -   php-version: '8.2'
-                        symfony-version: '7.0.*'
+                        symfony-version: '7.1.*'
                         composer-flags: '--prefer-stable --prefer-lowest'
-                        description: 'with SF 7.0.* lowest'
+                        description: 'with SF 7.1.* lowest'
 
 
                     #Symfony versions
-                    -   php-version: '8.3'
-                        symfony-version: '5.4.*'
-                        description: 'with SF 5.4.*'
-                    -   php-version: '8.3'
-                        symfony-version: '5.4.*@dev'
-                        description: 'with SF 5.4.* dev'
                     -   php-version: '8.3'
                         symfony-version: '6.4.*'
                         description: 'with SF 6.4.*'
@@ -42,14 +32,14 @@ jobs:
                         symfony-version: '6.4.*@dev'
                         description: 'with SF 6.4.* dev'
                     -   php-version: '8.3'
-                        symfony-version: '7.0.*'
-                        description: 'with SF 7.0.*'
-                    -   php-version: '8.3'
-                        symfony-version: '7.0.*@dev'
-                        description: 'with SF 7.0.* dev'
+                        symfony-version: '7.1.*'
+                        description: 'with SF 7.1.*'
                     -   php-version: '8.3'
                         symfony-version: '7.1.*@dev'
                         description: 'with SF 7.1.* dev'
+                    -   php-version: '8.3'
+                        symfony-version: '7.2.*@dev'
+                        description: 'with SF 7.2.* dev'
 
                     #PHP versions
                     -   php-version: '8.1'
