@@ -53,7 +53,7 @@ final class SearchFormBuilder
             $formOptions['validation_groups'] = $this->options['validation_groups'];
         }
 
-        if ($type) {
+        if (null !== $type) {
             $this->form = $formFactory->createBuilder($type, null, $formOptions);
         } else {
             $formName = \sprintf('crud_search_%s', $this->crud->getSessionName());

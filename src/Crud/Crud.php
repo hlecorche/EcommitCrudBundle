@@ -115,7 +115,7 @@ final class Crud
                     throw new \Exception('A column must be an array or a CrudColum instance.');
                 }
                 if (\array_key_exists($column->getId(), $columns)) {
-                    throw new \Exception(\sprintf('The column "column1" already exists.', $column->getId()));
+                    throw new \Exception(\sprintf('The column "%s" already exists.', $column->getId()));
                 }
                 $columns[$column->getId()] = $column;
             }
@@ -133,7 +133,7 @@ final class Crud
                     throw new \Exception('A column must be an array or a CrudColum instance.');
                 }
                 if (\array_key_exists($column->getId(), $columns)) {
-                    throw new \Exception(\sprintf('The column "column1" already exists.', $column->getId()));
+                    throw new \Exception(\sprintf('The column "%s" already exists.', $column->getId()));
                 }
                 $columns[$column->getId()] = $column;
             }
@@ -186,12 +186,10 @@ final class Crud
         // Check duplicates in columns / vitual columns
         $duplicates = array_intersect_key($this->options['columns'], $this->options['virtual_columns']);
         if (\count($duplicates) > 0) {
-            throw new \Exception(\sprintf('The column "column1" already exists.', array_keys($duplicates)[0]));
+            throw new \Exception(\sprintf('The column "%s" already exists.', array_keys($duplicates)[0]));
         }
 
         $this->init();
-
-        return $this;
     }
 
     protected function init(): void

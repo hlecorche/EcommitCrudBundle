@@ -45,8 +45,8 @@ class TextFilter extends AbstractFilter
             $queryBuilder->andWhere(\sprintf('%s = :%s', $options['alias_search'], $parameterName))
                 ->setParameter($parameterName, $value);
         } else {
-            $after = ($options['must_begin']) ? '' : '%';
-            $before = ($options['must_end']) ? '' : '%';
+            $after = (true === $options['must_begin']) ? '' : '%';
+            $before = (true === $options['must_end']) ? '' : '%';
             $value = addcslashes($value, '%_');
             $like = $after.$value.$before;
             $queryBuilder->andWhere($queryBuilder->expr()->like($options['alias_search'], ':'.$parameterName))

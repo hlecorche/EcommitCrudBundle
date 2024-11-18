@@ -20,5 +20,19 @@
                 <referencedClass name="UnitEnum"/>
             </errorLevel>
         </UndefinedDocblockClass>
+        <MissingTemplateParam>
+            <errorLevel type="suppress">
+                <!-- DataTransformer to be rewritten -->
+                <file name="src/Form/DataTransformer/Entity/AbstractEntityTransformer.php" />
+                <file name="src/Crud/CrudConfig.php" />
+            </errorLevel>
+        </MissingTemplateParam>
+        <UndefinedClass>
+            <errorLevel type="suppress">
+                <!-- Doctrine ORM v2 support -->
+                <referencedClass name="Doctrine\ORM\Mapping\ClassMetadataInfo"/>
+                <file name="src/EventListener/MappingEntities.php" />
+            </errorLevel>
+        </UndefinedClass>
     </issueHandlers>
 </psalm>

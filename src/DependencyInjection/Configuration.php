@@ -27,6 +27,7 @@ class Configuration implements ConfigurationInterface
     /**
      * @psalm-suppress PossiblyUndefinedMethod
      * @psalm-suppress PossiblyNullReference
+     * @psalm-suppress UndefinedInterfaceMethod
      */
     public function getConfigTreeBuilder(): TreeBuilder
     {

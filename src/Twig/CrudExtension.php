@@ -683,6 +683,11 @@ final class CrudExtension extends AbstractExtension
         return $resolver->resolve($options);
     }
 
+    /**
+     * @param array<string, string|bool|array<array-key, mixed>|null> $options
+     *
+     * @return array<string, string>
+     */
     protected function getAjaxAttributes(array $options): array
     {
         $attributes = [];
