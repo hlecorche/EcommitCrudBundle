@@ -17,7 +17,7 @@ module.exports = function (outputPath) {
         .enableVersioning(false)
         .configureBabelPresetEnv((config) => {
             config.useBuiltIns = 'usage';
-            config.corejs = 3;
+            config.corejs = '3.38';
         })
     ;
 
