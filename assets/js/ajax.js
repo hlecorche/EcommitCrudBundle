@@ -200,9 +200,7 @@ export function sendRequest (options) {
         dataPromise.then(data => {
           executeEventsAndCallbacksSuccess(callbacksSuccess, options, data, response)
           resolve(response)
-        })
-
-        dataPromise.catch(error => {
+        }).catch(error => {
           error = 'Error during fetching response body: ' + error
           executeEventsAndCallbacksError(options, error, response)
           reject(error)
@@ -216,9 +214,7 @@ export function sendRequest (options) {
           resolve(response)
         }
       }
-    })
-
-    fetchPromise.catch(error => {
+    }).catch(error => {
       error = 'Error during query execution: ' + error
       executeEventsAndCallbacksError(options, error, null)
       reject(error)
