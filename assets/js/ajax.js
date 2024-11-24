@@ -81,7 +81,7 @@ export function sendRequest (options) {
   const eventBeginning = new CustomEvent('ec-crud-ajax', {
     cancelable: true,
     detail: {
-      options: options
+      options
     }
   })
   document.dispatchEvent(eventBeginning)
@@ -152,7 +152,7 @@ export function sendRequest (options) {
   const eventBeforeSend = new CustomEvent('ec-crud-ajax-before-send', {
     cancelable: true,
     detail: {
-      options: options
+      options
     }
   })
   document.dispatchEvent(eventBeforeSend)
@@ -282,8 +282,8 @@ export function updateDom (element, updateMode, content) {
     cancelable: true,
     detail: {
       element: originElement,
-      updateMode: updateMode,
-      content: content
+      updateMode,
+      content
     }
   })
   element.dispatchEvent(eventBefore)
@@ -313,8 +313,8 @@ export function updateDom (element, updateMode, content) {
     bubbles: true,
     detail: {
       element: originElement,
-      updateMode: updateMode,
-      content: content
+      updateMode,
+      content
     }
   })
   element.dispatchEvent(eventAfter)
@@ -364,8 +364,8 @@ function generateParameters (result, propertyPath, property, value) {
 function executeEventsAndCallbacksSuccess (callbacksSuccess, options, data, response) {
   const eventOnSuccess = new CustomEvent('ec-crud-ajax-on-success', {
     detail: {
-      data: data,
-      response: response
+      data,
+      response
     }
   })
   document.dispatchEvent(eventOnSuccess)
@@ -374,7 +374,7 @@ function executeEventsAndCallbacksSuccess (callbacksSuccess, options, data, resp
   const eventOnComplete = new CustomEvent('ec-crud-ajax-on-complete', {
     detail: {
       statusText: response.statusText,
-      response: response
+      response
     }
   })
   document.dispatchEvent(eventOnComplete)
@@ -384,8 +384,8 @@ function executeEventsAndCallbacksSuccess (callbacksSuccess, options, data, resp
 function executeEventsAndCallbacksError (options, statusText, response) {
   const eventOnError = new CustomEvent('ec-crud-ajax-on-error', {
     detail: {
-      statusText: statusText,
-      response: response
+      statusText,
+      response
     }
   })
   document.dispatchEvent(eventOnError)
@@ -393,8 +393,8 @@ function executeEventsAndCallbacksError (options, statusText, response) {
 
   const eventOnComplete = new CustomEvent('ec-crud-ajax-on-complete', {
     detail: {
-      statusText: statusText,
-      response: response
+      statusText,
+      response
     }
   })
   document.dispatchEvent(eventOnComplete)

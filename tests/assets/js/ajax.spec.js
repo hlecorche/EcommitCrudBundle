@@ -978,7 +978,7 @@ describe('Test Ajax.sendRequest', function () {
         priority: -99
       },
       update: '#ajax-result .content',
-      updateMode: updateMode
+      updateMode
     })
 
     expect(callbackSuccess).toHaveBeenCalledWith(expectedContent)
