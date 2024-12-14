@@ -40,7 +40,7 @@ class EntityManyToOneFixtures extends Fixture implements DependentFixtureInterfa
         $manager->flush();
     }
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             TagFixtures::class,

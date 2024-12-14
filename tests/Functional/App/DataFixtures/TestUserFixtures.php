@@ -47,7 +47,7 @@ class TestUserFixtures extends Fixture
         }
 
         $userCrudSettings = new UserCrudSettings(
-            $this->getReference('user_EveReste'),
+            $this->getReference('user_EveReste', TestUser::class),
             'crud_persistent_settings',
             50,
             ['username', 'firstName'],
