@@ -252,6 +252,21 @@ export function link (link, options) {
 }
 
 export function sendForm (form, options) {
+  const eventBefore = new CustomEvent('ec-crud-ajax-form-before', {
+    bubbles: true,
+    cancelable: true,
+    detail: {
+      form,
+      options
+    }
+  })
+  document.dispatchEvent(eventBefore)
+  if (eventBefore.defaultPrevented) {
+    return new Promise((resolve, reject) => {
+      resolve(null)
+    })
+  }
+
   form = optionsResolver.getElement(form)
   // Options in data-* override options argument
   // Option argument override action, method and data form
@@ -266,6 +281,25 @@ export function sendForm (form, options) {
       optionsResolver.getDataAttributes(form, 'ecCrudAjax')
     )
   )
+
+  const callbacksComplete = []
+  callbacksComplete.push({
+    priority: 10,
+    callback: (statusText, response) => {
+      const eventOnComplete = new CustomEvent('ec-crud-ajax-form-complete', {
+        detail: {
+          form,
+          statusText,
+          response
+        }
+      })
+      document.dispatchEvent(eventOnComplete)
+    }
+  })
+  if (optionsResolver.isNotBlank(options.onComplete)) {
+    callbacksComplete.push(options.onComplete)
+  }
+  options.onComplete = callbacksComplete
 
   return sendRequest(options)
 }

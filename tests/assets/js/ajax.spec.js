@@ -1364,12 +1364,21 @@ describe('Test Ajax.form', function () {
       status: 200,
       responseText: 'CONTENT'
     })
+
+    jasmine.Ajax.stubRequest(/error404/).andReturn({
+      status: 404,
+      statusText: 'Not Found',
+      response: 'Page not found !',
+      responseText: 'Page not found !'
+    })
   })
 
   afterEach(function () {
     jasmine.Ajax.uninstall()
     $('.html-test').remove()
     callbackManager.clear()
+    $(document).off('ec-crud-ajax-form-before')
+    $(document).off('ec-crud-ajax-form-complete')
   })
 
   it('Send request with form', async function () {
@@ -1377,7 +1386,16 @@ describe('Test Ajax.form', function () {
     $('#formToTest input[name=var1]').val('My value 1')
     $('#formToTest input[name=var2]').val('My value 2')
 
+    const callbackFormBefore = jasmine.createSpy('form_before')
+    const callbackFormComplete = jasmine.createSpy('form_complete')
     const callbackSuccess = jasmine.createSpy('success')
+
+    $(document).on('ec-crud-ajax-form-before', function (event) {
+      callbackFormBefore()
+    })
+    $(document).on('ec-crud-ajax-form-complete', function (event) {
+      callbackFormComplete()
+    })
 
     const promise = ajax.sendForm('#formToTest', {
       onSuccess: function (data, response) {
@@ -1392,7 +1410,90 @@ describe('Test Ajax.form', function () {
     expect(jasmine.Ajax.requests.mostRecent().url).toMatch('/goodRequest')
     expect(jasmine.Ajax.requests.mostRecent().method).toBe('POST')
     expect(jasmine.Ajax.requests.mostRecent().data()).toEqual([['var1', 'My value 1'], ['var2', 'My value 2']]) // Parsed by addJasmineAjaxFormDataSupport
+    expect(callbackFormBefore).toHaveBeenCalled()
+    expect(callbackFormComplete).toHaveBeenCalled()
     expect(callbackSuccess).toHaveBeenCalled()
+  })
+
+  it('Send request with form canceled', async function () {
+    $('body').append('<form action="/goodRequest" method="POST" class="html-test" id="formToTest"><input type="text" name="var1" /><input type="text" name="var2" /></form>')
+    $('#formToTest input[name=var1]').val('My value 1')
+    $('#formToTest input[name=var2]').val('My value 2')
+
+    const callbackFormComplete = jasmine.createSpy('form_complete')
+
+    $(document).on('ec-crud-ajax-form-before', function (event) {
+      event.preventDefault()
+    })
+    $(document).on('ec-crud-ajax-form-complete', function (event) {
+      callbackFormComplete()
+    })
+
+    const promise = ajax.sendForm('#formToTest')
+    expect(promise).toBeInstanceOf(Promise)
+
+    await promise
+
+    expect(callbackFormComplete).not.toHaveBeenCalled()
+  })
+
+  it('Send request with form and complete callback', async function () {
+    $('body').append('<form action="/goodRequest" method="POST" class="html-test" id="formToTest"><input type="text" name="var1" /><input type="text" name="var2" /></form>')
+    $('#formToTest input[name=var1]').val('My value 1')
+    $('#formToTest input[name=var2]').val('My value 2')
+
+    const callbackFormBefore = jasmine.createSpy('form_before')
+    const callbackFormComplete = jasmine.createSpy('form_complete')
+    const callbackComplete = jasmine.createSpy('complete')
+
+    $(document).on('ec-crud-ajax-form-before', function (event) {
+      callbackFormBefore()
+    })
+    $(document).on('ec-crud-ajax-form-complete', function (event) {
+      callbackFormComplete()
+    })
+
+    const promise = ajax.sendForm('#formToTest', {
+      onComplete: function (statusText, response) {
+        callbackComplete()
+      }
+    })
+    expect(promise).toBeInstanceOf(Promise)
+
+    const response = await promise
+
+    expect(response).toBeInstanceOf(Response)
+    expect(jasmine.Ajax.requests.mostRecent().url).toMatch('/goodRequest')
+    expect(jasmine.Ajax.requests.mostRecent().method).toBe('POST')
+    expect(jasmine.Ajax.requests.mostRecent().data()).toEqual([['var1', 'My value 1'], ['var2', 'My value 2']]) // Parsed by addJasmineAjaxFormDataSupport
+    expect(callbackFormBefore).toHaveBeenCalled()
+    expect(callbackFormComplete).toHaveBeenCalled()
+    expect(callbackComplete).toHaveBeenCalled()
+  })
+
+  it('Send request with form and error', async function () {
+    $('body').append('<form action="/error404" method="POST" class="html-test" id="formToTest"><input type="text" name="var1" /><input type="text" name="var2" /></form>')
+    $('#formToTest input[name=var1]').val('My value 1')
+    $('#formToTest input[name=var2]').val('My value 2')
+
+    const callbackFormComplete = jasmine.createSpy('form_complete')
+    const callbackSuccess = jasmine.createSpy('success')
+
+    $(document).on('ec-crud-ajax-form-complete', function (event) {
+      callbackFormComplete()
+    })
+
+    const promise = ajax.sendForm('#formToTest', {
+      onSuccess: function (data, response) {
+        callbackSuccess()
+      }
+    })
+    expect(promise).toBeInstanceOf(Promise)
+
+    await promise
+
+    expect(callbackFormComplete).toHaveBeenCalled()
+    expect(callbackSuccess).not.toHaveBeenCalled()
   })
 
   it('Send request with form with Element', async function () {
@@ -1536,6 +1637,16 @@ describe('Test Ajax.form', function () {
     $('#formToTest input[name=var1]').val('My value 1')
     $('#formToTest input[name=var2]').val('My value 2')
 
+    const callbackFormBefore = jasmine.createSpy('form_before')
+    const callbackFormComplete = jasmine.createSpy('form_complete')
+
+    $(document).on('ec-crud-ajax-form-before', function (event) {
+      callbackFormBefore()
+    })
+    $(document).on('ec-crud-ajax-form-complete', function (event) {
+      callbackFormComplete()
+    })
+
     $('#formToTest button[type="submit"]').get(0).click()
 
     await wait(() => {
@@ -1545,6 +1656,8 @@ describe('Test Ajax.form', function () {
     expect(jasmine.Ajax.requests.mostRecent().url).toMatch('/goodRequest')
     expect(jasmine.Ajax.requests.mostRecent().method).toBe('POST')
     expect(jasmine.Ajax.requests.mostRecent().data()).toEqual([['var1', 'My value 1'], ['var2', 'My value 2']]) // Parsed by addJasmineAjaxFormDataSupport
+    expect(callbackFormBefore).toHaveBeenCalled()
+    expect(callbackFormComplete).toHaveBeenCalled()
   })
 
   it('Send auto-request with form canceled', async function () {
