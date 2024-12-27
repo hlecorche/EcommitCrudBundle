@@ -51,9 +51,6 @@ final class MappingEntities
         $userCrudSettingsMetadata->setAssociationOverride(
             'user',
             [
-                'targetEntity' => $userMetadata->getName(),
-                'fieldName' => 'user',
-                'id' => true,
                 'joinColumns' => [[
                     'name' => 'user_id',
                     'referencedColumnName' => $userMetadata->getSingleIdentifierColumnName(),
