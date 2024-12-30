@@ -581,18 +581,16 @@ final class CrudExtension extends AbstractExtension
         ]);
         $resolver->setAllowedTypes('ajax_options', ['array']);
         $resolver->setAllowedTypes('button_attr', ['array']);
-        $resolver->addNormalizer('button_attr', function (Options $options, mixed $value) use ($crud): array {
-            return array_merge(
-                [
-                    'data-ec-crud-toggle' => 'search-reset',
-                    'data-crud-search-id' => $crud->getDivIdSearch(),
-                    'data-crud-list-id' => $crud->getDivIdList(),
-                    'data-ec-crud-ajax-url' => $crud->getSearchUrl(['reset' => 1]),
-                ],
-                $value,
-                $this->getAjaxAttributes($this->validateAjaxOptions($options['ajax_options'])),
-            );
-        });
+        $resolver->addNormalizer('button_attr', fn (Options $options, mixed $value): array => array_merge(
+            [
+                'data-ec-crud-toggle' => 'search-reset',
+                'data-crud-search-id' => $crud->getDivIdSearch(),
+                'data-crud-list-id' => $crud->getDivIdList(),
+                'data-ec-crud-ajax-url' => $crud->getSearchUrl(['reset' => 1]),
+            ],
+            $value,
+            $this->getAjaxAttributes($this->validateAjaxOptions($options['ajax_options'])),
+        ));
         $options = $resolver->resolve($this->buildOptions('crud_search_form_reset', $options, $crud));
 
         if ($options['render']) {

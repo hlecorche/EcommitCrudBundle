@@ -32,7 +32,7 @@ class CrudColumnTest extends TestCase
     public function testIdTooLongOption(): void
     {
         $options = $this->createValidConfig();
-        $options['id'] = str_pad('', 101, 'a');
+        $options['id'] = mb_str_pad('', 101, 'a');
 
         $this->expectException(ValidationFailedException::class);
         $this->expectExceptionMessageMatches('/The column id ".+" is too long. It should have 100 character or less/');

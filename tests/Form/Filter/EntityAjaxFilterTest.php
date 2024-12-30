@@ -154,11 +154,9 @@ class EntityAjaxFilterTest extends AbstractFilterTest
     public function testViewWithQueryBuilder(bool $queryBuilderIsClosure, bool $multiple, $modelData, $expectedViewData, array $expectedIdsFound): void
     {
         if ($queryBuilderIsClosure) {
-            $queryBuilder = function (EntityRepository $entityRepository) {
-                return $entityRepository->createQueryBuilder('t')
+            $queryBuilder = fn (EntityRepository $entityRepository) => $entityRepository->createQueryBuilder('t')
                     ->select('t')
                     ->andWhere('t.id > 2');
-            };
         } else {
             $queryBuilder = $this->em->getRepository(Tag::class)->createQueryBuilder('t')
                 ->select('t')
@@ -213,11 +211,9 @@ class EntityAjaxFilterTest extends AbstractFilterTest
     public function testSubmitWithQueryBuilder(bool $queryBuilderIsClosure, bool $multiple, $submittedData, $expectedValid, $expectedModelData, $expectedViewData): void
     {
         if ($queryBuilderIsClosure) {
-            $queryBuilder = function (EntityRepository $entityRepository) {
-                return $entityRepository->createQueryBuilder('t')
+            $queryBuilder = fn (EntityRepository $entityRepository) => $entityRepository->createQueryBuilder('t')
                     ->select('t')
                     ->andWhere('t.id > 2');
-            };
         } else {
             $queryBuilder = $this->em->getRepository(Tag::class)->createQueryBuilder('t')
                 ->select('t')

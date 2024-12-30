@@ -51,7 +51,7 @@ class CrudTest extends AbstractCrudTest
             ['', InvalidOptionsException::class, '/The option "session_name" with value ".*" is invalid/'],
             ['aa#bb', ValidationFailedException::class, '/Invalid session_name format/'],
             ['aa bb', ValidationFailedException::class, '/Invalid session_name format/'],
-            [str_pad('', 101, 'a'), ValidationFailedException::class, '/Invalid session_name format/'],
+            [mb_str_pad('', 101, 'a'), ValidationFailedException::class, '/Invalid session_name format/'],
             [1, InvalidOptionsException::class, '/The option "session_name" with value 1 is expected to be of type "string", but is of type "int"/'],
         ];
     }

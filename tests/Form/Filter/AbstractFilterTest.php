@@ -82,12 +82,10 @@ abstract class AbstractFilterTest extends KernelTestCase
         $this->crudFactory = $this->getMockBuilder(CrudFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->crudFactory->method('create')->willReturnCallback(function (array $options) use ($container) {
-            return $this->getMockBuilder(Crud::class)
+        $this->crudFactory->method('create')->willReturnCallback(fn (array $options) => $this->getMockBuilder(Crud::class)
                 ->setConstructorArgs([$options, $container])
                 ->onlyMethods(['save', 'buildSearchForm']) // buildSearchForm: Disable search form creation
-                ->getMock();
-        });
+                ->getMock());
     }
 
     protected function tearDown(): void

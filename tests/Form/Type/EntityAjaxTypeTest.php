@@ -174,11 +174,9 @@ class EntityAjaxTypeTest extends KernelTestCase
     public function testSubmitWithQueryBuilder(bool $queryBuilderIsClosure, bool $multiple, $submittedData, $expectedValid, $expectedModelData, $expectedDataBuilderName, $expectedViewData): void
     {
         if ($queryBuilderIsClosure) {
-            $queryBuilder = function (EntityRepository $entityRepository) {
-                return $entityRepository->createQueryBuilder('t')
+            $queryBuilder = fn (EntityRepository $entityRepository) => $entityRepository->createQueryBuilder('t')
                     ->select('t')
                     ->andWhere('t.id > 2');
-            };
         } else {
             $queryBuilder = $this->em->getRepository(Tag::class)->createQueryBuilder('t')
                 ->select('t')
