@@ -289,6 +289,10 @@ describe('Test Modal-manager with test engine', function () {
 
       modalManager.closeModal('#test-modal')
 
+      await wait(() => {
+        return !opened
+      })
+
       expect(callbackOpen).toHaveBeenCalledTimes(1)
       expect(callbackClose).toHaveBeenCalledWith($('#test-modal'))
     })
