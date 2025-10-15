@@ -63,6 +63,7 @@ class EntityAjaxType extends AbstractType
     {
         $view->vars['url'] = $this->router->generate($options['route_name'], $options['route_parameters']);
         $view->vars['multiple'] = $options['multiple'];
+        $view->vars['list_is_synchronized'] = $form->isSynchronized();
 
         if ($options['multiple']) {
             $view->vars['full_name'] .= '[]';

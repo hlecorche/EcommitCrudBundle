@@ -22,6 +22,7 @@ use Ecommit\CrudBundle\Tests\Functional\App\Entity\Tag;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
+use Symfony\Component\Validator\Constraints\Blank;
 
 class EntityAjaxTypeTest extends KernelTestCase
 {
@@ -82,6 +83,7 @@ class EntityAjaxTypeTest extends KernelTestCase
         $this->assertSame($expectedViewValue, $view->vars['value']);
         $this->assertSame('/fake', $view->vars['url']);
         $this->assertSame($multiple, $view->vars['multiple']);
+        $this->assertTrue($view->vars['list_is_synchronized']);
     }
 
     public function getTestViewProvider(): array
@@ -166,6 +168,22 @@ class EntityAjaxTypeTest extends KernelTestCase
             [true, ['1', '99999']],
             [true, ['1', '2', '3']], // max elements
         ];
+    }
+
+    public function testSubmitInvalidByValidator(): void
+    {
+        $field = $this->factory->create(EntityAjaxType::class, null, [
+            'class' => Tag::class,
+            'route_name' => 'fake_route',
+            'multiple' => false,
+            'constraints' => [new Blank()],
+        ]);
+
+        $field->submit('2');
+
+        $this->assertTrue($field->isSynchronized());
+        $this->assertFalse($field->isValid());
+        $this->assertSame(['2' => 'tag2'], $field->getViewData());
     }
 
     /**

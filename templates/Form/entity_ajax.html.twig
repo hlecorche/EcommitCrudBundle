@@ -10,8 +10,8 @@
     {% endif %}
 
     <select {{ block('widget_attributes') }}>
-        {# If null (invalid) or if invalid : Not display list because several labels are missing #}
-        {% if value is not null and valid %}
+        {# If null (not valid) or if not synchronized : Not display list because several labels are missing #}
+        {% if value is not null and list_is_synchronized %}
             {% for id, label in value %}
                 <option value="{{ id }}" selected="selected">{{ label }}</option>
             {% endfor %}
