@@ -13,12 +13,12 @@ import $ from 'jquery'
 export function openModal (options) {
   runCallback(options.onOpen, $(options.element))
 
-  $(document).on('DOMNodeRemoved', options.element + ' .content', function (event) {
+  $(document).one('testEngineClose', options.element, function () {
     runCallback(options.onClose, $(options.element))
   })
 }
 
 export function closeModal (element) {
   $(element + ' .content').remove()
-  $(document).off('remove', element + ' .content')
+  $(document).find(element).trigger('testEngineClose')
 }
