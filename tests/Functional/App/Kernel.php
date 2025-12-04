@@ -40,7 +40,15 @@ class Kernel extends BaseKernel implements CompilerPassInterface
         $loader->load($this->getProjectDir().'/config/ecommit_crud.yaml');
         $loader->load($this->getProjectDir().'/config/services.yaml');
 
-        if (5 === static::MAJOR_VERSION) {
+        if (\PHP_VERSION_ID >= 80400) { // @legacy
+            $container->loadFromExtension('doctrine', [
+                'orm' => [
+                    'enable_native_lazy_objects' => true,
+                ],
+            ]);
+        }
+
+        if (5 === static::MAJOR_VERSION) { // @legacy
             $container->loadFromExtension('security', [
                 'enable_authenticator_manager' => true,
             ]);
