@@ -16,7 +16,7 @@ namespace Ecommit\CrudBundle\Tests\Functional\App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-class Tag
+class Tag implements \Stringable
 {
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
