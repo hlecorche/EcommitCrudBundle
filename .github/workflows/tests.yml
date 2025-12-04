@@ -133,6 +133,11 @@ jobs:
                     yarn install
                     yarn encore dev
 
+            -   name: Fix Panther code
+                if: matrix.coding-standards != true && matrix.static-analysis != true
+                run: |
+                    sed -i 's/protected function doRequest(\$request)/protected function doRequest(object $request): object/' vendor/symfony/panther/src/Client.php
+
             -   name: Run PHPUnit
                 if: matrix.coding-standards != true && matrix.static-analysis != true
                 run: php vendor/phpunit/phpunit/phpunit
