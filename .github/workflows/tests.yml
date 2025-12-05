@@ -145,7 +145,7 @@ jobs:
 
             -   name: Run PHPUnit
                 if: matrix.coding-standards != true && matrix.analyze-dependencies != true && matrix.static-analysis != true
-                run: php vendor/phpunit/phpunit/phpunit
+                run: php vendor/bin/phpunit
 
             -   name: Run Karma
                 if: matrix.coding-standards != true && matrix.analyze-dependencies != true && matrix.static-analysis != true
@@ -153,7 +153,7 @@ jobs:
 
             -   name: Run PHP CS Fixer
                 if: matrix.coding-standards
-                run: php vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --diff --dry-run -v
+                run: php vendor/bin/php-cs-fixer fix --diff --dry-run -v
 
             -   name: Check license year
                 if: matrix.coding-standards
