@@ -24,10 +24,10 @@ class TextFilter extends AbstractFilter
     {
         $typeOptions = $this->getTypeOptions($options, [
             'constraints' => [
-                new Assert\Length([
-                    'min' => $options['min_length'],
-                    'max' => $options['max_length'],
-                ]),
+                new Assert\Length(
+                    min: $options['min_length'],
+                    max: $options['max_length'],
+                ),
             ],
         ]);
         $builder->addField($property, $options['type'], $typeOptions);

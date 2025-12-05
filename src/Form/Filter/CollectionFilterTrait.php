@@ -25,10 +25,10 @@ trait CollectionFilterTrait
         $constraints = [];
         if ($options['multiple']) {
             $constraints = [
-                new Assert\Count([
-                    'min' => $options['min'],
-                    'max' => $options['max'],
-                ]),
+                new Assert\Count(
+                    min: $options['min'],
+                    max: $options['max'],
+                ),
             ];
         }
 

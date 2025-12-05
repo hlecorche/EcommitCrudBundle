@@ -31,7 +31,7 @@ class FormSearchType extends AbstractType
         ]);
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'crud_search';
     }

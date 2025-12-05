@@ -159,47 +159,47 @@ final class CrudExtension extends AbstractExtension
             'max_pages_after' => 3,
             'nav_attr' => [],
             'ul_attr' => [],
-            'li_attr' => static function (OptionsResolver $liResolver): void {
-                $liResolver->setDefaults([
-                    'first_page' => [],
-                    'previous_page' => [],
-                    'current_page' => [],
-                    'next_page' => [],
-                    'last_page' => [],
-                    'other_page' => [],
-                ]);
-                foreach (['first_page', 'previous_page', 'current_page', 'next_page', 'last_page', 'other_page'] as $option) {
-                    $liResolver->setAllowedTypes($option, 'array');
-                }
-            },
-            'a_attr' => function (OptionsResolver $aResolver, Options $parent): void {
-                $aResolver->setDefaults([
-                    'first_page' => [],
-                    'previous_page' => [],
-                    'current_page' => [],
-                    'next_page' => [],
-                    'last_page' => [],
-                    'other_page' => [],
-                ]);
-                foreach (['first_page', 'previous_page', 'current_page', 'next_page', 'last_page', 'other_page'] as $option) {
-                    $aResolver->setAllowedTypes($option, 'array');
-                    $aResolver->addNormalizer($option, function (Options $options, mixed $value) use ($parent): array {
-                        if (null !== $parent['ajax_options']) {
-                            return array_merge(
-                                $value,
-                                ['data-ec-crud-toggle' => 'ajax-link'],
-                                $this->getAjaxAttributes($this->validateAjaxOptions($parent['ajax_options'])),
-                            );
-                        }
-
-                        return $value;
-                    });
-                }
-            },
             'render' => null,
             'theme' => $this->theme,
             'block' => 'paginator_links',
         ]);
+        $this->nestedOptions($resolver, 'li_attr', static function (OptionsResolver $liResolver): void {
+            $liResolver->setDefaults([
+                'first_page' => [],
+                'previous_page' => [],
+                'current_page' => [],
+                'next_page' => [],
+                'last_page' => [],
+                'other_page' => [],
+            ]);
+            foreach (['first_page', 'previous_page', 'current_page', 'next_page', 'last_page', 'other_page'] as $option) {
+                $liResolver->setAllowedTypes($option, 'array');
+            }
+        });
+        $this->nestedOptions($resolver, 'a_attr', function (OptionsResolver $aResolver, Options $parent): void {
+            $aResolver->setDefaults([
+                'first_page' => [],
+                'previous_page' => [],
+                'current_page' => [],
+                'next_page' => [],
+                'last_page' => [],
+                'other_page' => [],
+            ]);
+            foreach (['first_page', 'previous_page', 'current_page', 'next_page', 'last_page', 'other_page'] as $option) {
+                $aResolver->setAllowedTypes($option, 'array');
+                $aResolver->addNormalizer($option, function (Options $options, mixed $value) use ($parent): array {
+                    if (null !== $parent['ajax_options']) {
+                        return array_merge(
+                            $value,
+                            ['data-ec-crud-toggle' => 'ajax-link'],
+                            $this->getAjaxAttributes($this->validateAjaxOptions($parent['ajax_options'])),
+                        );
+                    }
+
+                    return $value;
+                });
+            }
+        });
         $resolver->setAllowedTypes('ajax_options', ['null', 'array']);
         $resolver->setAllowedTypes('max_pages_before', 'int');
         $resolver->setAllowedTypes('max_pages_after', 'int');
@@ -288,42 +288,42 @@ final class CrudExtension extends AbstractExtension
         $resolver->setDefaults([
             'ajax_options' => null,
             'label' => null,
-            'th_attr' => static function (OptionsResolver $thResolver): void {
-                $thResolver->setDefaults([
-                    'not_sortable' => [],
-                    'sortable_active_asc' => [],
-                    'sortable_active_desc' => [],
-                    'sortable_not_active' => [],
-                ]);
-                foreach (['not_sortable', 'sortable_active_asc', 'sortable_active_desc', 'sortable_not_active'] as $option) {
-                    $thResolver->setAllowedTypes($option, 'array');
-                }
-            },
-            'a_attr' => function (OptionsResolver $aResolver, Options $parent): void {
-                $aResolver->setDefaults([
-                    'sortable_active_asc' => [],
-                    'sortable_active_desc' => [],
-                    'sortable_not_active' => [],
-                ]);
-                foreach (['sortable_active_asc', 'sortable_active_desc', 'sortable_not_active'] as $option) {
-                    $aResolver->setAllowedTypes($option, 'array');
-                    $aResolver->addNormalizer($option, function (Options $options, mixed $value) use ($parent): array {
-                        if (null !== $parent['ajax_options']) {
-                            return array_merge(
-                                $value,
-                                ['data-ec-crud-toggle' => 'ajax-link'],
-                                $this->getAjaxAttributes($this->validateAjaxOptions($parent['ajax_options'])),
-                            );
-                        }
-
-                        return $value;
-                    });
-                }
-            },
             'render' => null,
             'theme' => $this->theme,
             'block' => 'th',
         ]);
+        $this->nestedOptions($resolver, 'th_attr', static function (OptionsResolver $thResolver): void {
+            $thResolver->setDefaults([
+                'not_sortable' => [],
+                'sortable_active_asc' => [],
+                'sortable_active_desc' => [],
+                'sortable_not_active' => [],
+            ]);
+            foreach (['not_sortable', 'sortable_active_asc', 'sortable_active_desc', 'sortable_not_active'] as $option) {
+                $thResolver->setAllowedTypes($option, 'array');
+            }
+        });
+        $this->nestedOptions($resolver, 'a_attr', function (OptionsResolver $aResolver, Options $parent): void {
+            $aResolver->setDefaults([
+                'sortable_active_asc' => [],
+                'sortable_active_desc' => [],
+                'sortable_not_active' => [],
+            ]);
+            foreach (['sortable_active_asc', 'sortable_active_desc', 'sortable_not_active'] as $option) {
+                $aResolver->setAllowedTypes($option, 'array');
+                $aResolver->addNormalizer($option, function (Options $options, mixed $value) use ($parent): array {
+                    if (null !== $parent['ajax_options']) {
+                        return array_merge(
+                            $value,
+                            ['data-ec-crud-toggle' => 'ajax-link'],
+                            $this->getAjaxAttributes($this->validateAjaxOptions($parent['ajax_options'])),
+                        );
+                    }
+
+                    return $value;
+                });
+            }
+        });
         $resolver->setAllowedTypes('ajax_options', ['null', 'array']);
         $resolver->addNormalizer('ajax_options', static function (Options $options, mixed $value) use ($crud): array {
             if (!isset($value['update'])) {
@@ -739,5 +739,14 @@ final class CrudExtension extends AbstractExtension
         }
 
         return array_merge($options, $inlineOptions);
+    }
+
+    private function nestedOptions(OptionsResolver $optionsResolver, string $option, \Closure $nested): void
+    {
+        if (method_exists($optionsResolver, 'setOptions')) {
+            $optionsResolver->setOptions($option, $nested);
+        } else { // @legacy Symfony < 7.3
+            $optionsResolver->setDefault($option, $nested);
+        }
     }
 }

@@ -135,7 +135,7 @@ class EntityAjaxType extends AbstractType
         $resolver->setNormalizer('identifier', $identifierNormalizer);
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'ecommit_crud_entity_ajax';
     }

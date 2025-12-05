@@ -50,7 +50,7 @@ class DisplaySettingsType extends AbstractType
             'label' => 'display_settings.displayed_columns',
             'translation_domain' => 'EcommitCrudBundle',
             'choice_translation_domain' => 'messages',
-            'constraints' => [new NotBlank(), new Count(['min' => 1])],
+            'constraints' => [new NotBlank(), new Count(min: 1)],
         ]);
 
         $builder->add('reset', ButtonType::class, [
@@ -81,7 +81,7 @@ class DisplaySettingsType extends AbstractType
         ]);
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'crud_display_settings';
     }
