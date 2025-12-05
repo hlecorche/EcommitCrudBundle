@@ -16,7 +16,7 @@ namespace Ecommit\CrudBundle\DependencyInjection;
 use Ecommit\CrudBundle\Form\Filter\FilterInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class EcommitCrudExtension extends Extension
@@ -34,9 +34,9 @@ class EcommitCrudExtension extends Extension
         $configuration = new Configuration();
         $configs = $this->processConfiguration($configuration, $configs);
 
-        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../../config'));
-        $loader->load('services.xml');
-        $loader->load('filters.xml');
+        $loader = new PhpFileLoader($container, new FileLocator(__DIR__.'/../../config'));
+        $loader->load('crud.php');
+        $loader->load('filters.php');
 
         $container->setParameter('ecommit_crud.theme', $configs['theme']);
         $container->setParameter('ecommit_crud.icon_theme', $configs['icon_theme']);
