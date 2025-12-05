@@ -4,6 +4,7 @@ composer.lock
 /composer-require-checker.phar
 /drivers/
 /node_modules/
+/tests/Functional/App/config/reference.php
 /tests/Functional/App/public/build/
 /tests/Functional/App/var/
 /vendor/
