@@ -81,7 +81,6 @@ jobs:
                 run: |
                     sudo rm -rf ~/.nvm && curl -sL "https://deb.nodesource.com/setup_16.x" | sudo -E bash -
                     sudo apt-get install -y nodejs
-                    sudo npm install -g yarn
                     sudo apt-get install xvfb
 
             -   name: Setup PHP
@@ -103,17 +102,17 @@ jobs:
                 id: composer-cache
                 run: echo "::set-output name=dir::$(composer config cache-dir)"
 
-            -   name: Get yarn cache directory
-                id: yarn-cache
-                run: echo "::set-output name=dir::$(yarn cache dir)"
+            -   name: Get npm cache directory
+                id: npm-cache
+                run: echo "::set-output name=dir::$(npm config get cache)"
 
             -   name: Cache dependencies
                 uses: actions/cache@v3
                 with:
                     path: |
                         ${{ steps.composer-cache.outputs.dir }}
-                        ${{ steps.yarn-cache.outputs.dir }}
-                    key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('**/composer.*') }}-${{ matrix.composer-flags }}-${{ hashFiles('**/yarn.lock') }}
+                        ${{ steps.npm-cache.outputs.dir }}
+                    key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('**/composer.*') }}-${{ matrix.composer-flags }}-${{ hashFiles('**/package-lock.json') }}
                     restore-keys: composer-${{ runner.os }}-${{ matrix.php-version }}-
 
             -   name: Configure minimum stability
@@ -136,8 +135,8 @@ jobs:
                 run: |
                     composer update --no-interaction --no-progress ${{ matrix.composer-flags }}
                     vendor/bin/bdi detect drivers
-                    yarn install
-                    yarn encore dev
+                    npm install
+                    npm run dev
 
             -   name: Fix Panther code
                 if: matrix.coding-standards != true && matrix.analyze-dependencies != true && matrix.static-analysis != true

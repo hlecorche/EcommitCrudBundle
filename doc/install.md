@@ -3,7 +3,7 @@
 Prérequis :
 * Projet Symfony fonctionnel
 * Entité utilisateur avec Doctrine
-* Yarn
+* NodeJS
 * Webpack Encore
 * Pour une compatibilité avec un maximum de navigateurs Internet, il est conseillé :
   * De configurer Webpack Encore pour activer Babel et core-js
@@ -23,7 +23,7 @@ Installez le bundle avec Composer : A la racine de votre projet Symfony, éxécu
 
 ```bash
 $ composer require ecommit/crud-bundle:3.*@dev
-$ yarn add --dev @ecommit/crud-bundle@link:vendor/ecommit/crud-bundle/assets
+$ npm install --save-dev @ecommit/crud-bundle@file:vendor/ecommit/crud-bundle/assets
 ```
 
 Activez le bundle dans le fichier de configuration `config/bundles.php` de votre projet :
@@ -102,7 +102,7 @@ modalManager.defineEngine(modalEngine);
 Recompiliez avec Webpack Encore:
 
 ```bash
-yarn encore dev
+npm run dev
 ```
 
 Mettez à jour vos entités Doctrine :
