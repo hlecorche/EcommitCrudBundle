@@ -16,32 +16,45 @@ namespace Ecommit\CrudBundle\EventListener;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Ecommit\CrudBundle\Entity\UserCrudInterface;
+use Ecommit\CrudBundle\Entity\UserCrudSettings;
 
 final class MappingEntities
 {
-    protected bool $isLoad = false;
+    private bool $isLoad = false;
+
+    /** @var array<class-string, bool> */
+    private array $inProgress = [];
 
     /**
      * @psalm-suppress ArgumentTypeCoercion
      */
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs): void
     {
+        if ($this->isLoad) {
+            return;
+        }
+
         $metadata = $eventArgs->getClassMetadata();
 
         if ($metadata->isMappedSuperclass) {
             return;
         }
 
-        /** @var string $className */
+        /** @var class-string $className */
         $className = $metadata->getName();
-        if (!$this->isLoad && is_subclass_of($className, 'Ecommit\CrudBundle\Entity\UserCrudInterface')) {
-            $this->isLoad = true;
-            $userCrudSettingsMetadata = $eventArgs->getEntityManager()->getMetadataFactory()->getMetadataFor('Ecommit\CrudBundle\Entity\UserCrudSettings');
+
+        if (isset($this->inProgress[$className])) {
+            return;
+        }
+        $this->inProgress[$className] = true;
+
+        if (is_subclass_of($className, UserCrudInterface::class)) {
+            $userCrudSettingsMetadata = $eventArgs->getEntityManager()->getMetadataFactory()->getMetadataFor(UserCrudSettings::class);
             $this->mappUserCrudSettings($userCrudSettingsMetadata, $metadata);
         }
-        if (!$this->isLoad && 'Ecommit\CrudBundle\Entity\UserCrudSettings' === $className) {
-            $this->isLoad = true;
-            $userMetadata = $eventArgs->getEntityManager()->getMetadataFactory()->getMetadataFor('Ecommit\CrudBundle\Entity\UserCrudInterface');
+        if (UserCrudSettings::class === $className) {
+            $userMetadata = $eventArgs->getEntityManager()->getMetadataFactory()->getMetadataFor(UserCrudInterface::class);
             $this->mappUserCrudSettings($metadata, $userMetadata);
         }
     }
@@ -58,5 +71,6 @@ final class MappingEntities
                 ]],
             ]
         );
+        $this->isLoad = true;
     }
 }
