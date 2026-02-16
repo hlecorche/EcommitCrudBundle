@@ -106,7 +106,7 @@ final class Crud
         $resolver->setAllowedValues('columns', Validation::createCallable(
             new Assert\Count(min: 1, minMessage: 'The CRUD should contain 1 column or more.'),
         ));
-        $resolver->setNormalizer('columns', function (Options $options, array $value): array {
+        $resolver->setNormalizer('columns', static function (Options $options, array $value): array {
             $columns = [];
             foreach ($value as $column) {
                 if (\is_array($column)) {
@@ -124,7 +124,7 @@ final class Crud
         });
 
         $resolver->setAllowedTypes('virtual_columns', 'array');
-        $resolver->setNormalizer('virtual_columns', function (Options $options, array $value): array {
+        $resolver->setNormalizer('virtual_columns', static function (Options $options, array $value): array {
             $columns = [];
             foreach ($value as $column) {
                 if (\is_array($column)) {

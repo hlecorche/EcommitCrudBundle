@@ -71,7 +71,7 @@ abstract class AbstractFilterTest extends KernelTestCase
         $container = $this->createMock(ContainerInterface::class);
         $container->expects($this->any())
             ->method('get')
-            ->willReturnCallback(function ($name) use ($requestStack) {
+            ->willReturnCallback(static function ($name) use ($requestStack) {
                 if ('request_stack' === $name) {
                     return $requestStack;
                 }

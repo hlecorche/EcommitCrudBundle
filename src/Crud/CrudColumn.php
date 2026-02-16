@@ -54,11 +54,11 @@ final class CrudColumn
             'alias',
         ]);
         $resolver->setDefaults([
-            'label' => fn (Options $options): string|TranslatableInterface => $options['id'],
+            'label' => static fn (Options $options): string|TranslatableInterface => $options['id'],
             'sortable' => true,
             'displayed_by_default' => true,
-            'alias_sort' => fn (Options $options): string => $options['alias'],
-            'alias_search' => fn (Options $options): string => $options['alias'],
+            'alias_sort' => static fn (Options $options): string => $options['alias'],
+            'alias_search' => static fn (Options $options): string => $options['alias'],
         ]);
         $resolver->setAllowedTypes('id', 'string');
         $resolver->setAllowedValues('id', Validation::createCallable(

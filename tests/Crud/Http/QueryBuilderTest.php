@@ -135,7 +135,7 @@ class QueryBuilderTest extends TestCase
     public function testOrderBy(): void
     {
         $queryBuilder = $this->createQueryBuider();
-        $queryBuilder->setOrderBuilder(function (QueryBuilder $queryBuilder, $orders): void {
+        $queryBuilder->setOrderBuilder(static function (QueryBuilder $queryBuilder, $orders): void {
             foreach ($orders as $sort => $sortDirection) {
                 $queryBuilder->addParameter(new QueryBuilderBodyParameter('sort', $sort));
                 $queryBuilder->addParameter(new QueryBuilderBodyParameter('sort-direction', $sortDirection));
@@ -152,7 +152,7 @@ class QueryBuilderTest extends TestCase
     public function testAddOrderBy(): void
     {
         $queryBuilder = $this->createQueryBuider();
-        $queryBuilder->setOrderBuilder(function (QueryBuilder $queryBuilder, $orders): void {
+        $queryBuilder->setOrderBuilder(static function (QueryBuilder $queryBuilder, $orders): void {
             $paramSort = [];
             $paramSortDirection = [];
             foreach ($orders as $sort => $sortDirection) {
@@ -174,7 +174,7 @@ class QueryBuilderTest extends TestCase
     public function testPagination(): void
     {
         $queryBuilder = $this->createQueryBuider();
-        $queryBuilder->setPaginationBuilder(function (QueryBuilder $queryBuilder, $page, $resultsPerPage): void {
+        $queryBuilder->setPaginationBuilder(static function (QueryBuilder $queryBuilder, $page, $resultsPerPage): void {
             $queryBuilder->addParameter(new QueryBuilderBodyParameter('page', $page));
             $queryBuilder->addParameter(new QueryBuilderBodyParameter('per_page', $resultsPerPage));
         });
@@ -191,13 +191,13 @@ class QueryBuilderTest extends TestCase
         $queryBuilder->addParameter(new QueryBuilderQueryParameter('queryparam1', 'queryparamval1'));
         $queryBuilder->addParameter(new QueryBuilderBodyParameter('bodyparam1', 'bodyparamval1'));
         $queryBuilder->addParameter(new QueryBuilderHeaderParameter('headerparam1', 'headerparamval1'));
-        $queryBuilder->setOrderBuilder(function (QueryBuilder $queryBuilder, $orders): void {
+        $queryBuilder->setOrderBuilder(static function (QueryBuilder $queryBuilder, $orders): void {
             foreach ($orders as $sort => $sortDirection) {
                 $queryBuilder->addParameter(new QueryBuilderQueryParameter('sort', $sort));
                 $queryBuilder->addParameter(new QueryBuilderQueryParameter('sort-direction', $sortDirection));
             }
         });
-        $queryBuilder->setPaginationBuilder(function (QueryBuilder $queryBuilder, $page, $resultsPerPage): void {
+        $queryBuilder->setPaginationBuilder(static function (QueryBuilder $queryBuilder, $page, $resultsPerPage): void {
             $queryBuilder->addParameter(new QueryBuilderQueryParameter('page', $page));
             $queryBuilder->addParameter(new QueryBuilderQueryParameter('per_page', $resultsPerPage));
         });
@@ -217,7 +217,7 @@ class QueryBuilderTest extends TestCase
 
     protected function createQueryBuider(string $method = 'GET'): QueryBuilder
     {
-        $callback = function ($method, $url, $options): MockResponse {
+        $callback = static function ($method, $url, $options): MockResponse {
             // Result : Returns request options
             $result = [
                 'method' => $method,

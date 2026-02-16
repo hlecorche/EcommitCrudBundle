@@ -38,7 +38,7 @@ class DisplaySettingsType extends AbstractType
         $columnsChoices = $options['columns_choices'];
         $builder->add('displayedColumns', ChoiceType::class, [
             'choices' => array_keys($columnsChoices),
-            'choice_label' => function (string $choice, string $key, mixed $value) use ($columnsChoices): string|TranslatableInterface {
+            'choice_label' => static function (string $choice, string $key, mixed $value) use ($columnsChoices): string|TranslatableInterface {
                 if (\array_key_exists($choice, $columnsChoices)) {
                     return $columnsChoices[$choice];
                 }

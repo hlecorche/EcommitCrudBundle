@@ -215,8 +215,8 @@ class SearchFormBuilderTest extends AbstractCrudTest
     {
         $filter = $this->createMock(FilterInterface::class);
         $filter->expects($this->exactly(2))->method('buildForm')->withConsecutive(
-            [self::callback(fn ($value): bool => $value instanceof SearchFormBuilder), 'column1', self::callback(fn ($value): bool => \is_array($value))],
-            [self::callback(fn ($value): bool => $value instanceof SearchFormBuilder), 'virtual1', self::callback(fn ($value): bool => \is_array($value))],
+            [self::callback(static fn ($value): bool => $value instanceof SearchFormBuilder), 'column1', self::callback(static fn ($value): bool => \is_array($value))],
+            [self::callback(static fn ($value): bool => $value instanceof SearchFormBuilder), 'virtual1', self::callback(static fn ($value): bool => \is_array($value))],
         );
         $crudConfig = $this->createValidCrudConfig()
             ->addColumn(['id' => 'column1', 'alias' => 'alias1'])
@@ -232,8 +232,8 @@ class SearchFormBuilderTest extends AbstractCrudTest
     {
         $filter = $this->createMock(FilterInterface::class);
         $filter->expects($this->exactly(2))->method('buildForm')->withConsecutive(
-            [self::callback(fn ($value): bool => $value instanceof SearchFormBuilder), 'property1', self::callback(fn ($value): bool => \is_array($value))],
-            [self::callback(fn ($value): bool => $value instanceof SearchFormBuilder), 'property2', self::callback(fn ($value): bool => \is_array($value))],
+            [self::callback(static fn ($value): bool => $value instanceof SearchFormBuilder), 'property1', self::callback(static fn ($value): bool => \is_array($value))],
+            [self::callback(static fn ($value): bool => $value instanceof SearchFormBuilder), 'property2', self::callback(static fn ($value): bool => \is_array($value))],
         );
         $crudConfig = $this->createValidCrudConfig()
             ->addColumn(['id' => 'column1', 'alias' => 'alias1'])
@@ -370,7 +370,7 @@ class SearchFormBuilderTest extends AbstractCrudTest
             self::equalTo($queryBuilder),
             'property',
             'value',
-            self::callback(fn ($value): bool => \is_array($value))
+            self::callback(static fn ($value): bool => \is_array($value))
         );
         $filter->expects($this->once())->method('supportsQueryBuilder')->with($queryBuilder)->willReturn(true);
 
@@ -403,7 +403,7 @@ class SearchFormBuilderTest extends AbstractCrudTest
             self::equalTo($queryBuilder),
             'property',
             'value',
-            self::callback(fn ($value): bool => \is_array($value))
+            self::callback(static fn ($value): bool => \is_array($value))
         );
 
         $crudConfig = $this->createValidCrudConfig()
@@ -412,7 +412,7 @@ class SearchFormBuilderTest extends AbstractCrudTest
         $searchFormBuilder = $this->createSearchFormBuilder(filters: ['my_filter' => $filter], crud: $crud)
             ->addFilter('property', 'my_filter', [
                 'column_id' => 'column1',
-                'update_query_builder' => function ($queryBuilder, $property, $value, $options) use ($callback): void {
+                'update_query_builder' => static function ($queryBuilder, $property, $value, $options) use ($callback): void {
                     $callback->getCallback($queryBuilder, $property, $value, $options);
                 },
             ]);
@@ -456,16 +456,16 @@ class SearchFormBuilderTest extends AbstractCrudTest
     protected function createCrudContainer(array $filters = []): ContainerInterface
     {
         $crudFilters = $this->createMock(ContainerInterface::class);
-        $crudFilters->method('has')->willReturnCallback(fn (string $id) => \array_key_exists($id, $filters));
-        $crudFilters->method('get')->willReturnCallback(fn (string $id) => $filters[$id]);
+        $crudFilters->method('has')->willReturnCallback(static fn (string $id) => \array_key_exists($id, $filters));
+        $crudFilters->method('get')->willReturnCallback(static fn (string $id) => $filters[$id]);
 
         $services = [
             'form.factory' => self::getContainer()->get('form.factory'),
             'ecommit_crud.filters' => $crudFilters,
         ];
         $container = $this->createMock(ContainerInterface::class);
-        $container->method('has')->willReturnCallback(fn (string $id) => \array_key_exists($id, $services));
-        $container->method('get')->willReturnCallback(fn (string $id) => $services[$id]);
+        $container->method('has')->willReturnCallback(static fn (string $id) => \array_key_exists($id, $services));
+        $container->method('get')->willReturnCallback(static fn (string $id) => $services[$id]);
 
         return $container;
     }

@@ -34,7 +34,7 @@ class EntitiesToChoicesTransformer extends AbstractEntityTransformer
             return [];
         }
 
-        if (!($value instanceof Collection)) {
+        if (!$value instanceof Collection) {
             throw new UnexpectedTypeException($value, Collection::class);
         }
 

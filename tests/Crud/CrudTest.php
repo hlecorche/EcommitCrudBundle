@@ -121,19 +121,19 @@ class CrudTest extends AbstractCrudTest
     public function getTestAddColumnAlreadyExistsProvider(): array
     {
         return [
-            [function (CrudConfig $crudConfig): void {
+            [static function (CrudConfig $crudConfig): void {
                 $crudConfig->addColumn(['id' => 'column1', 'alias' => 'alias1'])
                     ->addColumn(['id' => 'column1', 'alias' => 'alias1']);
             }],
-            [function (CrudConfig $crudConfig): void {
+            [static function (CrudConfig $crudConfig): void {
                 $crudConfig->addVirtualColumn(['id' => 'column1', 'alias' => 'alias1'])
                     ->addVirtualColumn(['id' => 'column1', 'alias' => 'alias1']);
             }],
-            [function (CrudConfig $crudConfig): void {
+            [static function (CrudConfig $crudConfig): void {
                 $crudConfig->addColumn(['id' => 'column1', 'alias' => 'alias1'])
                     ->addVirtualColumn(['id' => 'column1', 'alias' => 'alias1']);
             }],
-            [function (CrudConfig $crudConfig): void {
+            [static function (CrudConfig $crudConfig): void {
                 $crudConfig->addVirtualColumn(['id' => 'column1', 'alias' => 'alias1'])
                     ->addColumn(['id' => 'column1', 'alias' => 'alias1']);
             }],

@@ -49,8 +49,8 @@ abstract class AbstractCrudTest extends KernelTestCase
             ->willReturn($request);
 
         $crudFilters = $this->createMock(CrudFilters::class);
-        $crudFilters->method('has')->willReturnCallback(fn (string $name) => \array_key_exists($name, $filters) || static::getContainer()->get('ecommit_crud.filters')->has($name));
-        $crudFilters->method('get')->willReturnCallback(function (string $name) use ($filters): FilterInterface {
+        $crudFilters->method('has')->willReturnCallback(static fn (string $name) => \array_key_exists($name, $filters) || static::getContainer()->get('ecommit_crud.filters')->has($name));
+        $crudFilters->method('get')->willReturnCallback(static function (string $name) use ($filters): FilterInterface {
             if (\array_key_exists($name, $filters)) {
                 return $filters[$name];
             }
@@ -60,7 +60,7 @@ abstract class AbstractCrudTest extends KernelTestCase
 
         $container = $this->createMock(ContainerInterface::class);
         $container->method('get')
-            ->willReturnCallback(function ($name) use ($requestStack, $crudFilters) {
+            ->willReturnCallback(static function ($name) use ($requestStack, $crudFilters) {
                 if ('request_stack' === $name) {
                     return $requestStack;
                 } elseif ('ecommit_crud.filters' === $name) {

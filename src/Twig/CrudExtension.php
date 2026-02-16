@@ -159,7 +159,7 @@ final class CrudExtension extends AbstractExtension
             'max_pages_after' => 3,
             'nav_attr' => [],
             'ul_attr' => [],
-            'li_attr' => function (OptionsResolver $liResolver): void {
+            'li_attr' => static function (OptionsResolver $liResolver): void {
                 $liResolver->setDefaults([
                     'first_page' => [],
                     'previous_page' => [],
@@ -288,7 +288,7 @@ final class CrudExtension extends AbstractExtension
         $resolver->setDefaults([
             'ajax_options' => null,
             'label' => null,
-            'th_attr' => function (OptionsResolver $thResolver): void {
+            'th_attr' => static function (OptionsResolver $thResolver): void {
                 $thResolver->setDefaults([
                     'not_sortable' => [],
                     'sortable_active_asc' => [],
@@ -325,7 +325,7 @@ final class CrudExtension extends AbstractExtension
             'block' => 'th',
         ]);
         $resolver->setAllowedTypes('ajax_options', ['null', 'array']);
-        $resolver->addNormalizer('ajax_options', function (Options $options, mixed $value) use ($crud): array {
+        $resolver->addNormalizer('ajax_options', static function (Options $options, mixed $value) use ($crud): array {
             if (!isset($value['update'])) {
                 $value['update'] = '#'.$crud->getDivIdList();
             }

@@ -321,12 +321,12 @@ class TestCrudControllerTest extends PantherTestCase
 
         // Check all
         $client->getCrawler()->filterXPath('//form[@name="crud_display_settings_'.static::SESSION_NAME.'"]/descendant::button[contains(.,"Check all")]')->click();
-        $client->wait(5, 30)->until(fn () => 3 === \count($form->get('crud_display_settings_'.static::SESSION_NAME.'[displayedColumns]')->getValue()));
+        $client->wait(5, 30)->until(static fn () => 3 === \count($form->get('crud_display_settings_'.static::SESSION_NAME.'[displayedColumns]')->getValue()));
         $this->assertCount(3, $form->get('crud_display_settings_'.static::SESSION_NAME.'[displayedColumns]')->getValue());
 
         // Uncheck all
         $client->getCrawler()->filterXPath('//form[@name="crud_display_settings_'.static::SESSION_NAME.'"]/descendant::button[contains(.,"Uncheck all")]')->click();
-        $client->wait(5, 30)->until(fn () => null === $form->get('crud_display_settings_'.static::SESSION_NAME.'[displayedColumns]')->getValue());
+        $client->wait(5, 30)->until(static fn () => null === $form->get('crud_display_settings_'.static::SESSION_NAME.'[displayedColumns]')->getValue());
         $this->assertNull($form->get('crud_display_settings_'.static::SESSION_NAME.'[displayedColumns]')->getValue());
 
         // Save and error (save not done)

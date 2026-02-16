@@ -192,7 +192,7 @@ class EntityAjaxTypeTest extends KernelTestCase
     public function testSubmitWithQueryBuilder(bool $queryBuilderIsClosure, bool $multiple, $submittedData, $expectedValid, $expectedModelData, $expectedDataBuilderName, $expectedViewData): void
     {
         if ($queryBuilderIsClosure) {
-            $queryBuilder = fn (EntityRepository $entityRepository) => $entityRepository->createQueryBuilder('t')
+            $queryBuilder = static fn (EntityRepository $entityRepository) => $entityRepository->createQueryBuilder('t')
                     ->select('t')
                     ->andWhere('t.id > 2');
         } else {
@@ -258,7 +258,7 @@ class EntityAjaxTypeTest extends KernelTestCase
 
     public function getTestViewWithChoiceLabelProvider(): array
     {
-        $closure = fn (Tag $tag) => \sprintf('name: %s', $tag->getName());
+        $closure = static fn (Tag $tag) => \sprintf('name: %s', $tag->getName());
 
         return [
             ['name', ['2' => 'tag2']],

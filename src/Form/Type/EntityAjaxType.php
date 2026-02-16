@@ -101,7 +101,7 @@ class EntityAjaxType extends AbstractType
         };
         $resolver->setNormalizer('em', $emNormalizer);
 
-        $queryBuilderNormalizer = function (Options $options, QueryBuilder|\Closure|null $queryBuilder): QueryBuilder {
+        $queryBuilderNormalizer = static function (Options $options, QueryBuilder|\Closure|null $queryBuilder): QueryBuilder {
             $em = $options['em'];
             $class = $options['class'];
 
@@ -119,7 +119,7 @@ class EntityAjaxType extends AbstractType
         };
         $resolver->setNormalizer('query_builder', $queryBuilderNormalizer);
 
-        $identifierNormalizer = function (Options $options, ?string $identifier): string {
+        $identifierNormalizer = static function (Options $options, ?string $identifier): string {
             if (null !== $identifier) {
                 return $identifier;
             }

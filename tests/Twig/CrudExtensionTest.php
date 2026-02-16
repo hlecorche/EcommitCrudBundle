@@ -244,7 +244,7 @@ class CrudExtensionTest extends KernelTestCase
 
     public function getTestPaginatorWithTypeOptionProvider(): array
     {
-        $full = function (int $currentPage) {
+        $full = static function (int $currentPage) {
             $result = '';
             for ($i = 1; $i <= 20; ++$i) {
                 $class = ($i === $currentPage) ? ' class="current"' : '';
@@ -748,7 +748,7 @@ class CrudExtensionTest extends KernelTestCase
         $crud->expects($this->any())->method('getRouteName')->willReturn('user_crud');
         $crud->expects($this->any())->method('getRouteParameters')->willReturn([]);
         $crud->expects($this->any())->method('getSessionValues')->willReturn($crudSession);
-        $crud->expects($this->any())->method('getColumn')->willReturnCallback(fn ($columnId) => $columns[$columnId]);
+        $crud->expects($this->any())->method('getColumn')->willReturnCallback(static fn ($columnId) => $columns[$columnId]);
 
         return $crud;
     }

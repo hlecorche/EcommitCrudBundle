@@ -58,9 +58,9 @@ class CrudFiltersTest extends TestCase
 
         $container = $this->createMock(ContainerInterface::class);
         $container->method('has')
-            ->willReturnCallback(fn ($name): bool => \array_key_exists($name, $filters));
+            ->willReturnCallback(static fn ($name): bool => \array_key_exists($name, $filters));
         $container->method('get')
-            ->willReturnCallback(fn ($name): FilterInterface => $filters[$name]);
+            ->willReturnCallback(static fn ($name): FilterInterface => $filters[$name]);
 
         return new CrudFilters($container);
     }
