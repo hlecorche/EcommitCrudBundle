@@ -18,7 +18,7 @@ use Ecommit\CrudBundle\Form\Filter\EntityAjaxFilter;
 use Ecommit\CrudBundle\Tests\Functional\App\Entity\Tag;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
-class EntityAjaxFilterTest extends AbstractFilterTest
+class EntityAjaxFilterTest extends AbstractFilterTestCase
 {
     public function testOptionsAreRequired(): void
     {
@@ -51,7 +51,7 @@ class EntityAjaxFilterTest extends AbstractFilterTest
         $this->assertSame($expectedIdsFound, $idsFound);
     }
 
-    public function getTestViewAndQueryBuilderProvider(): array
+    public static function getTestViewAndQueryBuilderProvider(): array
     {
         return [
             // No multiple
@@ -93,7 +93,7 @@ class EntityAjaxFilterTest extends AbstractFilterTest
         $this->assertSame($expectedViewData, $field->getViewData());
     }
 
-    public function getTestSubmitProvider(): array
+    public static function getTestSubmitProvider(): array
     {
         return [
             // No multiple
@@ -133,7 +133,7 @@ class EntityAjaxFilterTest extends AbstractFilterTest
         $this->assertNull($field->getData());
     }
 
-    public function getTestSubmitInvalidProvider(): array
+    public static function getTestSubmitInvalidProvider(): array
     {
         return [
             // No multiple
@@ -184,7 +184,7 @@ class EntityAjaxFilterTest extends AbstractFilterTest
         $this->assertSame($expectedIdsFound, $idsFound);
     }
 
-    public function getTestViewWithQueryBuilderProvider(): array
+    public static function getTestViewWithQueryBuilderProvider(): array
     {
         return [
             // No multiple - Valid
@@ -242,7 +242,7 @@ class EntityAjaxFilterTest extends AbstractFilterTest
         $this->assertSame($expectedViewData, $field->getViewData()); // Twig doesn't display invalid list
     }
 
-    public function getTestSubmitWithQueryBuilderProvider(): array
+    public static function getTestSubmitWithQueryBuilderProvider(): array
     {
         return [
             // No multiple - Valid

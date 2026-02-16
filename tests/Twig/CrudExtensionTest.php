@@ -121,7 +121,7 @@ class CrudExtensionTest extends KernelTestCase
         $this->assertSame($expected, $result);
     }
 
-    public function getTestAjaxAttributesProvider(): array
+    public static function getTestAjaxAttributesProvider(): array
     {
         return [
             [[], ''],
@@ -183,7 +183,7 @@ class CrudExtensionTest extends KernelTestCase
         $this->assertSame($expected, $result);
     }
 
-    public function getTestPaginatorWithDefaultOptionsProvider(): array
+    public static function getTestPaginatorWithDefaultOptionsProvider(): array
     {
         return [
             [1, '<nav><ul class="ec-crud-pagination"><li class="current"><a href="/user?page=1">1</a></li><li><a href="/user?page=2">2</a></li><li><a href="/user?page=3">3</a></li><li><a href="/user?page=4">4</a></li><li class="next"><a href="/user?page=2">›</a></li><li class="last"><a href="/user?page=20">»</a></li></ul></nav>'],
@@ -213,7 +213,7 @@ class CrudExtensionTest extends KernelTestCase
         $this->assertSame($expected, $result);
     }
 
-    public function getTestPaginatorWithMaxPagesOptionsProvider(): array
+    public static function getTestPaginatorWithMaxPagesOptionsProvider(): array
     {
         return [
             [1, '<nav><ul class="ec-crud-pagination"><li class="current"><a href="/user?page=1">1</a></li><li><a href="/user?page=2">2</a></li><li><a href="/user?page=3">3</a></li><li class="next"><a href="/user?page=2">›</a></li><li class="last"><a href="/user?page=20">»</a></li></ul></nav>'],
@@ -242,7 +242,7 @@ class CrudExtensionTest extends KernelTestCase
         $this->assertSame($expected, $result);
     }
 
-    public function getTestPaginatorWithTypeOptionProvider(): array
+    public static function getTestPaginatorWithTypeOptionProvider(): array
     {
         $full = static function (int $currentPage) {
             $result = '';
@@ -512,7 +512,7 @@ class CrudExtensionTest extends KernelTestCase
         $this->assertSame($expected, $html);
     }
 
-    public function getTestThWithAttrOptionsProvider(): array
+    public static function getTestThWithAttrOptionsProvider(): array
     {
         return [
             ['column3', 'column1', Crud::ASC, '<th class="a ec-crud-th ec-crud-th-not-sortable" data-a="val">label3</th>'],

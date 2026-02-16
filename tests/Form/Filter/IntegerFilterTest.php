@@ -16,7 +16,7 @@ namespace Ecommit\CrudBundle\Tests\Form\Filter;
 use Ecommit\CrudBundle\Form\Filter\IntegerFilter;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
-class IntegerFilterTest extends AbstractFilterTest
+class IntegerFilterTest extends AbstractFilterTestCase
 {
     public const TEST_FILTER = IntegerFilter::class;
 
@@ -44,7 +44,7 @@ class IntegerFilterTest extends AbstractFilterTest
         $this->checkQueryBuilder($crud, $whereExpected, $parametersExpected);
     }
 
-    public function getTestViewAndQueryBuilderProvider(): array
+    public static function getTestViewAndQueryBuilderProvider(): array
     {
         return [
             // Null value
@@ -102,7 +102,7 @@ class IntegerFilterTest extends AbstractFilterTest
         $this->assertSame($expectedViewData, $field->getViewData());
     }
 
-    public function getTestSubmitProvider(): array
+    public static function getTestSubmitProvider(): array
     {
         return [
             [null, null, ''],
@@ -132,7 +132,7 @@ class IntegerFilterTest extends AbstractFilterTest
         $this->assertNull($field->getData());
     }
 
-    public function getTestSubmitInvalidFormatProvider(): array
+    public static function getTestSubmitInvalidFormatProvider(): array
     {
         return [
             [['not-scalar']],

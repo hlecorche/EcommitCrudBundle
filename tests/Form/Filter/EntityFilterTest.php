@@ -18,7 +18,7 @@ use Ecommit\CrudBundle\Form\Filter\EntityFilter;
 use Ecommit\CrudBundle\Tests\Functional\App\Entity\Tag;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
-class EntityFilterTest extends AbstractFilterTest
+class EntityFilterTest extends AbstractFilterTestCase
 {
     public function testOptionsAreRequired(): void
     {
@@ -50,7 +50,7 @@ class EntityFilterTest extends AbstractFilterTest
         $this->assertSame($expectedIdsFound, $idsFound);
     }
 
-    public function getTestViewAndQueryBuilderProvider(): array
+    public static function getTestViewAndQueryBuilderProvider(): array
     {
         return [
             // No multiple
@@ -91,7 +91,7 @@ class EntityFilterTest extends AbstractFilterTest
         $this->assertSame($expectedViewData, $field->getViewData());
     }
 
-    public function getTestSubmitProvider(): array
+    public static function getTestSubmitProvider(): array
     {
         return [
             // No multiple
@@ -126,7 +126,7 @@ class EntityFilterTest extends AbstractFilterTest
         $this->assertFalse($field->isValid());
     }
 
-    public function getTestSubmitInvalidProvider(): array
+    public static function getTestSubmitInvalidProvider(): array
     {
         return [
             // No multiple
@@ -194,7 +194,7 @@ class EntityFilterTest extends AbstractFilterTest
         $this->assertSame($expectedIdsFound, $idsFound);
     }
 
-    public function getTestViewWithQueryBuilderProvider(): array
+    public static function getTestViewWithQueryBuilderProvider(): array
     {
         return [
             // No multiple - Valid
@@ -252,7 +252,7 @@ class EntityFilterTest extends AbstractFilterTest
         }
     }
 
-    public function getTestSubmitWithQueryBuilderProvider(): array
+    public static function getTestSubmitWithQueryBuilderProvider(): array
     {
         return [
             // No multiple - Valid

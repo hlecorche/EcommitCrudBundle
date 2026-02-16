@@ -26,7 +26,7 @@ class EntitiesToIdsTransformerTest extends EntitiesToChoicesTransformerTest
         return new EntitiesToIdsTransformer(...$args);
     }
 
-    public function getTestTransformProvider(): array
+    public static function getTestTransformProvider(): array
     {
         $closure = static fn (Tag $tag) => \sprintf('name: %s', $tag->getName());
 

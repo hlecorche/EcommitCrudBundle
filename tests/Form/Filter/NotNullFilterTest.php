@@ -19,7 +19,7 @@ class NotNullFilterTest extends NullFilterTest
 {
     public const TEST_FILTER = NotNullFilter::class;
 
-    public function getTestViewAndQueryBuilderProvider(): array
+    public static function getTestViewAndQueryBuilderProvider(): array
     {
         return [
             // Null value

@@ -16,7 +16,7 @@ namespace Ecommit\CrudBundle\Tests\Form\Filter;
 use Ecommit\CrudBundle\Form\Filter\TextFilter;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
-class TextFilterTest extends AbstractFilterTest
+class TextFilterTest extends AbstractFilterTestCase
 {
     /**
      * @dataProvider getTestViewAndQueryBuilderProvider
@@ -35,7 +35,7 @@ class TextFilterTest extends AbstractFilterTest
         $this->checkQueryBuilder($crud, $whereExpected, $parametersExpected);
     }
 
-    public function getTestViewAndQueryBuilderProvider(): array
+    public static function getTestViewAndQueryBuilderProvider(): array
     {
         return [
             // Null value
@@ -89,7 +89,7 @@ class TextFilterTest extends AbstractFilterTest
         $this->assertSame($expectedViewData, $field->getViewData());
     }
 
-    public function getTestSubmitProvider(): array
+    public static function getTestSubmitProvider(): array
     {
         return [
             [null, null, ''],

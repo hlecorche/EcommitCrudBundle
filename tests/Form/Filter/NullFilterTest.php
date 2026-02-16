@@ -15,7 +15,7 @@ namespace Ecommit\CrudBundle\Tests\Form\Filter;
 
 use Ecommit\CrudBundle\Form\Filter\NullFilter;
 
-class NullFilterTest extends AbstractFilterTest
+class NullFilterTest extends AbstractFilterTestCase
 {
     public const TEST_FILTER = NullFilter::class;
 
@@ -34,7 +34,7 @@ class NullFilterTest extends AbstractFilterTest
         $this->checkQueryBuilder($crud, $whereExpected, $parametersExpected);
     }
 
-    public function getTestViewAndQueryBuilderProvider(): array
+    public static function getTestViewAndQueryBuilderProvider(): array
     {
         return [
             // Null value
@@ -67,7 +67,7 @@ class NullFilterTest extends AbstractFilterTest
         $this->assertSame($expectedModelData, $field->getData());
     }
 
-    public function getTestSubmitProvider(): array
+    public static function getTestSubmitProvider(): array
     {
         return [
             [null, false],

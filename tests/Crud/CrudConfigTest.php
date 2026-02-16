@@ -182,7 +182,7 @@ class CrudConfigTest extends TestCase
         $this->assertSame($expected, $config->getOptions());
     }
 
-    public function getTestResetOptionsProvider(): array
+    public static function getTestResetOptionsProvider(): array
     {
         return [
             [null, []],
@@ -203,7 +203,7 @@ class CrudConfigTest extends TestCase
         $this->assertSame($expected, $config->offsetExists($offset));
     }
 
-    public function getTestOffsetExistsProvider(): array
+    public static function getTestOffsetExistsProvider(): array
     {
         return [
             ['session_name', true],

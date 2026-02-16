@@ -15,7 +15,7 @@ namespace Ecommit\CrudBundle\Tests\Form\Filter;
 
 use Ecommit\CrudBundle\Form\Filter\BooleanFilter;
 
-class BooleanFilterTest extends AbstractFilterTest
+class BooleanFilterTest extends AbstractFilterTestCase
 {
     /**
      * @dataProvider getTestViewAndQueryBuilderProvider
@@ -31,7 +31,7 @@ class BooleanFilterTest extends AbstractFilterTest
         $this->checkQueryBuilder($crud, $whereExpected, $parametersExpected);
     }
 
-    public function getTestViewAndQueryBuilderProvider(): array
+    public static function getTestViewAndQueryBuilderProvider(): array
     {
         return [
             [null, '', null, []],
@@ -62,7 +62,7 @@ class BooleanFilterTest extends AbstractFilterTest
         $this->checkQueryBuilder($crud, $whereExpected, $parametersExpected);
     }
 
-    public function getTestValueTrueOptionProvider(): array
+    public static function getTestValueTrueOptionProvider(): array
     {
         return [
             [null, null, []],
@@ -85,7 +85,7 @@ class BooleanFilterTest extends AbstractFilterTest
         $this->checkQueryBuilder($crud, $whereExpected, $parametersExpected);
     }
 
-    public function getTestValueFalseOptionProvider(): array
+    public static function getTestValueFalseOptionProvider(): array
     {
         return [
             [null, null, []],
@@ -108,7 +108,7 @@ class BooleanFilterTest extends AbstractFilterTest
         $this->checkQueryBuilder($crud, $whereExpected, $parametersExpected);
     }
 
-    public function getTestValueFalseNullOptionProvider(): array
+    public static function getTestValueFalseNullOptionProvider(): array
     {
         return [
             [null, null, []],
@@ -131,7 +131,7 @@ class BooleanFilterTest extends AbstractFilterTest
         $this->checkQueryBuilder($crud, $whereExpected, $parametersExpected);
     }
 
-    public function getTestNotNullIsTrueOptionProvider(): array
+    public static function getTestNotNullIsTrueOptionProvider(): array
     {
         return [
             [false, null, null, []],
@@ -159,7 +159,7 @@ class BooleanFilterTest extends AbstractFilterTest
         $this->checkQueryBuilder($crud, $whereExpected, $parametersExpected);
     }
 
-    public function getTestNullIsFalseOptionProvider(): array
+    public static function getTestNullIsFalseOptionProvider(): array
     {
         return [
             [true, null, null, []],
@@ -194,7 +194,7 @@ class BooleanFilterTest extends AbstractFilterTest
         $this->assertSame($expectedViewData, $field->getViewData());
     }
 
-    public function getTestSubmitProvider(): array
+    public static function getTestSubmitProvider(): array
     {
         return [
             [null, null, ''],

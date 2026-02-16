@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-abstract class AbstractCrudTest extends KernelTestCase
+abstract class AbstractCrudTestCase extends KernelTestCase
 {
     protected function setUp(): void
     {

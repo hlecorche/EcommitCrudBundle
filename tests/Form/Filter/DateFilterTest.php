@@ -16,7 +16,7 @@ namespace Ecommit\CrudBundle\Tests\Form\Filter;
 use Ecommit\CrudBundle\Form\Filter\DateFilter;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
-class DateFilterTest extends AbstractFilterTest
+class DateFilterTest extends AbstractFilterTestCase
 {
     public function testOptionsAreRequired(): void
     {
@@ -43,7 +43,7 @@ class DateFilterTest extends AbstractFilterTest
         $this->checkQueryBuilder($crud, $whereExpected, $parametersExpected);
     }
 
-    public function getTestViewAndQueryBuilderProvider(): array
+    public static function getTestViewAndQueryBuilderProvider(): array
     {
         $data = [
             // Null value
@@ -93,7 +93,7 @@ class DateFilterTest extends AbstractFilterTest
         $this->checkQueryBuilder($crud, null, []);
     }
 
-    public function getTestInvalidInputProvider(): array
+    public static function getTestInvalidInputProvider(): array
     {
         return [
             [['not-scalar']],
@@ -124,7 +124,7 @@ class DateFilterTest extends AbstractFilterTest
         $this->assertSame($expectedViewData, $field->getViewData());
     }
 
-    public function getTestSubmitProvider(): array
+    public static function getTestSubmitProvider(): array
     {
         return [
             // Without time
@@ -160,7 +160,7 @@ class DateFilterTest extends AbstractFilterTest
         $this->assertNull($field->getData());
     }
 
-    public function getTestSubmitInvalidFormatProvider(): array
+    public static function getTestSubmitInvalidFormatProvider(): array
     {
         return [
             ['bad-value'],
@@ -190,7 +190,7 @@ class DateFilterTest extends AbstractFilterTest
         $this->checkQueryBuilder($crud, $whereExpected, $parametersExpected);
     }
 
-    public function getTestViewAndQueryBuilderWithSingleTextWidgetProvider(): array
+    public static function getTestViewAndQueryBuilderWithSingleTextWidgetProvider(): array
     {
         $inputValue = new \DateTime('2021-04-01 13:10:20');
 
@@ -233,7 +233,7 @@ class DateFilterTest extends AbstractFilterTest
         $this->assertSame($expectedViewData, $field->getViewData());
     }
 
-    public function getTestSubmitWithSingleTextWidgetProvider(): array
+    public static function getTestSubmitWithSingleTextWidgetProvider(): array
     {
         return [
             // Without time

@@ -30,7 +30,7 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 
-class CrudTest extends AbstractCrudTest
+class CrudTest extends AbstractCrudTestCase
 {
     /**
      * @dataProvider getTestCrudWithInvalidSessionNameProvider
@@ -45,7 +45,7 @@ class CrudTest extends AbstractCrudTest
         $this->createCrud($crudOptions);
     }
 
-    public function getTestCrudWithInvalidSessionNameProvider(): array
+    public static function getTestCrudWithInvalidSessionNameProvider(): array
     {
         return [
             ['', InvalidOptionsException::class, '/The option "session_name" with value ".*" is invalid/'],
@@ -118,7 +118,7 @@ class CrudTest extends AbstractCrudTest
         $this->createCrud($crudConfig);
     }
 
-    public function getTestAddColumnAlreadyExistsProvider(): array
+    public static function getTestAddColumnAlreadyExistsProvider(): array
     {
         return [
             [static function (CrudConfig $crudConfig): void {
@@ -249,20 +249,22 @@ class CrudTest extends AbstractCrudTest
     /**
      * @dataProvider getTestQueryBuilderProvider
      */
-    public function testQueryBuilder(mixed $queryBuilder): void
+    public function testQueryBuilder(\Closure $queryBuilderFactory): void
     {
+        $queryBuilder = $queryBuilderFactory($this);
+
         $crudConfig = $this->createValidCrudConfig()
             ->setQueryBuilder($queryBuilder);
         $crud = $this->createCrud($crudConfig);
         $this->assertSame($queryBuilder, $crud->getQueryBuilder());
     }
 
-    public function getTestQueryBuilderProvider(): array
+    public static function getTestQueryBuilderProvider(): array
     {
         return [
-            [$this->createMock(\Doctrine\ORM\QueryBuilder::class)],
-            [$this->createMock(\Doctrine\DBAL\Query\QueryBuilder::class)],
-            [$this->createMock(\Ecommit\CrudBundle\Crud\QueryBuilderInterface::class)],
+            [static fn (self $testCase) => $testCase->createMock(\Doctrine\ORM\QueryBuilder::class)],
+            [static fn (self $testCase) => $testCase->createMock(\Doctrine\DBAL\Query\QueryBuilder::class)],
+            [static fn (self $testCase) => $testCase->createMock(\Ecommit\CrudBundle\Crud\QueryBuilderInterface::class)],
         ];
     }
 
@@ -771,7 +773,7 @@ class CrudTest extends AbstractCrudTest
         $this->createCrud($crudConfig);
     }
 
-    public function getTestRequiredOptionsProvider(): array
+    public static function getTestRequiredOptionsProvider(): array
     {
         return [
             ['session_name'],
@@ -873,7 +875,7 @@ class CrudTest extends AbstractCrudTest
         $this->assertSame(['firstName'], $crud->getSessionValues()->getDisplayedColumns());
     }
 
-    public function getTestChangeColumnsDisplayedWithBadValueProvider(): array
+    public static function getTestChangeColumnsDisplayedWithBadValueProvider(): array
     {
         return [
             [['bad_column']],
@@ -906,7 +908,7 @@ class CrudTest extends AbstractCrudTest
         $this->assertSame('username', $crud->getSessionValues()->getSort());
     }
 
-    public function getTestChangeSortWithBadValueProvider(): array
+    public static function getTestChangeSortWithBadValueProvider(): array
     {
         return [
             [null],
@@ -944,7 +946,7 @@ class CrudTest extends AbstractCrudTest
         $this->assertSame('defaultPersonalizedSort', $crud->getSessionValues()->getSort());
     }
 
-    public function getTestChangeSortPersonalizedSortWithBadValueProvider(): array
+    public static function getTestChangeSortPersonalizedSortWithBadValueProvider(): array
     {
         return [
             [null],
@@ -977,7 +979,7 @@ class CrudTest extends AbstractCrudTest
         $this->assertSame(Crud::DESC, $crud->getSessionValues()->getSortDirection());
     }
 
-    public function getTestChangeSortDirectionWithBadValueProvider(): array
+    public static function getTestChangeSortDirectionWithBadValueProvider(): array
     {
         return [
             [null],
@@ -1002,8 +1004,9 @@ class CrudTest extends AbstractCrudTest
     /**
      * @dataProvider getTestChangeSearchFormDataWithBadValueProvider
      */
-    public function testChangeSearchFormDataWithBadValue(?SearcherInterface $value): void
+    public function testChangeSearchFormDataWithBadValue(\Closure $valueFactory): void
     {
+        $value = $valueFactory($this);
         $crud = $this->createCrud($this->createValidCrudConfig(withSearcher: true));
 
         $reflectionMethod = (new \ReflectionClass($crud))->getMethod('changeSearchFormData');
@@ -1013,11 +1016,11 @@ class CrudTest extends AbstractCrudTest
         $this->assertEquals(new UserSearcher(), $crud->getSessionValues()->getSearchFormData());
     }
 
-    public function getTestChangeSearchFormDataWithBadValueProvider(): array
+    public static function getTestChangeSearchFormDataWithBadValueProvider(): array
     {
         return [
-            [null],
-            [$this->createMock(SearcherInterface::class)],
+            [static fn (self $self) => null],
+            [static fn (self $self) => $self->createMock(SearcherInterface::class)],
         ];
     }
 
@@ -1031,7 +1034,7 @@ class CrudTest extends AbstractCrudTest
         $this->assertNull($crud->getSessionValues()->getSearchFormData());
     }
 
-    public function getBoolProvider(): array
+    public static function getBoolProvider(): array
     {
         return [
             [true],

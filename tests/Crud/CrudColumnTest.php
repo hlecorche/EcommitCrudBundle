@@ -140,7 +140,7 @@ class CrudColumnTest extends TestCase
         $this->assertSame('val', $crudColumn->getAliasSearch());
     }
 
-    public function getBooleanProvier(): array
+    public static function getBooleanProvier(): array
     {
         return [[true], [false]];
     }

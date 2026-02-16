@@ -18,7 +18,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Form\DataTransformerInterface;
 
-abstract class AbstractEntityTransformerTest extends KernelTestCase
+abstract class AbstractEntityTransformerTestCase extends KernelTestCase
 {
     /**
      * @var EntityManager

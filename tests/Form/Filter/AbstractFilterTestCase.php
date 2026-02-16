@@ -30,7 +30,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-abstract class AbstractFilterTest extends KernelTestCase
+abstract class AbstractFilterTestCase extends KernelTestCase
 {
     /**
      * @var EntityManager

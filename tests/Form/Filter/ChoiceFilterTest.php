@@ -16,7 +16,7 @@ namespace Ecommit\CrudBundle\Tests\Form\Filter;
 use Ecommit\CrudBundle\Form\Filter\ChoiceFilter;
 use Symfony\Component\Form\Extension\Core\Type\LanguageType;
 
-class ChoiceFilterTest extends AbstractFilterTest
+class ChoiceFilterTest extends AbstractFilterTestCase
 {
     /**
      * @dataProvider getTestViewAndQueryBuilderProvider
@@ -35,7 +35,7 @@ class ChoiceFilterTest extends AbstractFilterTest
         $this->checkQueryBuilder($crud, $whereExpected, $parametersExpected);
     }
 
-    public function getTestViewAndQueryBuilderProvider(): array
+    public static function getTestViewAndQueryBuilderProvider(): array
     {
         return [
             // No multiple
@@ -99,7 +99,7 @@ class ChoiceFilterTest extends AbstractFilterTest
         $this->assertSame($expectedViewData, $field->getViewData());
     }
 
-    public function getTestSubmitProvider(): array
+    public static function getTestSubmitProvider(): array
     {
         return [
             // No multiple
@@ -136,7 +136,7 @@ class ChoiceFilterTest extends AbstractFilterTest
         $this->assertNull($field->getData());
     }
 
-    public function getTestSubmitInvalidFormatProvider(): array
+    public static function getTestSubmitInvalidFormatProvider(): array
     {
         return [
             // No multiple

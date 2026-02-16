@@ -1,5 +1,5 @@
 .php-cs-fixer.cache
-.phpunit.result.cache
+.phpunit.cache/
 composer.lock
 /composer-require-checker.phar
 /drivers/

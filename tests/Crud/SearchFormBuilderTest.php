@@ -27,7 +27,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class SearchFormBuilderTest extends AbstractCrudTest
+class SearchFormBuilderTest extends AbstractCrudTestCase
 {
     /**
      * @dataProvider getTestCreateFormBuilderProvider
@@ -39,7 +39,7 @@ class SearchFormBuilderTest extends AbstractCrudTest
         $this->assertInstanceOf($expectedType, $searchFormBuilder->getFormBuilder()->getFormConfig()->getType()->getInnerType());
     }
 
-    public function getTestCreateFormBuilderProvider(): array
+    public static function getTestCreateFormBuilderProvider(): array
     {
         return [
             [null, 'crud_search_session_name', FormSearchType::class],
@@ -214,10 +214,17 @@ class SearchFormBuilderTest extends AbstractCrudTest
     public function testCreateFormWithDefaultColumnId(): void
     {
         $filter = $this->createMock(FilterInterface::class);
-        $filter->expects($this->exactly(2))->method('buildForm')->withConsecutive(
-            [self::callback(static fn ($value): bool => $value instanceof SearchFormBuilder), 'column1', self::callback(static fn ($value): bool => \is_array($value))],
-            [self::callback(static fn ($value): bool => $value instanceof SearchFormBuilder), 'virtual1', self::callback(static fn ($value): bool => \is_array($value))],
-        );
+        $invokedCount = 0;
+        $filter->expects($this->exactly(2))->method('buildForm')->willReturnCallback(static function ($searchFormBuilder, $property, $options) use (&$invokedCount): void {
+            self::assertInstanceOf(SearchFormBuilder::class, $searchFormBuilder);
+            if (0 === $invokedCount) {
+                self::assertSame('column1', $property);
+            } elseif (1 === $invokedCount) {
+                self::assertSame('virtual1', $property);
+            }
+            ++$invokedCount;
+            self::assertIsArray($options);
+        });
         $crudConfig = $this->createValidCrudConfig()
             ->addColumn(['id' => 'column1', 'alias' => 'alias1'])
             ->addVirtualColumn(['id' => 'virtual1', 'alias' => 'alias1']);
@@ -231,10 +238,17 @@ class SearchFormBuilderTest extends AbstractCrudTest
     public function testCreateFormWithColumnIdOption(): void
     {
         $filter = $this->createMock(FilterInterface::class);
-        $filter->expects($this->exactly(2))->method('buildForm')->withConsecutive(
-            [self::callback(static fn ($value): bool => $value instanceof SearchFormBuilder), 'property1', self::callback(static fn ($value): bool => \is_array($value))],
-            [self::callback(static fn ($value): bool => $value instanceof SearchFormBuilder), 'property2', self::callback(static fn ($value): bool => \is_array($value))],
-        );
+        $invokedCount = 0;
+        $filter->expects($this->exactly(2))->method('buildForm')->willReturnCallback(static function ($searchFormBuilder, $property, $options) use (&$invokedCount): void {
+            self::assertInstanceOf(SearchFormBuilder::class, $searchFormBuilder);
+            if (0 === $invokedCount) {
+                self::assertSame('property1', $property);
+            } elseif (1 === $invokedCount) {
+                self::assertSame('property2', $property);
+            }
+            ++$invokedCount;
+            self::assertIsArray($options);
+        });
         $crudConfig = $this->createValidCrudConfig()
             ->addColumn(['id' => 'column1', 'alias' => 'alias1'])
             ->addVirtualColumn(['id' => 'virtual1', 'alias' => 'alias1']);

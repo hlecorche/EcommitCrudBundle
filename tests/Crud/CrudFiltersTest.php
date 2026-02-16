@@ -35,7 +35,7 @@ class CrudFiltersTest extends TestCase
         $this->assertSame($expected, $this->crudFilters->has($filter));
     }
 
-    public function getTestHasProvider(): array
+    public static function getTestHasProvider(): array
     {
         return [
             ['filter_1', true],

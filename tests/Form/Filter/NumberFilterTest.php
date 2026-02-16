@@ -19,7 +19,7 @@ class NumberFilterTest extends IntegerFilterTest
 {
     public const TEST_FILTER = NumberFilter::class;
 
-    public function getTestViewAndQueryBuilderProvider(): array
+    public static function getTestViewAndQueryBuilderProvider(): array
     {
         return [
             // Null value
@@ -45,7 +45,7 @@ class NumberFilterTest extends IntegerFilterTest
         ];
     }
 
-    public function getTestSubmitProvider(): array
+    public static function getTestSubmitProvider(): array
     {
         return [
             [null, null, ''],

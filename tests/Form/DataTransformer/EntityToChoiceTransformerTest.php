@@ -21,7 +21,7 @@ use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 
-class EntityToChoiceTransformerTest extends AbstractEntityTransformerTest
+class EntityToChoiceTransformerTest extends AbstractEntityTransformerTestCase
 {
     protected function createTransformer(...$args): DataTransformerInterface
     {
@@ -41,7 +41,7 @@ class EntityToChoiceTransformerTest extends AbstractEntityTransformerTest
         $this->assertSame($expected, $transformer->transform($entity));
     }
 
-    public function getTestTransformProvider(): array
+    public static function getTestTransformProvider(): array
     {
         $closure = static fn (Tag $tag) => \sprintf('name: %s', $tag->getName());
 
@@ -101,7 +101,7 @@ class EntityToChoiceTransformerTest extends AbstractEntityTransformerTest
         $this->assertNull($transformer->reverseTransform($value));
     }
 
-    public function getTestReverseTransformNullValueProvider(): array
+    public static function getTestReverseTransformNullValueProvider(): array
     {
         return [
             [''],

@@ -86,7 +86,7 @@ class EntityAjaxTypeTest extends KernelTestCase
         $this->assertTrue($view->vars['list_is_synchronized']);
     }
 
-    public function getTestViewProvider(): array
+    public static function getTestViewProvider(): array
     {
         return [
             // No multiple
@@ -120,7 +120,7 @@ class EntityAjaxTypeTest extends KernelTestCase
         $this->assertEquals($expectedViewData, $field->getViewData());
     }
 
-    public function getTestSubmitProvider(): array
+    public static function getTestSubmitProvider(): array
     {
         return [
             // No multiple
@@ -155,7 +155,7 @@ class EntityAjaxTypeTest extends KernelTestCase
         $this->assertNull($field->getData());
     }
 
-    public function getTestSubmitInvalidProvider(): array
+    public static function getTestSubmitInvalidProvider(): array
     {
         return [
             // No multiple
@@ -217,7 +217,7 @@ class EntityAjaxTypeTest extends KernelTestCase
         $this->assertEquals($expectedViewData, $field->getViewData()); // Twig doesn't display invalid list
     }
 
-    public function getTestSubmitWithQueryBuilderProvider(): array
+    public static function getTestSubmitWithQueryBuilderProvider(): array
     {
         return [
             // No multiple - Valid
@@ -256,7 +256,7 @@ class EntityAjaxTypeTest extends KernelTestCase
         $this->assertSame($expectedViewValue, $view->vars['value']);
     }
 
-    public function getTestViewWithChoiceLabelProvider(): array
+    public static function getTestViewWithChoiceLabelProvider(): array
     {
         $closure = static fn (Tag $tag) => \sprintf('name: %s', $tag->getName());
 
