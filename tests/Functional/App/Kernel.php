@@ -47,12 +47,6 @@ class Kernel extends BaseKernel implements CompilerPassInterface
                 ],
             ]);
         }
-
-        if (5 === static::MAJOR_VERSION) { // @legacy
-            $container->loadFromExtension('security', [
-                'enable_authenticator_manager' => true,
-            ]);
-        }
     }
 
     public function process(ContainerBuilder $container): void
