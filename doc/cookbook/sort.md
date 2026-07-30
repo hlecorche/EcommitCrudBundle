@@ -60,6 +60,10 @@ class MyCrudController extends AbstractCrudController
 }
 ```
 
+> **_SÉCURITÉ:_** Les valeurs de l'option `alias_sort` sont injectées telles quelles (sans échappement) dans la
+> clause `ORDER BY` de la requête générée. Elles doivent donc être des valeurs écrites en dur dans le code et ne
+> jamais être construites à partir de données provenant de l'utilisateur.
+
 Il est aussi possible de définir un tri par défaut personnalisé grâce à la méthode `setDefaultPersonalizedSort` :
 
 ```php
@@ -92,3 +96,8 @@ class MyCrudController extends AbstractCrudController
     //...
 }
 ```
+
+> **_SÉCURITÉ:_** Contrairement au tri sur une colonne (validé par rapport aux colonnes déclarées), les alias passés
+> à `setDefaultPersonalizedSort` sont injectés tels quels (sans échappement ni validation) dans la clause `ORDER BY`
+> de la requête générée. Ils doivent donc être des valeurs écrites en dur dans le code et ne jamais être construits
+> à partir de données provenant de l'utilisateur, sous peine d'injection SQL.

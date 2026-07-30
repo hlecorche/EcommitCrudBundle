@@ -168,6 +168,12 @@ Explications de getCrudOptions():
     * **displayed_by_default**: Booléen qui définit si on affiche (ou non) cette colonne par défaut **Défaut: True**
     * **alias_search**: Alias Doctrine utilisé lors de la recherche DQL/SQL. Si pas défini, utilise l'alias Doctrine défini par l'option `alias`
     * **alias_sort**: Alias Doctrine (chaine de caractères ou tableau de chaines de caractères) utilisé(s) lors du tri sur cette colonne. Si pas défini, utilise l'alias Doctrine défini par l'option `alias`
+
+> **_SÉCURITÉ:_** Les options `alias`, `alias_search` et `alias_sort` sont injectées telles quelles (sans échappement)
+> dans la requête DQL/SQL générée. Elles doivent donc être des valeurs écrites en dur dans le code et ne jamais être
+> construites à partir de données provenant de l'utilisateur (requête HTTP, base de données, etc.), sous peine
+> d'injection SQL.
+
 * Nous donnons la requête Doctrine (sous forme d'objet QueryBuilder ou d'une fonction anonyme) avec la méthode setQueryBuilder() Le moteur du CRUD modifiera automatiquement cette requête, en fonction des actions demandées par l'utilisateur
 * Nous définissions les paramètres du nombre de pages avec la méthode `setMaxPerPage()`. Cette méthode prend 2 paramètres :
     * Un tableau contenant les différents nombres possibles du nombre de résultats par page. **Requis**
