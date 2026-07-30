@@ -822,7 +822,7 @@ final class Crud
         $session = $this->container->get('request_stack')->getCurrentRequest()->getSession();
         $object = $session->get($this->getSessionName()); // Load from session
 
-        if (!empty($object)) {
+        if ($object instanceof CrudSession) {
             $this->sessionValues = $object;
             $this->checkCrudSession();
 
