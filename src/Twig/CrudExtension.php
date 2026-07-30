@@ -411,7 +411,7 @@ final class CrudExtension extends AbstractExtension
 
         $repeatedValue = false;
         if (null !== $options['repeated_values_string']) {
-            $value = (string) $value; // transform to string is important : eg: Twig Markup
+            $value = trim((string) $value); // transform to string is important : eg: Twig Markup
             if (isset($this->lastTdValues[$crud->getSessionName()][$columnId]) && $this->lastTdValues[$crud->getSessionName()][$columnId] === $value) {
                 if ('' !== $value) {
                     $repeatedValue = true;
