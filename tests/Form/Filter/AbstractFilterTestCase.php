@@ -28,7 +28,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 abstract class AbstractFilterTestCase extends KernelTestCase
 {
@@ -53,6 +55,12 @@ abstract class AbstractFilterTestCase extends KernelTestCase
 
         $this->em = static::getContainer()->get(ManagerRegistry::class)->getManager();
         $this->factory = static::getContainer()->get(FormFactoryInterface::class);
+
+        // The real form factory renders the CSRF token using the real "request_stack" service.
+        // Push a request with a session so CSRF token generation does not fail.
+        $realRequest = new Request();
+        $realRequest->setSession(new Session(new MockArraySessionStorage()));
+        static::getContainer()->get('request_stack')->push($realRequest);
 
         $session = $this->createMock(SessionInterface::class);
         $session->expects($this->any())

@@ -27,7 +27,6 @@ class FormSearchType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => 'Ecommit\CrudBundle\Form\Searcher\SearcherInterface',
-            'csrf_protection' => false,
         ]);
     }
 

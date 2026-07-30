@@ -232,6 +232,10 @@
         {% set form_attr = form_attr|merge({novalidate: 'novalidate'}) %}
     {% endif %}
     {{ form_start(crud.searchForm, {'attr': form_attr}) }}
+    {# The CSRF token is rendered here because templates may close the form with a raw "</form>" tag (without form_end) #}
+    {% if crud.searchForm._token is defined %}
+        {{ form_widget(crud.searchForm._token) }}
+    {% endif %}
 {% endapply %}
 {% endblock %}
 

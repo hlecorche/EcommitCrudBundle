@@ -23,6 +23,9 @@ use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 use Twig\Environment;
 use Twig\Markup;
@@ -51,6 +54,12 @@ class CrudExtensionTest extends KernelTestCase
         $this->crudExtension = self::getContainer()->get('ecommit_crud.twig.crud_extension');
         $this->formFactory = self::getContainer()->get(FormFactoryInterface::class);
         $this->environment = self::getContainer()->get(Environment::class);
+
+        // The real form factory renders the CSRF token using the real "request_stack" service.
+        // Push a request with a session so CSRF token generation does not fail.
+        $realRequest = new Request();
+        $realRequest->setSession(new Session(new MockArraySessionStorage()));
+        self::getContainer()->get('request_stack')->push($realRequest);
     }
 
     public function testFormStartAjax(): void

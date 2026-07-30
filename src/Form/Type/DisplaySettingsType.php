@@ -70,10 +70,6 @@ class DisplaySettingsType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([
-            'csrf_protection' => false,
-        ]);
-
         $resolver->setRequired([
             'results_per_page_choices',
             'columns_choices',
