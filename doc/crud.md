@@ -346,6 +346,10 @@ class CarSearcher extends AbstractSearcher
 
 > **_REMARQUE:_**  Il est aussi possible de faire des recherches plus complexes sans utiliser les filtres pré-définis. [En savoir plus](cookbook/advanced-searcher.md)
 
+> **_REMARQUE:_**  La classe Searcher est un objet de données (elle est stockée en session), et non un service : elle est
+> automatiquement exclue du conteneur de services et doit être instanciée avec `new`. Pour utiliser un service dans la
+> classe Searcher, passez-le par [les options du formulaire de recherche](cookbook/advanced-searcher.md#définir-les-options-du-formulaire-de-recherche).
+
 Une fois la classe Searcher créée, nous devons modifier notre contrôleur :
 
 ```diff

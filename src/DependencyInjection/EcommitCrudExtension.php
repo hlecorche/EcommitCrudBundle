@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Ecommit\CrudBundle\DependencyInjection;
 
 use Ecommit\CrudBundle\Form\Filter\FilterInterface;
+use Ecommit\CrudBundle\Form\Searcher\SearcherInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
@@ -43,5 +44,10 @@ class EcommitCrudExtension extends Extension
         $container->setParameter('ecommit_crud.twig_functions_configuration', $configs['twig_functions_configuration']);
 
         $container->registerForAutoconfiguration(FilterInterface::class)->addTag('ecommit_crud.filter');
+
+        // Searchers are stored in the session: they are data objects, not services
+        $container->registerForAutoconfiguration(SearcherInterface::class)->addTag('container.excluded', [
+            'source' => 'because searchers are stored in the session and must not be services (to use a service in a searcher, pass it in the search form options)',
+        ]);
     }
 }
