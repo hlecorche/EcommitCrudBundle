@@ -1437,6 +1437,40 @@ describe('Test Ajax.form', function () {
     expect(callbackFormComplete).not.toHaveBeenCalled()
   })
 
+  it('Send request with form without options argument and options changed by ec-crud-ajax-form-before event', async function () {
+    $('body').append('<form action="/goodRequest" method="POST" class="html-test" id="formToTest"><input type="hidden" name="_token" value="my-csrf-token" /><input type="text" name="var1" /></form>')
+    $('#formToTest input[name=var1]').val('My value 1')
+
+    const callbackFormBefore = jasmine.createSpy('form_before')
+
+    $(document).on('ec-crud-ajax-form-before', function (event) {
+      expect(event.detail.options).toBeInstanceOf(Object)
+      event.detail.options.options = {
+        headers: {
+          'X-Test': '1'
+        }
+      }
+      callbackFormBefore()
+    })
+
+    // The "options" argument is omitted, like in onSubmitFormAuto
+    const promise = ajax.sendForm('#formToTest')
+    expect(promise).toBeInstanceOf(Promise)
+
+    const response = await promise
+
+    const requestHeaders = {}
+    Object.entries(jasmine.Ajax.requests.mostRecent().requestHeaders).forEach((header) => {
+      requestHeaders[header[0].toLowerCase()] = header[1]
+    })
+
+    expect(response).toBeInstanceOf(Response)
+    expect(jasmine.Ajax.requests.mostRecent().url).toMatch('/goodRequest')
+    expect(jasmine.Ajax.requests.mostRecent().data()).toEqual([['_token', 'my-csrf-token'], ['var1', 'My value 1']]) // Parsed by addJasmineAjaxFormDataSupport
+    expect(requestHeaders['x-test']).toEqual('1')
+    expect(callbackFormBefore).toHaveBeenCalled()
+  })
+
   it('Send request with form and complete callback', async function () {
     $('body').append('<form action="/goodRequest" method="POST" class="html-test" id="formToTest"><input type="text" name="var1" /><input type="text" name="var2" /></form>')
     $('#formToTest input[name=var1]').val('My value 1')

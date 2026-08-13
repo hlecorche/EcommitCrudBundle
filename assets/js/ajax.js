@@ -251,7 +251,7 @@ export function link (link, options) {
   return sendRequest(options)
 }
 
-export function sendForm (form, options) {
+export function sendForm (form, options = {}) {
   const eventBefore = new CustomEvent('ec-crud-ajax-form-before', {
     bubbles: true,
     cancelable: true,
