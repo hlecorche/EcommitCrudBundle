@@ -737,6 +737,130 @@ describe('Test Ajax.sendRequest', function () {
     expect(callbackBeforeSend).toHaveBeenCalled()
   })
 
+  it('Send request with onValidate option', async function () {
+    const callbackSuccess = jasmine.createSpy('success')
+    const callbackValidate = jasmine.createSpy('validate')
+    const callbackBeforeSend = jasmine.createSpy('beforeSend')
+    const eventBeforeSend = jasmine.createSpy('event-before-send')
+
+    $(document).on('ec-crud-ajax-before-send', function (event) {
+      eventBeforeSend()
+    })
+
+    const promise = ajax.sendRequest({
+      url: '/goodRequest',
+      onValidate: function (options) {
+        expect(options).toBeInstanceOf(Object)
+        expect(options.url).toEqual('/goodRequest')
+        expect(options.urlResolved).toBeUndefined() // The URL is not resolved yet
+        callbackValidate()
+      },
+      onBeforeSend: function (options) {
+        callbackBeforeSend()
+      },
+      onSuccess: function (data, response) {
+        callbackSuccess()
+      }
+    })
+
+    const response = await promise
+
+    expect(response).toBeInstanceOf(Response)
+    expect(jasmine.Ajax.requests.mostRecent().url).toMatch('/goodRequest')
+    expect(callbackValidate).toHaveBeenCalledBefore(eventBeforeSend)
+    expect(eventBeforeSend).toHaveBeenCalledBefore(callbackBeforeSend)
+    expect(callbackBeforeSend).toHaveBeenCalledBefore(callbackSuccess)
+    expect(callbackSuccess).toHaveBeenCalled()
+
+    $(document).off('ec-crud-ajax-before-send')
+  })
+
+  it('Send request canceled by onValidate option', async function () {
+    const callbackSuccess = jasmine.createSpy('success')
+    const callbackValidate = jasmine.createSpy('validate')
+    const callbackBeforeSend = jasmine.createSpy('beforeSend')
+    const eventBeginning = jasmine.createSpy('event-beginning')
+    const eventBeforeSend = jasmine.createSpy('event-before-send')
+
+    $(document).on('ec-crud-ajax', function (event) {
+      eventBeginning()
+    })
+    $(document).on('ec-crud-ajax-before-send', function (event) {
+      eventBeforeSend()
+    })
+
+    const promise = ajax.sendRequest({
+      url: '/goodRequest',
+      onValidate: function (options) {
+        expect(options).toBeInstanceOf(Object)
+        expect(options.url).toEqual('/goodRequest')
+        callbackValidate()
+        options.stop = true
+      },
+      onBeforeSend: function (options) {
+        callbackBeforeSend()
+      },
+      onSuccess: function (data, response) {
+        callbackSuccess()
+      }
+    })
+
+    const response = await promise
+
+    expect(response).toBeNull()
+    expect(jasmine.Ajax.requests.mostRecent()).toBeUndefined() // No request is sent
+    expect(callbackValidate).toHaveBeenCalled()
+    expect(eventBeginning).toHaveBeenCalled()
+    expect(eventBeforeSend).not.toHaveBeenCalled() // The event is not dispatched
+    expect(callbackBeforeSend).not.toHaveBeenCalled()
+    expect(callbackSuccess).not.toHaveBeenCalled()
+
+    $(document).off('ec-crud-ajax')
+    $(document).off('ec-crud-ajax-before-send')
+  })
+
+  it('Send request without onValidate option', async function () {
+    const callbackSuccess = jasmine.createSpy('success')
+    const callbackComplete = jasmine.createSpy('complete')
+    const callbackBeforeSend = jasmine.createSpy('beforeSend')
+    const eventBeginning = jasmine.createSpy('event-beginning')
+    const eventBeforeSend = jasmine.createSpy('event-before-send')
+
+    $(document).on('ec-crud-ajax', function (event) {
+      eventBeginning()
+    })
+    $(document).on('ec-crud-ajax-before-send', function (event) {
+      expect(event.detail.options.onValidate).toBeNull() // Default value
+      eventBeforeSend()
+    })
+
+    const promise = ajax.sendRequest({
+      url: '/goodRequest',
+      onBeforeSend: function (options) {
+        callbackBeforeSend()
+      },
+      onSuccess: function (data, response) {
+        callbackSuccess()
+      },
+      onComplete: function (statusText, response) {
+        callbackComplete()
+      }
+    })
+
+    const response = await promise
+
+    expect(response).toBeInstanceOf(Response)
+    expect(jasmine.Ajax.requests.mostRecent().url).toMatch('/goodRequest')
+    expect(eventBeginning).toHaveBeenCalledBefore(eventBeforeSend)
+    expect(eventBeforeSend).toHaveBeenCalledBefore(callbackBeforeSend)
+    expect(callbackBeforeSend).toHaveBeenCalledBefore(callbackSuccess)
+    expect(callbackSuccess).toHaveBeenCalledBefore(callbackComplete)
+    expect(callbackComplete).toHaveBeenCalled()
+
+    $(document).off('ec-crud-ajax')
+    $(document).off('ec-crud-ajax-before-send')
+  })
+
   it('Test ec-crud-ajax-before-send event', async function () {
     const callbackSuccess = jasmine.createSpy('success')
     const callbackBeforeSend = jasmine.createSpy('beforeSend')
@@ -1161,6 +1285,28 @@ describe('Test Ajax.click', function () {
     }, 500)
 
     expect(jasmine.Ajax.requests.mostRecent()).toBeUndefined()
+
+    $(document).off('ec-crud-ajax-click-auto-before', '#clickToTest')
+  })
+
+  it('Send auto-request canceled by onValidate option', async function () {
+    $('body').append('<button class="html-test" data-ec-crud-toggle="ajax-click" id="clickToTest" data-ec-crud-ajax-url="/goodRequest" data-ec-crud-ajax-on-validate="my_callback_on_validate">Go !</button>')
+
+    const callbackValidate = jasmine.createSpy('validate')
+
+    callbackManager.registerCallback('my_callback_on_validate', function (options) {
+      callbackValidate()
+      options.stop = true
+    })
+
+    $('#clickToTest').get(0).click()
+
+    await wait(() => {
+      return false
+    }, 500)
+
+    expect(jasmine.Ajax.requests.mostRecent()).toBeUndefined()
+    expect(callbackValidate).toHaveBeenCalled()
 
     $(document).off('ec-crud-ajax-click-auto-before', '#clickToTest')
   })

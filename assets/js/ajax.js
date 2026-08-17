@@ -96,6 +96,7 @@ export function sendRequest (options) {
       url: null,
       update: null,
       updateMode: 'update',
+      onValidate: null,
       onBeforeSend: null,
       onSuccess: null,
       onError: null,
@@ -114,6 +115,15 @@ export function sendRequest (options) {
   if (optionsResolver.isNotBlank(options.url) === false) {
     return new Promise((resolve, reject) => {
       reject(new TypeError('Value required: url'))
+    })
+  }
+
+  if (optionsResolver.isNotBlank(options.onValidate)) {
+    runCallback(options.onValidate, options)
+  }
+  if (options.stop !== undefined && options.stop === true) {
+    return new Promise((resolve, reject) => {
+      resolve(null)
     })
   }
 
