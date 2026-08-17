@@ -17,7 +17,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Ecommit\CrudBundle\Crud\CrudFactory;
 use Ecommit\CrudBundle\Crud\CrudResponseGenerator;
 use Ecommit\CrudBundle\EventListener\MappingEntities;
+use Ecommit\CrudBundle\Form\Type\DisplaySettingsType;
 use Ecommit\CrudBundle\Form\Type\EntityAjaxType;
+use Ecommit\CrudBundle\Form\Type\FormSearchType;
 use Ecommit\CrudBundle\Twig\CrudExtension;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -65,5 +67,11 @@ return static function (ContainerConfigurator $container): void {
             service(RouterInterface::class),
         ])
         ->tag('form.type')
+
+        ->set(FormSearchType::class)
+        ->autoconfigure()
+
+        ->set(DisplaySettingsType::class)
+        ->autoconfigure()
     ;
 };
