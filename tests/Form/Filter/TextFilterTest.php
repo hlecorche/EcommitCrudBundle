@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Ecommit\CrudBundle\Tests\Form\Filter;
 
 use Ecommit\CrudBundle\Form\Filter\TextFilter;
+use Ecommit\CrudBundle\Tests\Functional\App\Entity\EntityManyToOne;
+use Ecommit\CrudBundle\Tests\Functional\App\Entity\Tag;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class TextFilterTest extends AbstractFilterTestCase
@@ -51,14 +53,100 @@ class TextFilterTest extends AbstractFilterTestCase
             ['', true, true, '', null, []],
 
             // Not empty value
-            ['val', false, false, 'val', 'e.name LIKE :value_text_propertyName', ['value_text_propertyName' => '%val%']],
-            ['val', false, true, 'val', 'e.name LIKE :value_text_propertyName', ['value_text_propertyName' => '%val']],
-            ['val', true, false, 'val', 'e.name LIKE :value_text_propertyName', ['value_text_propertyName' => 'val%']],
+            ['val', false, false, 'val', "e.name LIKE :value_text_propertyName ESCAPE '!'", ['value_text_propertyName' => '%val%']],
+            ['val', false, true, 'val', "e.name LIKE :value_text_propertyName ESCAPE '!'", ['value_text_propertyName' => '%val']],
+            ['val', true, false, 'val', "e.name LIKE :value_text_propertyName ESCAPE '!'", ['value_text_propertyName' => 'val%']],
             ['val', true, true, 'val', 'e.name = :value_text_propertyName', ['value_text_propertyName' => 'val']],
 
             // Escape
-            ['v%a_l', false, false, 'v%a_l', 'e.name LIKE :value_text_propertyName', ['value_text_propertyName' => '%v\%a\_l%']],
+            ['v%a_l', false, false, 'v%a_l', "e.name LIKE :value_text_propertyName ESCAPE '!'", ['value_text_propertyName' => '%v!%a!_l%']],
+            ['v!a\l', false, false, 'v!a\l', "e.name LIKE :value_text_propertyName ESCAPE '!'", ['value_text_propertyName' => '%v!!a\l%']],
+            ['val\\', false, false, 'val\\', "e.name LIKE :value_text_propertyName ESCAPE '!'", ['value_text_propertyName' => '%val\\%']],
+            ['v%a_l', true, true, 'v%a_l', 'e.name = :value_text_propertyName', ['value_text_propertyName' => 'v%a_l']],
         ];
+    }
+
+    public function testInvalidUtf8(): void
+    {
+        $crud = $this->createCrud($this->createCrudConfig('e.name', "val\xff"));
+        $crud->getSearchFormBuilder()->addFilter('propertyName', TextFilter::class);
+
+        $this->checkQueryBuilder($crud, null, []);
+    }
+
+    /**
+     * @dataProvider getTestLikeResultsProvider
+     */
+    public function testLikeResults(string $value, bool $mustBegin, bool $mustEnd, array $expectedNames): void
+    {
+        $this->insertLikeEntities();
+
+        $crud = $this->createCrud($this->createCrudConfig('e.name', $value));
+        $crud->getSearchFormBuilder()->addFilter('propertyName', TextFilter::class, [
+            'must_begin' => $mustBegin,
+            'must_end' => $mustEnd,
+        ]);
+        $crud->build();
+
+        $names = $crud->getQueryBuilder()->select('e.name')->getQuery()->getSingleColumnResult();
+        sort($names);
+        $this->assertSame($expectedNames, $names);
+    }
+
+    /**
+     * @dataProvider getTestLikeResultsProvider
+     */
+    public function testLikeResultsWithDbalQueryBuilder(string $value, bool $mustBegin, bool $mustEnd, array $expectedNames): void
+    {
+        $this->insertLikeEntities();
+
+        $queryBuilder = $this->em->getConnection()->createQueryBuilder()
+            ->select('e.name')
+            ->from('entity_many_to_one', 'e');
+        (new TextFilter())->updateQueryBuilder($queryBuilder, 'propertyName', $value, [
+            'must_begin' => $mustBegin,
+            'must_end' => $mustEnd,
+            'alias_search' => 'e.name',
+        ]);
+
+        $names = $queryBuilder->executeQuery()->fetchFirstColumn();
+        sort($names);
+        $this->assertSame($expectedNames, $names);
+    }
+
+    public static function getTestLikeResultsProvider(): array
+    {
+        return [
+            ['like_a_b', false, false, ['like_a_b']],
+            ['like_50%', false, false, ['like_50%']],
+            ['like_a!b', false, false, ['like_a!b']],
+            ['like_c:\\', false, false, ['like_c:\x']],
+            ['like_c:\\', true, false, ['like_c:\x']],
+            ['like_', true, false, ['like_50%', 'like_500', 'like_a!b', 'like_a_b', 'like_axb', 'like_c:\x']],
+            ['%', false, false, ['like_50%']],
+            ['_', false, false, ['like_50%', 'like_500', 'like_a!b', 'like_a_b', 'like_axb', 'like_c:\x']],
+            ['a_b', false, true, ['like_a_b']],
+        ];
+    }
+
+    protected function insertLikeEntities(): void
+    {
+        $this->em->getConnection()->beginTransaction();
+
+        $tag = $this->em->getRepository(Tag::class)->find(2);
+        foreach (['like_a_b', 'like_axb', 'like_50%', 'like_500', 'like_a!b', 'like_c:\x'] as $i => $name) {
+            $this->em->persist(new EntityManyToOne(1000 + $i, $name, $tag));
+        }
+        $this->em->flush();
+    }
+
+    protected function tearDown(): void
+    {
+        if ($this->em?->getConnection()->isTransactionActive()) {
+            $this->em->getConnection()->rollBack();
+        }
+
+        parent::tearDown();
     }
 
     public function testInvalidInput(): void

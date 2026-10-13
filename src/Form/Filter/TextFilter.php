@@ -20,6 +20,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class TextFilter extends AbstractFilter
 {
+    protected const LIKE_ESCAPE_CHAR = '!';
+
     public function buildForm(SearchFormBuilder $builder, string $property, array $options): void
     {
         $typeOptions = $this->getTypeOptions($options, [
@@ -35,7 +37,7 @@ class TextFilter extends AbstractFilter
 
     public function updateQueryBuilder(mixed $queryBuilder, string $property, mixed $value, array $options): void
     {
-        if (null === $value || '' === $value || !\is_string($value)) {
+        if (null === $value || '' === $value || !\is_string($value) || !mb_check_encoding($value, 'UTF-8')) {
             return;
         }
 
@@ -47,11 +49,24 @@ class TextFilter extends AbstractFilter
         } else {
             $after = (true === $options['must_begin']) ? '' : '%';
             $before = (true === $options['must_end']) ? '' : '%';
-            $value = addcslashes($value, '%_');
-            $like = $after.$value.$before;
-            $queryBuilder->andWhere($queryBuilder->expr()->like($options['alias_search'], ':'.$parameterName))
+            $like = $after.$this->escapeLike($queryBuilder, $value).$before;
+            $queryBuilder->andWhere(\sprintf("%s LIKE :%s ESCAPE '%s'", $options['alias_search'], $parameterName, self::LIKE_ESCAPE_CHAR))
                 ->setParameter($parameterName, $like);
         }
+    }
+
+    protected function escapeLike(mixed $queryBuilder, string $value): string
+    {
+        if ($queryBuilder instanceof \Doctrine\ORM\QueryBuilder) {
+            return $queryBuilder->getEntityManager()->getConnection()->getDatabasePlatform()->escapeStringForLike($value, self::LIKE_ESCAPE_CHAR);
+        }
+
+        // The DBAL QueryBuilder does not expose its connection: platform-specific wildcards (e.g. "[" on SQL Server) cannot be escaped
+        return strtr($value, [
+            self::LIKE_ESCAPE_CHAR => self::LIKE_ESCAPE_CHAR.self::LIKE_ESCAPE_CHAR,
+            '%' => self::LIKE_ESCAPE_CHAR.'%',
+            '_' => self::LIKE_ESCAPE_CHAR.'_',
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

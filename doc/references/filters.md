@@ -176,5 +176,13 @@ Voir aussi les [options générales](#options-générales-pour-tous-les-filtres)
 | max_length | Si définie, longueur maximale de la longueur du terme recherché | Non | 255 |
 | type | "Type" de formulaire Symfony à utiliser | Non | Symfony\Component\Form\Extension\Core\Type\TextType |
 
+Les caractères spéciaux du terme recherché (`%`, `_`) sont échappés : ils sont recherchés tels quels et ne sont pas
+interprétés comme des jokers par `LIKE`.
+
+**Limite avec un QueryBuilder DBAL** (`Doctrine\DBAL\Query\QueryBuilder`) : le QueryBuilder DBAL ne donnant pas accès à
+la connexion, les jokers propres à une base de données ne peuvent pas être échappés. Avec SQL Server, le caractère `[`
+reste donc interprété comme un joker (ex : `[a-z]`). Cette limite ne s'applique pas au QueryBuilder ORM
+(`Doctrine\ORM\QueryBuilder`).
+
 
 Voir aussi les [options générales](#options-générales-pour-tous-les-filtres)
