@@ -200,6 +200,51 @@ ajax.sendForm($('#formToTest'), {
 * Les attributs `data-ec-crud-ajax-*` (si présents) écrasent les options de la fonction `sendForm` (si présent)
 * La fonction retourne la promesse générée par `sendRequest`
 
+#### Événements
+
+Les événements de `sendRequest` sont également dispatchés.
+
+| Événement                    | Objet                                                                                    | Description                                                                                                                                                       | Propriétés disponibles                                                                             |
+|------------------------------|------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|
+| ec-crud-ajax-form-auto-before | [CustomEvent](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent) (cancelable) | Mode automatique uniquement. Dispatché sur le formulaire lors de sa soumission, avant l'appel de `sendForm`. Peut annuler l'envoi avec `event.preventDefault()`      |                                                                                                    |
+| ec-crud-ajax-form-before     | [CustomEvent](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent) (cancelable) | Dispatché sur `document` au début de `sendForm`. Peut annuler la requête avec `event.preventDefault()`                                                            | <ul><li>event.detail.form</li><li>event.detail.options</li></ul>                                   |
+| ec-crud-ajax-form-complete   | [CustomEvent](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent)              | Dispatché sur `document` quand la requête a été exécutée et s'est terminée (succès ou erreur). Même fonctionnement que callback `onComplete`                      | <ul><li>event.detail.form</li><li>event.detail.statusText</li><li>event.detail.response</li></ul> |
+| ec-crud-ajax-form-cancel     | [CustomEvent](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent)              | Dispatché sur `document` quand la requête est annulée. Dispatché avant la résolution (valeur nulle) de la promesse retournée par `sendForm`                       | <ul><li>event.detail.form (élément HTML du formulaire, `null` si introuvable)</li></ul>            |
+
+Sauf erreur de programmation (voir *Limites* ci-dessous), chaque événement `ec-crud-ajax-form-before` dispatché par
+`sendForm` est suivi d'**exactement un** des événements suivants :
+* `ec-crud-ajax-form-complete` si la requête a été exécutée (appel à `fetch`), qu'elle aboutisse ou échoue (code HTTP
+  d'erreur, erreur réseau, erreur de lecture de la réponse, requête refusée par `fetch`)
+* `ec-crud-ajax-form-cancel` si la requête a été annulée (voir les causes ci-dessous)
+
+Une application peut ainsi préparer quelque chose sur `ec-crud-ajax-form-before` (exemple : poser un cookie CSRF de
+double-soumission) et le défaire de façon fiable sur `ec-crud-ajax-form-complete` **et** `ec-crud-ajax-form-cancel`.
+
+Causes d'annulation déclenchant `ec-crud-ajax-form-cancel` :
+* `event.preventDefault()` sur l'événement `ec-crud-ajax-form-before`
+* `event.preventDefault()` sur l'événement `ec-crud-ajax`
+* `options.stop = true` dans le callback `onValidate` (exemple : `confirm()` refusé)
+* `event.preventDefault()` sur l'événement `ec-crud-ajax-before-send`
+* `options.stop = true` dans le callback `onBeforeSend`
+
+Limites (erreurs de programmation) : en cas d'erreur **avant** l'exécution de la requête, ni
+`ec-crud-ajax-form-complete` ni `ec-crud-ajax-form-cancel` ne sont dispatchés :
+* La promesse retournée par `sendForm` est rejetée :
+    * URL vide (`TypeError: Value required: url`). Exemples : `<form>` sans attribut `action` ou avec `action=""`,
+      attribut `data-ec-crud-ajax-url=""`, option `url: null`
+    * Option `body` d'un type invalide (`TypeError: Bad type for option "body"`), passée à `sendForm` ou par l'attribut
+      `data-ec-crud-ajax-body` (exemple : `data-ec-crud-ajax-body="123"`, converti en nombre)
+* Une exception est levée de façon synchrone par `sendForm` (aucune promesse n'est retournée) :
+    * Callback `onValidate` ou `onBeforeSend` qui lève une exception
+    * URL invalide pour `new URL()` (exemple : `action="http://["`). Le callback `onValidate` a alors déjà été exécuté
+    * Formulaire introuvable, ou élément qui n'est pas un `<form>`
+
+Les exceptions levées par les écouteurs d'événements ne sont pas propagées et ne modifient pas ce comportement.
+
+La règle suppose également que les callbacks `onError` et `onComplete` ne lèvent pas d'exception. Si c'est le cas
+après l'exécution de la requête, `ec-crud-ajax-form-complete` peut être dispatché deux fois (exception dans
+`onComplete`) ou jamais (exception dans `onError`), et la promesse retournée par `sendForm` n'est jamais résolue.
+
 
 ### updateDom
 

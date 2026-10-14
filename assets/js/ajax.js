@@ -262,6 +262,18 @@ export function link (link, options) {
 }
 
 export function sendForm (form, options = {}) {
+  // Except in case of programming error (see documentation), each "ec-crud-ajax-form-before" event is
+  // followed by exactly one "ec-crud-ajax-form-complete" event (request executed) or one
+  // "ec-crud-ajax-form-cancel" event (request cancelled)
+  const dispatchCancelEvent = () => {
+    const eventOnCancel = new CustomEvent('ec-crud-ajax-form-cancel', {
+      detail: {
+        form: optionsResolver.getElement(form)
+      }
+    })
+    document.dispatchEvent(eventOnCancel)
+  }
+
   const eventBefore = new CustomEvent('ec-crud-ajax-form-before', {
     bubbles: true,
     cancelable: true,
@@ -272,6 +284,8 @@ export function sendForm (form, options = {}) {
   })
   document.dispatchEvent(eventBefore)
   if (eventBefore.defaultPrevented) {
+    dispatchCancelEvent()
+
     return new Promise((resolve, reject) => {
       resolve(null)
     })
@@ -311,7 +325,15 @@ export function sendForm (form, options = {}) {
   }
   options.onComplete = callbacksComplete
 
-  return sendRequest(options)
+  // sendRequest resolves null only when the request is cancelled (ec-crud-ajax or
+  // ec-crud-ajax-before-send prevented, stop in onValidate or onBeforeSend)
+  return sendRequest(options).then((result) => {
+    if (result === null) {
+      dispatchCancelEvent()
+    }
+
+    return result
+  })
 }
 
 export function updateDom (element, updateMode, content) {

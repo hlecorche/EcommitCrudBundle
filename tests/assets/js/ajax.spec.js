@@ -1525,6 +1525,8 @@ describe('Test Ajax.form', function () {
     callbackManager.clear()
     $(document).off('ec-crud-ajax-form-before')
     $(document).off('ec-crud-ajax-form-complete')
+    $(document).off('ec-crud-ajax-form-cancel')
+    $(document).off('ec-crud-ajax-before-send')
   })
 
   it('Send request with form', async function () {
@@ -1581,6 +1583,177 @@ describe('Test Ajax.form', function () {
     await promise
 
     expect(callbackFormComplete).not.toHaveBeenCalled()
+  })
+
+  it('Send request with form: ec-crud-ajax-form-complete is dispatched and ec-crud-ajax-form-cancel is not dispatched', async function () {
+    $('body').append('<form action="/goodRequest" method="POST" class="html-test" id="formToTest"><input type="text" name="var1" /></form>')
+
+    const callbackFormComplete = jasmine.createSpy('form_complete')
+    const callbackFormCancel = jasmine.createSpy('form_cancel')
+
+    $(document).on('ec-crud-ajax-form-complete', function (event) {
+      callbackFormComplete()
+    })
+    $(document).on('ec-crud-ajax-form-cancel', function (event) {
+      callbackFormCancel()
+    })
+
+    const response = await ajax.sendForm('#formToTest')
+
+    expect(response).toBeInstanceOf(Response)
+    expect(jasmine.Ajax.requests.mostRecent().url).toMatch('/goodRequest')
+    expect(callbackFormComplete).toHaveBeenCalledTimes(1)
+    expect(callbackFormCancel).not.toHaveBeenCalled()
+  })
+
+  it('Send request with form with error: ec-crud-ajax-form-complete is dispatched and ec-crud-ajax-form-cancel is not dispatched', async function () {
+    $('body').append('<form action="/error404" method="POST" class="html-test" id="formToTest"><input type="text" name="var1" /></form>')
+
+    const callbackFormComplete = jasmine.createSpy('form_complete')
+    const callbackFormCancel = jasmine.createSpy('form_cancel')
+
+    $(document).on('ec-crud-ajax-form-complete', function (event) {
+      callbackFormComplete()
+    })
+    $(document).on('ec-crud-ajax-form-cancel', function (event) {
+      callbackFormCancel()
+    })
+
+    const response = await ajax.sendForm('#formToTest')
+
+    expect(response).toBeInstanceOf(Response)
+    expect(callbackFormComplete).toHaveBeenCalledTimes(1)
+    expect(callbackFormCancel).not.toHaveBeenCalled()
+  })
+
+  it('Send request with form canceled by ec-crud-ajax-form-before event: ec-crud-ajax-form-cancel is dispatched', async function () {
+    $('body').append('<form action="/goodRequest" method="POST" class="html-test" id="formToTest"><input type="text" name="var1" /></form>')
+
+    const callbackFormComplete = jasmine.createSpy('form_complete')
+    const callbackFormCancel = jasmine.createSpy('form_cancel')
+
+    $(document).on('ec-crud-ajax-form-before', function (event) {
+      event.preventDefault()
+    })
+    $(document).on('ec-crud-ajax-form-complete', function (event) {
+      callbackFormComplete()
+    })
+    $(document).on('ec-crud-ajax-form-cancel', function (event) {
+      expect(event.detail.form).toBe(document.querySelector('#formToTest'))
+      callbackFormCancel()
+    })
+
+    const response = await ajax.sendForm('#formToTest')
+
+    expect(response).toBeNull()
+    expect(jasmine.Ajax.requests.mostRecent()).toBeUndefined()
+    expect(callbackFormComplete).not.toHaveBeenCalled()
+    expect(callbackFormCancel).toHaveBeenCalledTimes(1)
+  })
+
+  it('Send request with form stopped by onValidate: ec-crud-ajax-form-cancel is dispatched', async function () {
+    $('body').append('<form action="/goodRequest" method="POST" class="html-test" id="formToTest"><input type="text" name="var1" /></form>')
+
+    const callbackFormBefore = jasmine.createSpy('form_before')
+    const callbackFormComplete = jasmine.createSpy('form_complete')
+    const callbackFormCancel = jasmine.createSpy('form_cancel')
+
+    $(document).on('ec-crud-ajax-form-before', function (event) {
+      callbackFormBefore()
+    })
+    $(document).on('ec-crud-ajax-form-complete', function (event) {
+      callbackFormComplete()
+    })
+    $(document).on('ec-crud-ajax-form-cancel', function (event) {
+      expect(event.detail.form).toBe(document.querySelector('#formToTest'))
+      callbackFormCancel()
+    })
+
+    const response = await ajax.sendForm('#formToTest', {
+      onValidate: function (options) {
+        options.stop = true
+      }
+    })
+
+    expect(response).toBeNull()
+    expect(jasmine.Ajax.requests.mostRecent()).toBeUndefined()
+    expect(callbackFormBefore).toHaveBeenCalledTimes(1)
+    expect(callbackFormComplete).not.toHaveBeenCalled()
+    expect(callbackFormCancel).toHaveBeenCalledTimes(1)
+  })
+
+  it('Send request with form stopped by onBeforeSend: ec-crud-ajax-form-cancel is dispatched', async function () {
+    $('body').append('<form action="/goodRequest" method="POST" class="html-test" id="formToTest"><input type="text" name="var1" /></form>')
+
+    const callbackFormComplete = jasmine.createSpy('form_complete')
+    const callbackFormCancel = jasmine.createSpy('form_cancel')
+
+    $(document).on('ec-crud-ajax-form-complete', function (event) {
+      callbackFormComplete()
+    })
+    $(document).on('ec-crud-ajax-form-cancel', function (event) {
+      callbackFormCancel()
+    })
+
+    const response = await ajax.sendForm('#formToTest', {
+      onBeforeSend: function (options) {
+        options.stop = true
+      }
+    })
+
+    expect(response).toBeNull()
+    expect(jasmine.Ajax.requests.mostRecent()).toBeUndefined()
+    expect(callbackFormComplete).not.toHaveBeenCalled()
+    expect(callbackFormCancel).toHaveBeenCalledTimes(1)
+  })
+
+  it('Send request with form canceled by ec-crud-ajax-before-send event: ec-crud-ajax-form-cancel is dispatched', async function () {
+    $('body').append('<form action="/goodRequest" method="POST" class="html-test" id="formToTest"><input type="text" name="var1" /></form>')
+
+    const callbackFormComplete = jasmine.createSpy('form_complete')
+    const callbackFormCancel = jasmine.createSpy('form_cancel')
+
+    $(document).on('ec-crud-ajax-before-send', function (event) {
+      event.preventDefault()
+    })
+    $(document).on('ec-crud-ajax-form-complete', function (event) {
+      callbackFormComplete()
+    })
+    $(document).on('ec-crud-ajax-form-cancel', function (event) {
+      callbackFormCancel()
+    })
+
+    const response = await ajax.sendForm('#formToTest')
+
+    expect(response).toBeNull()
+    expect(jasmine.Ajax.requests.mostRecent()).toBeUndefined()
+    expect(callbackFormComplete).not.toHaveBeenCalled()
+    expect(callbackFormCancel).toHaveBeenCalledTimes(1)
+  })
+
+  it('Send request with form without action: promise rejected, neither ec-crud-ajax-form-complete nor ec-crud-ajax-form-cancel is dispatched', async function () {
+    $('body').append('<form method="POST" class="html-test" id="formToTest"><input type="text" name="var1" /></form>')
+
+    const callbackFormBefore = jasmine.createSpy('form_before')
+    const callbackFormComplete = jasmine.createSpy('form_complete')
+    const callbackFormCancel = jasmine.createSpy('form_cancel')
+
+    $(document).on('ec-crud-ajax-form-before', function (event) {
+      callbackFormBefore()
+    })
+    $(document).on('ec-crud-ajax-form-complete', function (event) {
+      callbackFormComplete()
+    })
+    $(document).on('ec-crud-ajax-form-cancel', function (event) {
+      callbackFormCancel()
+    })
+
+    await expectAsync(ajax.sendForm('#formToTest')).toBeRejectedWith(new TypeError('Value required: url'))
+
+    expect(jasmine.Ajax.requests.mostRecent()).toBeUndefined()
+    expect(callbackFormBefore).toHaveBeenCalledTimes(1)
+    expect(callbackFormComplete).not.toHaveBeenCalled()
+    expect(callbackFormCancel).not.toHaveBeenCalled()
   })
 
   it('Send request with form without options argument and options changed by ec-crud-ajax-form-before event', async function () {
