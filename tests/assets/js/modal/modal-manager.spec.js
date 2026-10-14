@@ -399,6 +399,30 @@ describe('Test Modal-manager with test engine', function () {
       expect($('#test-modal .content').html()).toBe('OK')
     })
 
+    it('Test openRemoteModal with ajaxOptions.onSuccess without parameter', async function () {
+      const callbackOpen = jasmine.createSpy('open')
+      const callbackSuccess = jasmine.createSpy('success')
+
+      modalManager.openRemoteModal({
+        url: '/goodRequest',
+        element: '#test-modal',
+        elementContent: '#test-modal .content',
+        onOpen: function (element) {
+          callbackOpen(element)
+        },
+        ajaxOptions: {
+          onSuccess: () => callbackSuccess()
+        }
+      })
+
+      await wait(() => {
+        return $('#test-modal .content').text().length > 0
+      })
+
+      expect(callbackOpen).toHaveBeenCalledWith($('#test-modal'))
+      expect(callbackSuccess).toHaveBeenCalledTimes(1)
+    })
+
     it('Test openRemoteModal with method option', async function () {
       const callbackOpen = jasmine.createSpy('open')
       const callbackClose = jasmine.createSpy('close')

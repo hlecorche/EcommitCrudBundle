@@ -58,6 +58,10 @@ function transformDataValue (value) {
 }
 
 export function isNotBlank (value) {
+  // A function is never blank (its "length" property is its arity, not a size)
+  if (value instanceof Function) {
+    return true
+  }
   if (undefined === value || value === null || value.length === 0) {
     return false
   }

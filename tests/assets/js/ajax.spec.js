@@ -861,6 +861,29 @@ describe('Test Ajax.sendRequest', function () {
     $(document).off('ec-crud-ajax-before-send')
   })
 
+  it('Send request with callbacks without parameter', async function () {
+    const callbackValidate = jasmine.createSpy('validate')
+    const callbackBeforeSend = jasmine.createSpy('beforeSend')
+    const callbackSuccess = jasmine.createSpy('success')
+    const callbackComplete = jasmine.createSpy('complete')
+
+    const response = await ajax.sendRequest({
+      url: '/goodRequest',
+      onValidate: () => callbackValidate(),
+      onBeforeSend: function () {
+        callbackBeforeSend()
+      },
+      onSuccess: (...args) => callbackSuccess(),
+      onComplete: () => callbackComplete()
+    })
+
+    expect(response).toBeInstanceOf(Response)
+    expect(callbackValidate).toHaveBeenCalledBefore(callbackBeforeSend)
+    expect(callbackBeforeSend).toHaveBeenCalledBefore(callbackSuccess)
+    expect(callbackSuccess).toHaveBeenCalledBefore(callbackComplete)
+    expect(callbackComplete).toHaveBeenCalledTimes(1)
+  })
+
   it('Test ec-crud-ajax-before-send event', async function () {
     const callbackSuccess = jasmine.createSpy('success')
     const callbackBeforeSend = jasmine.createSpy('beforeSend')
@@ -1680,6 +1703,31 @@ describe('Test Ajax.form', function () {
     expect(callbackFormBefore).toHaveBeenCalledTimes(1)
     expect(callbackFormComplete).not.toHaveBeenCalled()
     expect(callbackFormCancel).toHaveBeenCalledTimes(1)
+  })
+
+  it('Send request with form and callbacks without parameter', async function () {
+    $('body').append('<form action="/goodRequest" method="POST" class="html-test" id="formToTest"><input type="text" name="var1" /></form>')
+
+    const callbackValidate = jasmine.createSpy('validate')
+    const callbackBeforeSend = jasmine.createSpy('beforeSend')
+    const callbackSuccess = jasmine.createSpy('success')
+    const callbackComplete = jasmine.createSpy('complete')
+
+    const response = await ajax.sendForm('#formToTest', {
+      onValidate: function () {
+        callbackValidate()
+      },
+      onBeforeSend: () => callbackBeforeSend(),
+      onSuccess: (...args) => callbackSuccess(),
+      onComplete: () => callbackComplete()
+    })
+
+    expect(response).toBeInstanceOf(Response)
+    expect(jasmine.Ajax.requests.mostRecent().url).toMatch('/goodRequest')
+    expect(callbackValidate).toHaveBeenCalledBefore(callbackBeforeSend)
+    expect(callbackBeforeSend).toHaveBeenCalledBefore(callbackSuccess)
+    expect(callbackSuccess).toHaveBeenCalledBefore(callbackComplete)
+    expect(callbackComplete).toHaveBeenCalledTimes(1)
   })
 
   it('Send request with form stopped by onBeforeSend: ec-crud-ajax-form-cancel is dispatched', async function () {

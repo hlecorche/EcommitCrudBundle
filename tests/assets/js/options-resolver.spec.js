@@ -137,6 +137,17 @@ describe('Test options-resolver.isNotBlank', function () {
   it('Array is not blank', function () {
     expect(optionsRevolser.isNotBlank(['val'])).toBe(true)
   })
+
+  it('Function without parameter is not blank', function () {
+    expect(optionsRevolser.isNotBlank(() => {})).toBe(true)
+    expect(optionsRevolser.isNotBlank(function () {})).toBe(true)
+    expect(optionsRevolser.isNotBlank((...args) => {})).toBe(true)
+    expect(optionsRevolser.isNotBlank((a = 1) => {})).toBe(true)
+  })
+
+  it('Function with parameter is not blank', function () {
+    expect(optionsRevolser.isNotBlank((a) => {})).toBe(true)
+  })
 })
 
 describe('Test options-resolver.getElement', function () {
